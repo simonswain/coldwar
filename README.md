@@ -1,11 +1,15 @@
 # Cold War
 
-## install
+## Install
 
 ```bash
-git clone
+git clone git@github.com:simonswain/coldwar.git
+cd coldwar
+cp config/index.sample.js config/index.js
 npm install
 node run
+
+# http://localhost:3002
 ```
 
 
