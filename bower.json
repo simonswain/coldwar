@@ -1,0 +1,12 @@
+{
+  "name": "colddwar",
+  "version": "0.0.1",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+  }
+}

@@ -1,0 +1,233 @@
+body {
+    background: #000;
+    color: #fff;
+    scroll-y: none;
+    overflow: hidden;
+    font-family: "ubuntu mono", monospace;
+    font-size: 24pt;
+}
+
+
+.scrollbars {
+
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-button:start:decrement,
+    &::-webkit-scrollbar-button:end:increment {
+        display: block;
+        height: 0;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-track-piece {
+        -webkit-border-radius: 0;
+        -webkit-border-bottom-right-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:vertical {
+        height: 8px;
+        background-color: rgba(0, 255, 0, 0.2);
+        -webkit-border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal {
+        width: 8px;
+        background-color: rgba(0, 255, 0, 0.2);
+        -webkit-border-radius: 4px;
+    }
+}
+
+#app {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+
+    h1 {
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        left: 0;
+        color: #0f0;
+        transform: translateY(-50%);
+        text-shadow: 0 0 32px rgba(0, 0, 0, 0.8);
+        span {
+            color: #0f0;
+        }
+    }
+
+    h2 {
+        font-family: "ubuntu mono", monospace;
+        text-transform: lowercase;
+        text-align: center;
+        position: absolute;
+        text-align: center;
+        position: absolute;
+        top: 40%;
+        right: 0;
+        left: 0;
+        color: #0f0;
+    }
+
+    #ex {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    #fx {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    #gx {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    #map {
+        position: absolute;
+        top: 30%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        &.has-controls {
+            left: 200px;
+        }
+    }
+
+    #elevation {
+        position: absolute;
+        height: 30%;
+        top: 0;
+        right: 0;
+        left: 0;
+        &.has-controls {
+            left: 200px;
+        }
+        border-bottom: 1px solid #333;
+        background: #000;
+    }
+
+    #params {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 200px;
+        height: auto;
+        border-right: 1px solid #222;
+        background: #000;
+
+
+        h3 {
+            text-align: center;
+            color: #0f0;
+            font-size: 14pt;
+            margin: 8px;
+        }
+
+        p {
+            margin: 8px 0 16px 0;
+            font-size: 10pt;
+            color: #0f0;
+            text-align: center;
+            a {
+                color: #0f0;
+                text-decoration: none;
+                &:hover {
+                    color: #fff;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        button {
+            font-family: "ubuntu mono", monospace;
+            margin: 0 8px;
+            padding: 16px;
+            width: 184px;
+            font-size: 12pt;
+            text-align: center;
+            background: #111;
+            color: #0ff;
+            border: none;
+            cursor: pointer;
+            &:hover {
+                color: #fff;
+                background: #222;
+            }
+        }
+
+    }
+
+    #options {
+        .scrollbars;
+        position: absolute;
+        top: 140px;
+        left: 0;
+        bottom: 0;
+        width: 200px;
+        height: auto;
+        border-right: 1px solid #222;
+        background: #000;
+
+        div {
+            margin: 0 8px 8px 8px;
+            height: 32px;
+            position: relative;
+            &.restart {
+                height: 64px;
+            }
+            label {
+                position: absolute;
+                top: 10px;
+                left: 48px;
+                font-size: 9pt;
+                text-align: right;
+                color: #999;
+            }
+            input {
+                font-family: "ubuntu mono", monospace;
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 8px 0;
+                width: 40px;
+                font-size: 11pt;
+                text-align: right;
+                background: #000;
+                color: #fff;
+                border: none;
+            }
+
+            &:hover {
+                input {
+                    background: #111;
+                }
+            }
+
+
+        }
+    }
+
+}
