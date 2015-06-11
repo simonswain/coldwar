@@ -50,6 +50,18 @@ When your capital is destroyed, it's Game Over.
 
 The control panel lets you tweak the starting parameters. There are a lot more controls for all the actors (e.g, how close do bombers flock.) than are not exposed here.
 
+## References
+
+[SAGE](https://www.youtube.com/results?search_query=sage+computer)
+[Cold War, Hot Jets](https://www.youtube.com/watch?v=oJtzyFRy2Ko)
+[Wargames](https://www.youtube.com/watch?v=NHWjlCaIrQo)
+[Fail Safe](https://www.youtube.com/watch?v=-9R3w8wDrmM)
+[Thirteen Days](https://www.youtube.com/watch?v=-yfIoHXOO9E)
+[Dr Strangelove](https://www.youtube.com/watch?v=vuP6KbIsNK4)
+[Major Havoc](https://www.youtube.com/watch?v=rbq1LE9MJc0)
+[History of Game Graphics](https://www.youtube.com/watch?v=dzN2pgL0zeg&index=1&list=PLOQZmjD6P2HlOoEVKOPaCFvLnjP865X1f)
+[Cold War Britain](https://www.youtube.com/watch?v=TZi_rrZX4bo)
+
 
 ## History
 
