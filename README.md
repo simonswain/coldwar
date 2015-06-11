@@ -11,6 +11,9 @@ node run
 
 # http://localhost:3002
 ```
+## Preview
+
+![Screenshot]\(http://i.imgur.com/PNsaof4.gifv) 
 
 ## About
 
