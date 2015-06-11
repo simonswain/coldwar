@@ -13,7 +13,7 @@ node run
 ```
 ## Preview
 
-![Screenshot]\(http://i.imgur.com/PNsaof4.gifv) 
+![](http://i.imgur.com/PNsaof4.gif) 
 
 ## About
 
