@@ -57,11 +57,12 @@ The control panel lets you tweak the starting parameters. There are a lot more c
 * [Wargames](https://www.youtube.com/watch?v=NHWjlCaIrQo)
 * [Fail Safe](https://www.youtube.com/watch?v=-9R3w8wDrmM)
 * [Thirteen Days](https://www.youtube.com/watch?v=-yfIoHXOO9E)
+* [Seven Days in May](https://www.youtube.com/watch?v=nwMjiArJFhM)
 * [Dr Strangelove](https://www.youtube.com/watch?v=vuP6KbIsNK4)
 * [Major Havoc](https://www.youtube.com/watch?v=rbq1LE9MJc0)
 * [History of Game Graphics](https://www.youtube.com/watch?v=dzN2pgL0zeg&index=1&list=PLOQZmjD6P2HlOoEVKOPaCFvLnjP865X1f)
 * [Cold War Britain](https://www.youtube.com/watch?v=TZi_rrZX4bo)
-
+* [The Power of Decision](https://www.youtube.com/watch?v=q2v0YuDatpc)
 
 ## History
 
