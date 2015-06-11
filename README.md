@@ -1,5 +1,7 @@
 # Cold War
 
+![](http://i.imgur.com/PNsaof4.gif) 
+
 ## Install
 
 ```bash
@@ -11,9 +13,6 @@ node run
 
 # http://localhost:3002
 ```
-## Preview
-
-![](http://i.imgur.com/PNsaof4.gif) 
 
 ## About
 
