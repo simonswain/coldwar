@@ -99,6 +99,7 @@ Icbm.prototype.update = function(delta){
       this.world.booms.push(new Boom({
         world: this.world,
         style: 'zoom',
+        crater: true,
         radius: 40,
         ttl: 100,
         x: this.target.pos.x,

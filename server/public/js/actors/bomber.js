@@ -194,6 +194,7 @@ Bomber.prototype.destroyTarget = function(){
     this.world.booms.push(new Boom({
       world: this.world,
       style: 'zoom',
+      crater: true,
       radius: 35,
       x: this.target.pos.x,
       y: this.target.pos.y,

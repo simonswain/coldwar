@@ -1,7 +1,3 @@
-/*global Vec3:true */
-/*jshint browser:true */
-/*jshint strict:false */
-
 function Boom(opts){
 
   this.pos = new Vec3(
@@ -17,6 +13,7 @@ function Boom(opts){
   this.world = opts.world;
 
   this.style = opts.style || false;
+  this.crater = opts.crater || false;
 
   this.radius = opts.radius || 100;
   this.initial_radius = this.radius;
@@ -31,7 +28,12 @@ function Boom(opts){
 Boom.prototype.update = function(delta){
   this.ttl -= (this.rate * delta);
   if(this.ttl <= 0){
-    this.dead = true;
+    if(this.crater){
+      this.style = 'crater';
+      this.ttl = 1000;
+    } else {
+      this.dead = true;
+    }
   }
 };
 
@@ -70,7 +72,14 @@ Boom.prototype.paint = function(view){
     }
     break;
 
-    case 'expand':
+  case 'crater':
+    view.ctx.strokeStyle= 'rgba(' + this.color + ',0.25)';
+    view.ctx.beginPath();
+    view.ctx.arc(0, 0, this.radius * 0.5, 0, 2*Math.PI);
+    view.ctx.stroke();
+    break;
+
+  case 'expand':
 
     radius = this.initial_radius - (this.radius * (this.ttl/this.initial_ttl));
 
@@ -118,6 +127,14 @@ Boom.prototype.elevation = function(view){
       view.ctx.arc(0, 0, (this.radius - radius) * i/(10*div), 0, 2*Math.PI);
       view.ctx.stroke();
     }
+    break;
+
+  case 'crater':
+    // view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (((1000-this.ttl)/1000).toFixed)(2) + ')';
+    // view.ctx.strokeStyle= 'rgba(' + this.color + ',1)';
+    // view.ctx.beginPath();
+    // view.ctx.arc(0, 0, (this.radius * 0.5), 0, 2*Math.PI);
+    // view.ctx.stroke();
     break;
 
     case 'expand':
