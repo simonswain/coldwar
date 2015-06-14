@@ -14,6 +14,12 @@ node run
 # http://localhost:3002
 ```
 
+## Shortcuts
+
+Press `?` for on help.
+
+Press `\` for diagnostics.
+
 ## About
 
 There are two views, top view and elevation view. All the actors have an x, y and z.
