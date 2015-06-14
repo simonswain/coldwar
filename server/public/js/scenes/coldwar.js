@@ -491,19 +491,6 @@ Scenes.coldwar = function(el, opts){
     elParams.appendChild(el);
     el.getElementsByTagName('button')[0].onclick=restart;
 
-    el = document.createElement('div');
-    html = '';
-    html += '<label id="first_strike" title="First Strike">first_strike</label>';
-    html += '<input type="checkbox" value="1" for="first_strike" />';
-    el.innerHTML = html;
-    elOptions.appendChild(el);
-    if(self.first_strike){
-      el.getElementsByTagName('input')[0].checked=true;
-    }
-    el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
-      setOpt('first_strike', e.target.checked);
-    });
-
     self.params.forEach(function(param){
       if(param.key === 'first_strike'){
         return;
@@ -529,6 +516,19 @@ Scenes.coldwar = function(el, opts){
         }
         setOpt(param.key, val);
       }, false);
+    });
+
+    el = document.createElement('div');
+    html = '';
+    html += '<label id="first_strike" title="First Strike">first_strike</label>';
+    html += '<input type="checkbox" value="1" for="first_strike" />';
+    el.innerHTML = html;
+    elOptions.appendChild(el);
+    if(self.first_strike){
+      el.getElementsByTagName('input')[0].checked=true;
+    }
+    el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
+      setOpt('first_strike', e.target.checked);
     });
 
     boot();
