@@ -16,7 +16,7 @@ node run
 
 ## Shortcuts
 
-Press `?` for on help.
+Press `?` for on screen help.
 
 Press `\` for diagnostics.
 
