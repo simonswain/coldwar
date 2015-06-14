@@ -41,21 +41,14 @@ var App = function(){
   };
 
   this.onKey = function(e){
-    //console.log(e.which);
     switch(e.which){
 
-    case 68:
-      // d
+    case 220:
+      // '\'
       e.preventDefault();
       if(this.view.hasOwnProperty('toggleMeta')){
         this.view.toggleMeta();
       }
-      break;
-
-      // enter
-    case 13:
-      this.render();
-      // restart scene
       break;
     }
   };
