@@ -116,11 +116,11 @@ Sat.prototype.paint = function(view){
   view.ctx.rotate(this.angle);
 
   // range
-  view.ctx.beginPath();
-  view.ctx.lineWidth = 1;
-  view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
-  view.ctx.strokeStyle = '#222'; 
-  view.ctx.stroke();
+  // view.ctx.beginPath();
+  // view.ctx.lineWidth = 1;
+  // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
+  // view.ctx.strokeStyle = '#222'; 
+  // view.ctx.stroke();
 
   view.ctx.fillStyle = '#000';
   view.ctx.fillRect(-6, -6, 12, 12);
@@ -157,11 +157,11 @@ Sat.prototype.elevation = function(view){
   view.ctx.save();  
   view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
 
-  view.ctx.beginPath();
-  view.ctx.lineWidth = 1;
-  view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
-  view.ctx.strokeStyle = '#222'; 
-  view.ctx.stroke();
+  // view.ctx.beginPath();
+  // view.ctx.lineWidth = 1;
+  // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
+  // view.ctx.strokeStyle = '#222'; 
+  // view.ctx.stroke();
 
   view.ctx.fillStyle = this.color;
   view.ctx.beginPath();
