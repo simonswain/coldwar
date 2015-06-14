@@ -23,6 +23,11 @@ Scenes.coldwar = function(el, opts){
   });
 
   this.params = [{
+    key: 'capital_count',
+    info: 'Capitals',
+    min: 1,
+    max: 4
+  }, {
     key: 'defcon',
     info: 'Defcon',
     min: 1,
@@ -134,9 +139,9 @@ Scenes.coldwar = function(el, opts){
     this.params.forEach(function(param){
       if(opts.hasOwnProperty(param.key)){
         if(opts[param.key] === 'true'){
-          self[param.key] = true;
+          self[param.key] = 1;
         } else if(opts[param.key] === 'false'){
-          self[param.key] = false;
+          self[param.key] = 0;
         } else {
           self[param.key] = parseInt(opts[param.key], 10);
         }
@@ -186,7 +191,7 @@ Scenes.coldwar = function(el, opts){
       }
     }
 
-    if(self.capitals.length <= 1 && ! self.gameover){
+    if(self.capital_count > 1 && self.capitals.length <= 1 && ! self.gameover){
       self.gameover = true;
       setTimeout(init, 5000, self);
     }
@@ -328,17 +333,84 @@ Scenes.coldwar = function(el, opts){
     self.world.abms = self.abms = [];
     self.world.sats = self.sats = [];
 
-    var capitals = [{
-      x: self.world.max_x * 0.2,
-      y: self.world.max_y * 0.5,
-      z: 0,
-      color: '#fc0'
-    }, {
-      x: self.world.max_x * 0.8,
-      y: self.world.max_y * 0.5,
-      z: 0,
-      color: '#0ff',
-    }];
+    var capitals = [];
+
+    if(self.capital_count === 4){
+
+      capitals.push({
+        x: self.world.max_x * 0.2,
+        y: self.world.max_y * 0.6,
+        z: 0,
+        color: '#fc0'
+      });
+
+      capitals.push({
+        x: self.world.max_x * 0.8,
+        y: self.world.max_y * 0.4,
+        z: 0,
+        color: '#0ff',
+      });
+
+      capitals.push({
+        x: self.world.max_x * 0.4,
+        y: self.world.max_y * 0.2,
+        z: 0,
+        color: '#f00'
+      });
+
+      capitals.push({
+        x: self.world.max_x * 0.6,
+        y: self.world.max_y * 0.9,
+        z: 0,
+        color: '#090',
+      });
+
+    } else if(self.capital_count === 3){
+
+      capitals.push({
+        x: self.world.max_x * 0.35,
+        y: self.world.max_y * 0.8,
+        z: 0,
+        color: '#fc0'
+      });
+
+      capitals.push({
+        x: self.world.max_x * 0.65,
+        y: self.world.max_y * 0.8,
+        z: 0,
+        color: '#0ff',
+      });
+
+      capitals.push({
+        x: self.world.max_x * 0.5,
+        y: self.world.max_y * 0.2,
+        z: 0,
+        color: '#f00'
+      });
+
+    } else if(self.capital_count === 1){
+
+      capitals.push({
+        x: self.world.max_x * 0.5,
+        y: self.world.max_y * 0.5,
+        z: 0,
+        color: '#0ff',
+      });
+
+    } else {
+      capitals = [{
+        x: self.world.max_x * 0.2,
+        y: self.world.max_y * 0.5,
+        z: 0,
+        color: '#fc0'
+      }, {
+        x: self.world.max_x * 0.8,
+        y: self.world.max_y * 0.5,
+        z: 0,
+        color: '#0ff',
+      }];
+    }
+
 
     if(self.first_strike){
       // select one capital to attack first
