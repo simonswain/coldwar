@@ -16,6 +16,103 @@
   </head>
   <body>
     <div id="app"></div>
+    <div id="help">
+<h1>Cold War</h1>
+
+<p>
+  Cold War models the escalation and execution of nuclear combat.
+</p>
+
+<p>
+  You can experiment with different scenarios to game
+  out possible results.
+</p>
+
+<p>
+  An Actor is any element in the game. Actors follow rules over time.
+  These rules determine the actor's behaviour.
+</p>
+
+<p>
+  There are two views, top view and elevation view. All the actors have
+  an x, y and z position on the surface or in airspace.
+</p>
+
+<p>
+  Each of the circled groupings is a nation state. It is controlled by
+  it's Capital.
+</p>
+
+<p>
+  The Capital is at the center of the Nation State. (square,
+  blinking). The lower the Defcon number in the Capital, the more
+  aggressive the Nation State will be.
+</p>
+
+<p>
+  Cities (circles) send people to work at factories.
+</p>
+
+<p>
+  Factories (triangles) make munitions and send them to bases
+</p>
+
+<p>
+  Bases (square) stockpile munitions (counts, clockwise from top right:
+  icbms, abms (anti ballistic missiles), fighters and bombers.
+</p>
+
+<p>
+  Bombers are big and slow (triangles) that select a target (factory,
+  base, city, capital in that order), fly to it and nuke it, re-selecting
+  a target if somebody else destroys it first.
+</p>
+
+<p>
+  As deeper defence perimeters are penetrated, Defcon gets more scary.
+</p>
+
+<p>
+  Fighters launch at Defcon 4 and attempt to destroy bombers.
+</p>
+
+<p>
+  At Defcon 3, Bases launch ICBMs a low probability amount of the time.
+</p>
+
+<p>
+  Satellites launch at Defcon 2, and can shoot ICBMs out of the sky, but
+  have fire/recharge lasers, so won't get them all.
+</p>
+
+<p>
+  When one of a nation's assets (factory, base, city) is nuked, they go
+  to Defcon 1.
+</p>
+
+<p>
+  If your enemy goes to Defcon 1, so do you.
+</p>
+
+<p>
+  At Defcon 1, all ICBMs will fire.
+</p>
+
+<p>
+  When your capital is destroyed, it's Game Over.
+</p>
+
+<p>
+  The control panel lets you tweak the starting parameters. There are a
+  lot more controls for all the actors (e.g, how close do bombers
+  flock.) that are not exposed here.
+</p>
+
+<p>
+  This is Version 0.2.
+</p>
+
+</div>
     {{{js}}}
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

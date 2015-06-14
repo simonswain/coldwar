@@ -41,6 +41,7 @@ var App = function(){
   };
 
   this.onKey = function(e){
+    //console.log(e);
     switch(e.which){
 
     case 220:
@@ -48,6 +49,15 @@ var App = function(){
       e.preventDefault();
       if(this.view.hasOwnProperty('toggleMeta')){
         this.view.toggleMeta();
+      }
+      break;
+
+    case 191:
+
+      // '?'
+      e.preventDefault();
+      if(e.shiftKey && this.view.hasOwnProperty('toggleHelp')){
+        this.view.toggleHelp();
       }
       break;
     }

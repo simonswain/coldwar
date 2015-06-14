@@ -231,3 +231,66 @@ body {
     }
 
 }
+
+#help {
+    .scrollbars;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 1024;
+
+    h1 {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    p {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    div {
+        margin: 0 8px 8px 8px;
+        height: 32px;
+        position: relative;
+        &.restart {
+            height: 64px;
+        }
+        label {
+            position: absolute;
+            top: 10px;
+            left: 48px;
+            font-size: 9pt;
+            text-align: right;
+            color: #999;
+        }
+        input {
+            font-family: "ubuntu mono", monospace;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 8px 0;
+            width: 40px;
+            font-size: 11pt;
+            text-align: right;
+            background: #000;
+            color: #fff;
+            border: none;
+        }
+
+        &:hover {
+            input {
+                background: #111;
+            }
+        }
+
+
+    }
+}

@@ -8,6 +8,8 @@ Scenes.coldwar = function(el, opts){
 
   this.el = el;
   this.show_meta = false;
+  this.show_help = false;
+  this.show_help_changed = false;
 
   // world size
   this.max_x = 1600;
@@ -190,6 +192,16 @@ Scenes.coldwar = function(el, opts){
     }
 
     timers.update = Date.now() - timer;
+
+    if(self.show_help_changed){
+      if(self.show_help){
+        document.getElementById('help').style.display='block';
+      } else {
+        views.help.el.style.display='none';
+      }
+      self.show_help_changed = false;
+    }
+
 
   }
 
@@ -422,6 +434,9 @@ Scenes.coldwar = function(el, opts){
     self.w = self.el.offsetWidth;
     self.h = self.el.offsetHeight;
 
+    views.help = {};
+    views.help.el = document.getElementById('help');
+
     views.map = {};
     views.map.wrap = document.getElementById('map');
     views.map.el = document.getElementById('cMap');
@@ -465,6 +480,10 @@ Scenes.coldwar = function(el, opts){
     var elOptions = document.getElementById('options');
 
     var el;
+
+    el = document.createElement('div');
+    el.innerHTML = '<p>Type <strong>?</strong> for Help</p>';
+    elParams.appendChild(el);
 
     el = document.createElement('div');
     el.innerHTML = '<button>Restart</label>';
@@ -523,6 +542,11 @@ Scenes.coldwar = function(el, opts){
     self.show_meta = !self.show_meta;
   }
 
+  function toggleHelp(){
+    self.show_help = !self.show_help;
+    self.show_help_changed = true;
+  }
+
   function toggleVectors(){
     self.world.show_vectors = !self.world.show_vectors;
   }
@@ -541,6 +565,7 @@ Scenes.coldwar = function(el, opts){
     start: start,
     stop: stop,
     toggleMeta: toggleMeta,
+    toggleHelp: toggleHelp,
     toggleVectors: toggleVectors
   };
 
