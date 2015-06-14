@@ -21,6 +21,11 @@ Scenes.coldwar = function(el, opts){
   });
 
   this.params = [{
+    key: 'first_strike',
+    info: 'First Strike',
+    min: 0,
+    max: 1
+  }, {
     key: 'defcon',
     info: 'Defcon',
     min: 1,
@@ -97,6 +102,8 @@ Scenes.coldwar = function(el, opts){
     max: 10
   }];
 
+  // defaults
+
   this.first_strike = false;
 
   this.capital_count = 2;
@@ -120,6 +127,21 @@ Scenes.coldwar = function(el, opts){
   this.stock_fighters = 0;
   this.stock_icbms = 0;
   this.stock_abms = 0;
+
+  if(opts){
+    this.params.forEach(function(param){
+      if(opts.hasOwnProperty(param.key)){
+        if(opts[param.key] === 'true'){
+          self[param.key] = true;
+        } else if(opts[param.key] === 'false'){
+          self[param.key] = false;
+        } else {
+          self[param.key] = parseInt(opts[param.key], 10);
+        }
+      }
+    });
+  }
+
 
   this.gameover = false;
 
@@ -338,6 +360,16 @@ Scenes.coldwar = function(el, opts){
     self.raf = window.requestAnimationFrame(tick);
   }
 
+  function setOpt(key, val){
+    self[key] = val;
+    var opts = []
+    self.params.forEach(function(param){
+      opts.push(param.key + '=' + self[param.key]);
+    });
+    history.pushState(null, null, '?' + opts.join('&'));
+    restart();
+  }
+
   function start(){
 
     var html;
@@ -411,10 +443,13 @@ Scenes.coldwar = function(el, opts){
       el.getElementsByTagName('input')[0].checked=true;
     }
     el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
-      self.first_strike = e.target.checked;
+      setOpt('first_strike', e.target.checked);
     });
 
     self.params.forEach(function(param){
+      if(param.key === 'first_strike'){
+        return;
+      }
       var el = document.createElement('div');
       var html;
       html = '';
@@ -434,7 +469,7 @@ Scenes.coldwar = function(el, opts){
           e.target.value = val;
           return;
         }
-        self[param.key] = val;
+        setOpt(param.key, val);
       }, false);
     });
 
