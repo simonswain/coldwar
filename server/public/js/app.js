@@ -44,8 +44,8 @@ var App = function(){
     //console.log(e.which);
     switch(e.which){
 
-    case 9:
-      // tab
+    case 68:
+      // d
       e.preventDefault();
       if(this.view.hasOwnProperty('toggleMeta')){
         this.view.toggleMeta();
