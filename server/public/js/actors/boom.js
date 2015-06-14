@@ -107,6 +107,7 @@ Boom.prototype.elevation = function(view){
 
   var scale = view.yscale;
   var xx;
+  var i, ii;
 
   var div = 3;
   view.ctx.save();
@@ -125,7 +126,7 @@ Boom.prototype.elevation = function(view){
     break;
 
   case 'zoom':
-    for(var i=0; i< 10; i++){
+    for(i=0; i< 10; i++){
       view.ctx.strokeStyle= 'rgba(' + this.color + ', ' + (1-(i/10).toFixed(2)) + ')';
       view.ctx.beginPath();
       view.ctx.lineWidth= 8 * (i/10);
@@ -135,7 +136,7 @@ Boom.prototype.elevation = function(view){
     break;
 
   case 'crater':
-    for(var i=0, ii = 10 * Math.random(); i<ii; i++){
+    for(i=0, ii = 10 * Math.random(); i<ii; i++){
       view.ctx.strokeStyle= 'rgba(' + this.color + ',' + ((Math.random() * 0.5)) + ')';
       view.ctx.beginPath();
       view.ctx.lineWidth = 1;
