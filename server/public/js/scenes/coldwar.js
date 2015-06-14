@@ -249,6 +249,45 @@ Scenes.coldwar = function(el, opts){
       views.map.ctx.fillText('GAME OVER', views.map.w/2, views.map.h/2);
     }
 
+    if(self.show_meta){
+
+      text_x = self.w - 240;
+
+      views.map.ctx.font = '16pt ubuntu mono';
+      views.map.ctx.textBaseline = 'middle';
+      views.map.ctx.textAlign = 'right';
+
+      views.map.ctx.fillStyle = '#999';
+      if(timers.update > 12){
+        views.map.ctx.fillStyle = '#f00';
+      }
+      views.map.ctx.fillText(timers.update + 'ms update  ', text_x, 32);
+
+      views.map.ctx.fillStyle = '#999';
+      if(timers.paint > 12){
+        views.map.ctx.fillStyle = '#f00';
+      }
+      views.map.ctx.fillText(timers.paint + 'ms paint   ', text_x, 56);
+      views.map.ctx.fillStyle = '#999';
+      if(timers.total > 12){
+        views.map.ctx.fillStyle = '#f00';
+      }
+      views.map.ctx.fillText((timers.total) + 'ms total   ', text_x, 80);
+
+      views.map.ctx.font = '16pt ubuntu mono';
+      views.map.ctx.textBaseline = 'middle';
+      views.map.ctx.textAlign = 'right';
+      views.map.ctx.fillStyle = '#999';
+
+      views.map.ctx.fillText(self.bombers.length + ' bombers ', text_x, 120);
+      views.map.ctx.fillText(self.fighters.length + ' fighters', text_x, 144);
+      views.map.ctx.fillText(self.icbms.length + ' icbms   ', text_x, 168);
+      views.map.ctx.fillText(self.abms.length + ' abms    ', text_x, 192);
+      views.map.ctx.fillText(self.booms.length + ' booms   ', text_x, 216);
+      var total = self.bombers.length + self.fighters.length + self.icbms.length + self.abms.length + self.booms.length;
+      views.map.ctx.fillText(total + ' total   ', text_x, 240);
+    }
+
   }
 
   function tick(){
