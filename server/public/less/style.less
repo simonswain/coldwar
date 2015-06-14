@@ -31,13 +31,13 @@ body {
 
     &::-webkit-scrollbar-thumb:vertical {
         height: 8px;
-        background-color: rgba(0, 255, 0, 0.2);
+        background-color: rgba(0, 255, 255, 0.2);
         -webkit-border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb:horizontal {
         width: 8px;
-        background-color: rgba(0, 255, 0, 0.2);
+        background-color: rgba(0, 255, 255, 0.2);
         -webkit-border-radius: 4px;
     }
 }
@@ -138,7 +138,6 @@ body {
         border-right: 1px solid #222;
         background: #000;
 
-
         h3 {
             text-align: center;
             color: #0f0;
@@ -161,11 +160,16 @@ body {
             }
         }
 
+
+        .restart {
+            margin: 16px 8px;
+        }
+
         button {
             font-family: "ubuntu mono", monospace;
             margin: 0 8px;
             padding: 16px;
-            width: 184px;
+            width: 160px;
             font-size: 12pt;
             text-align: center;
             background: #111;
@@ -183,39 +187,48 @@ body {
     #options {
         .scrollbars;
         position: absolute;
-        top: 140px;
+        top: 148px;
         left: 0;
         bottom: 0;
         width: 200px;
         height: auto;
         border-right: 1px solid #222;
         background: #000;
-
         div {
-            margin: 0 8px 8px 8px;
-            height: 32px;
+            margin: 8px 8px 8px 8px;
+            height: 40px;
             position: relative;
-            &.restart {
-                height: 64px;
-            }
-            label {
+
+            .value {
+                z-index: 1;
                 position: absolute;
-                top: 10px;
-                left: 48px;
+                top: 0;
+                right: 8px;
+                font-size: 12pt;
+                text-align: right;
+                color: #999;
+            }
+
+            label {
+                z-index: 1;
+                position: absolute;
+                top: 2px;
+                left: 0;
                 font-size: 9pt;
                 text-align: right;
                 color: #999;
             }
+
             input {
                 font-family: "ubuntu mono", monospace;
                 position: absolute;
                 top: 0;
                 left: 0;
+                width: 176px;
                 padding: 8px 0;
-                width: 40px;
                 font-size: 11pt;
                 text-align: right;
-                background: #000;
+                background: none;
                 color: #fff;
                 border: none;
             }
@@ -256,41 +269,4 @@ body {
         margin-right: auto;
     }
 
-    div {
-        margin: 0 8px 8px 8px;
-        height: 32px;
-        position: relative;
-        &.restart {
-            height: 64px;
-        }
-        label {
-            position: absolute;
-            top: 10px;
-            left: 48px;
-            font-size: 9pt;
-            text-align: right;
-            color: #999;
-        }
-        input {
-            font-family: "ubuntu mono", monospace;
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 8px 0;
-            width: 40px;
-            font-size: 11pt;
-            text-align: right;
-            background: #000;
-            color: #fff;
-            border: none;
-        }
-
-        &:hover {
-            input {
-                background: #111;
-            }
-        }
-
-
-    }
 }

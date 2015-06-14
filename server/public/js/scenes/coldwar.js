@@ -23,11 +23,6 @@ Scenes.coldwar = function(el, opts){
   });
 
   this.params = [{
-    key: 'first_strike',
-    info: 'First Strike',
-    min: 0,
-    max: 1
-  }, {
     key: 'defcon',
     info: 'Defcon',
     min: 1,
@@ -102,6 +97,11 @@ Scenes.coldwar = function(el, opts){
     info: 'Number of Satellites each Capital can have. Sats launch at Defcon 3.',
     min: 0,
     max: 10
+  }, {
+    key: 'first_strike',
+    info: 'First Strike',
+    min: 0,
+    max: 1
   }];
 
   // defaults
@@ -492,14 +492,15 @@ Scenes.coldwar = function(el, opts){
     el.getElementsByTagName('button')[0].onclick=restart;
 
     self.params.forEach(function(param){
-      if(param.key === 'first_strike'){
-        return;
-      }
+      // if(param.key === 'first_strike'){
+      //   return;
+      // }
       var el = document.createElement('div');
       var html;
       html = '';
       html += '<label title="' + param.info + '">' + param.key + '</label>';
-      html += '<input type="number" value="' + self[param.key] + '" />';
+      html += '<input type="range" value="' + self[param.key] + '" min="' + param.min + '" max="' + param.max + '" />';
+      html += '<span class="value">' + self[param.key] + '</span>';
       el.innerHTML = html;
       elOptions.appendChild(el);
       el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
@@ -518,18 +519,18 @@ Scenes.coldwar = function(el, opts){
       }, false);
     });
 
-    el = document.createElement('div');
-    html = '';
-    html += '<label id="first_strike" title="First Strike">first_strike</label>';
-    html += '<input type="checkbox" value="1" for="first_strike" />';
-    el.innerHTML = html;
-    elOptions.appendChild(el);
-    if(self.first_strike){
-      el.getElementsByTagName('input')[0].checked=true;
-    }
-    el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
-      setOpt('first_strike', e.target.checked);
-    });
+    // el = document.createElement('div');
+    // html = '';
+    // html += '<label id="first_strike" title="First Strike">first_strike</label>';
+    // html += '<input type="checkbox" value="1" for="first_strike" />';
+    // el.innerHTML = html;
+    // elOptions.appendChild(el);
+    // if(self.first_strike){
+    //   el.getElementsByTagName('input')[0].checked=true;
+    // }
+    // el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
+    //   setOpt('first_strike', e.target.checked);
+    // });
 
     boot();
   }

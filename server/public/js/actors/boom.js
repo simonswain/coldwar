@@ -77,7 +77,7 @@ Boom.prototype.paint = function(view){
     break;
 
   case 'crater':
-    view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (0.5 + (Math.random() * 0.5)) + ')';
+    view.ctx.strokeStyle= 'rgba(' + this.color + ',' + ((Math.random() * 0.5)) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, this.radius * 0.5, 0, 2*Math.PI);
     view.ctx.stroke();
@@ -136,7 +136,7 @@ Boom.prototype.elevation = function(view){
 
   case 'crater':
     for(var i=0, ii = 10 * Math.random(); i<ii; i++){
-      view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (0.5 + (Math.random() * 0.5)) + ')';
+      view.ctx.strokeStyle= 'rgba(' + this.color + ',' + ((Math.random() * 0.5)) + ')';
       view.ctx.beginPath();
       view.ctx.lineWidth = 1;
 
