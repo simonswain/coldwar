@@ -59,14 +59,14 @@ Boom.prototype.paint = function(view){
 
   switch (this.style){
 
-    case 'splat':
+  case 'splat':
     view.ctx.strokeStyle= 'rgba(' + this.color + ', ' + f.toFixed(2) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, radius, 0, 2*Math.PI);
     view.ctx.stroke();
     break;
 
-    case 'zoom':
+  case 'zoom':
     for(var i=0; i< 10; i++){
       view.ctx.strokeStyle= 'rgba(' + this.color + ', ' + (1-(i/10).toFixed(2)) + ')';
       view.ctx.beginPath();
@@ -77,7 +77,7 @@ Boom.prototype.paint = function(view){
     break;
 
   case 'crater':
-    view.ctx.strokeStyle= 'rgba(' + this.color + ',0.25)';
+    view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (0.5 + (Math.random() * 0.5)) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, this.radius * 0.5, 0, 2*Math.PI);
     view.ctx.stroke();
@@ -93,7 +93,7 @@ Boom.prototype.paint = function(view){
     view.ctx.fill();
     break;
 
-    default: 
+  default:
     view.ctx.fillStyle= 'rgba(' + this.color + ', ' + f.toFixed(2) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, radius, 0, 2*Math.PI);
@@ -106,6 +106,7 @@ Boom.prototype.paint = function(view){
 Boom.prototype.elevation = function(view){
 
   var scale = view.yscale;
+  var xx;
 
   var div = 3;
   view.ctx.save();
@@ -116,14 +117,14 @@ Boom.prototype.elevation = function(view){
   var f = this.ttl / this.initial_ttl;
 
   switch (this.style){
-    case 'splat':
+  case 'splat':
     view.ctx.strokeStyle= 'rgba(' + this.color + ', ' + f.toFixed(2) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, radius/div, 0, 2*Math.PI);
     view.ctx.stroke();
     break;
 
-    case 'zoom':
+  case 'zoom':
     for(var i=0; i< 10; i++){
       view.ctx.strokeStyle= 'rgba(' + this.color + ', ' + (1-(i/10).toFixed(2)) + ')';
       view.ctx.beginPath();
@@ -134,14 +135,20 @@ Boom.prototype.elevation = function(view){
     break;
 
   case 'crater':
-    // view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (((1000-this.ttl)/1000).toFixed)(2) + ')';
-    // view.ctx.strokeStyle= 'rgba(' + this.color + ',1)';
-    // view.ctx.beginPath();
-    // view.ctx.arc(0, 0, (this.radius * 0.5), 0, 2*Math.PI);
-    // view.ctx.stroke();
+    for(var i=0, ii = 10 * Math.random(); i<ii; i++){
+      view.ctx.strokeStyle= 'rgba(' + this.color + ',' + (0.5 + (Math.random() * 0.5)) + ')';
+      view.ctx.beginPath();
+      view.ctx.lineWidth = 1;
+
+      xx = this.radius * Math.random();
+      view.ctx.moveTo(xx, 0);
+      view.ctx.lineTo(xx, -2);
+      view.ctx.stroke();
+    }
+
     break;
 
-    case 'expand':
+  case 'expand':
 
     radius = this.initial_radius - (this.radius * (this.ttl/this.initial_ttl));
 
@@ -151,7 +158,7 @@ Boom.prototype.elevation = function(view){
     view.ctx.fill();
     break;
 
-    default: 
+  default:
     view.ctx.fillStyle= 'rgba(' + this.color + ', ' + f.toFixed(2) + ')';
     view.ctx.beginPath();
     view.ctx.arc(0, 0, radius/div, 0, 2*Math.PI);
