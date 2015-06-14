@@ -55,7 +55,7 @@ Scenes.coldwar = function(el, opts){
   }, {
     key: 'unit_rate',
     info: 'Unit Production Rate for Factories',
-    min: 1,
+    min: 0,
     max: 5
   }, {
     key: 'stock_bombers',
