@@ -401,7 +401,7 @@ Scenes.coldwar = function(el, opts){
 
   function setOpt(key, val){
     self[key] = val;
-    var opts = []
+    var opts = [];
     self.params.forEach(function(param){
       opts.push(param.key + '=' + self[param.key]);
     });

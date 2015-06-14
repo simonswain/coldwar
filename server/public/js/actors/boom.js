@@ -1,3 +1,7 @@
+/*global Vec3:true, Boom:true, pickOne:true, hex2rgb */
+/*jshint browser:true */
+/*jshint strict:false */
+
 function Boom(opts){
 
   this.pos = new Vec3(

@@ -26,7 +26,7 @@ var App = function(){
     if(window.location.search.substr(0,1) === '?'){
       pairs = window.location.search.substr(1).split('&');
       pairs.forEach(function(pair, ix){
-        var pair = pair.split('=');
+        pair = pair.split('=');
         opts[pair[0]] = pair[1];
       });
     }
