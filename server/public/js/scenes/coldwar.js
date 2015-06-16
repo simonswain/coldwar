@@ -499,7 +499,14 @@ Scenes.coldwar = function(el, opts){
     html = '';
     html += '<div id="map" class="has-controls"><canvas id="cMap"></canvas></div>';
     html += '<div id="elevation" class="has-controls"><canvas id="cElevation"></canvas></div>';
-    html += '<div id="params"><h3>Cold War</h3><p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p></div>';
+    html += '<div id="params">';
+    html += '<h3>Cold War</h3>';
+    html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
+    html += '<p><a href="https://coldwarjs-slack.herokuapp.com/" target="new">#coldwarjs</a></p>';
+
+    html += '<p>Type <strong>?</strong> for Help</p>';
+
+    html += '</div>';
     html += '<div id="options"></div>';
     self.el.innerHTML = html;
 
@@ -552,10 +559,6 @@ Scenes.coldwar = function(el, opts){
     var elOptions = document.getElementById('options');
 
     var el;
-
-    el = document.createElement('div');
-    el.innerHTML = '<p>Type <strong>?</strong> for Help</p>';
-    elParams.appendChild(el);
 
     el = document.createElement('div');
     el.innerHTML = '<button>Restart</label>';

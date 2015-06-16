@@ -2,6 +2,13 @@
 
 ![](http://i.imgur.com/PNsaof4.gif) 
 
+## Comms
+
+Slack channel is available - get an invite here:
+
+https://coldwarjs-slack.herokuapp.com/
+
+
 ## Install
 
 ```bash
