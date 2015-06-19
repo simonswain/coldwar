@@ -246,6 +246,26 @@ Scenes.coldwar = function(el, opts){
       }
     }
 
+    if(self.gameover && Date.now()/400 % 1 > 0.5){
+
+      if(self.capitals.length === 0){
+        views.map.ctx.fillStyle = '#fff';
+        views.map.ctx.font = '32pt ubuntu mono';
+        views.map.ctx.textBaseline = 'middle';
+        views.map.ctx.textAlign = 'center';
+        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.1);
+      }
+
+      if(self.capitals.length === 1){
+        views.map.ctx.fillStyle = '#fff';
+        views.map.ctx.font = '32pt ubuntu mono';
+        views.map.ctx.textBaseline = 'middle';
+        views.map.ctx.textAlign = 'center';
+        views.map.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.1);
+      }
+
+    }
+
     views.map.ctx.restore();
     views.elv.ctx.restore();
 
@@ -260,7 +280,7 @@ Scenes.coldwar = function(el, opts){
       views.elv.ctx.fillText('GAME OVER', views.elv.w/2, views.elv.h/2);
 
       views.map.ctx.fillStyle = '#f00';
-      views.map.ctx.font = '32pt monospace';
+      views.map.ctx.font = '48pt monospace';
       views.map.ctx.textBaseline = 'middle';
       views.map.ctx.textAlign = 'center';
       views.map.ctx.fillText('GAME OVER', views.map.w/2, views.map.h/2);
