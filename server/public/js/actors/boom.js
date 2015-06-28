@@ -143,7 +143,7 @@ Boom.prototype.elevation = function(view){
 
       xx = this.radius * Math.random();
       view.ctx.moveTo(xx, 0);
-      view.ctx.lineTo(xx, -2);
+      view.ctx.lineTo(xx, -4);
       view.ctx.stroke();
     }
 
