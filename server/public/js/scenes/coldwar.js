@@ -4,6 +4,7 @@
 /*jshint latedef:false */
 
 Scenes.coldwar = function(el, opts){
+
   var self = this;
 
   this.el = el;
@@ -11,150 +12,8 @@ Scenes.coldwar = function(el, opts){
   this.show_help = false;
   this.show_help_changed = false;
 
-  // world size
-  this.max_x = 1600;
-  this.max_y = 500;
-  this.max_z = 200;
-
-  this.world = new World({
-    max_x: self.max_x,
-    max_y: self.max_y,
-    max_z: self.max_z
-  });
-
-  this.params = [{
-    key: 'capital_count',
-    info: 'Capitals',
-    min: 1,
-    max: 4
-  }, {
-    key: 'defcon',
-    info: 'Defcon',
-    min: 1,
-    max: 5
-  }, {
-    key: 'bases_max',
-    info: 'Number of Bases each Nation State starts with',
-    min: 0,
-    max: 5
-  }, {
-    key: 'cities_max',
-    info: 'Number of Cities each Nation State starts with',
-    min: 0,
-    max: 5
-  }, {
-    key: 'factories_max',
-    info: 'Number of Factories each Nation State starts with',
-    min: 0,
-    max: 5
-  }, {
-    key: 'units',
-    info: 'Starting Units for Factory',
-    min: 0,
-    max: 1000
-  }, {
-    key: 'unit_rate',
-    info: 'Unit Production Rate for Factories',
-    min: 0,
-    max: 5
-  }, {
-    key: 'stock_bombers',
-    info: 'Number of Bombers each Base starts with',
-    min: 0,
-    max: 1000
-  }, {
-    key: 'stock_fighters',
-    info: 'Number of Fighters each Base starts with',
-    min: 0,
-    max: 1000
-  }, {
-    key: 'stock_icbms',
-    info: 'Number ICBMs each Base starts with. ICBMs launch intermittently below Defcon3. At Defcon 1, they all launch.',
-    min: 0,
-    max: 1000
-  }, {
-    key: 'stock_abms',
-    info: 'Number ABMs each Base starts with. ABMs launch when ICBMs get close.',
-    min: 0,
-    max: 1000
-  }, {
-    key: 'fighter_launch_max',
-    info: 'Number of Fighters each Base can have in air at any time.',
-    min: 0,
-    max: 100
-  }, {
-    key: 'bomber_launch_max',
-    info: 'Number of Bombers each Base can have in air at any time.',
-    min: 0,
-    max: 100
-  }, {
-    key: 'icbm_launch_max',
-    info: 'Number of ICBMs each Base can have in air at any time.',
-    min: 0,
-    max: 100
-  }, {
-    key: 'abm_launch_max',
-    info: 'Number of ABMs each Base can have in air at any time',
-    min: 0,
-    max: 100
-  }, {
-    key: 'sats_max',
-    info: 'Number of Satellites each Capital can have. Sats launch at Defcon 3.',
-    min: 0,
-    max: 10
-  }, {
-    key: 'first_strike',
-    info: 'First Strike',
-    min: 0,
-    max: 1
-  }];
-
-  // defaults
-
-  this.first_strike = false;
-
-  this.capital_count = 2;
-  this.defcon = 5;
-
-  this.unit_rate = 1;
-  this.units = 0;
-
-  this.bases_max = 3;
-  this.cities_max = 3;
-  this.factories_max = 3;
-  this.bomber_launch_max = 10;
-  this.fighter_launch_max = 10;
-
-  this.icbm_launch_max = 5;
-  this.abm_launch_max = 10;
-
-  this.sats_max = 1;
-
-  this.stock_bombers = 0;
-  this.stock_fighters = 0;
-  this.stock_icbms = 0;
-  this.stock_abms = 0;
-
-  if(opts){
-    this.params.forEach(function(param){
-      if(opts.hasOwnProperty(param.key)){
-        if(opts[param.key] === 'true'){
-          self[param.key] = 1;
-        } else if(opts[param.key] === 'false'){
-          self[param.key] = 0;
-        } else {
-          self[param.key] = parseInt(opts[param.key], 10);
-        }
-      }
-    });
-  }
-
-
-  this.gameover = false;
-
-  this.raf = null;
-  this.stopped = false;
-  this.at = 0;
+  setParams(opts);
+  init();
 
   var views = {
     map: null,
@@ -167,6 +26,133 @@ Scenes.coldwar = function(el, opts){
   };
 
   var sets = [];
+
+  function setParams(){
+    self.params = [{
+      key: 'capital_count',
+      info: 'Capitals',
+      value: 2,
+      min: 1,
+      max: 4
+    }, {
+      key: 'defcon',
+      info: 'Defcon',
+      value: 5,
+      min: 1,
+      max: 5
+    }, {
+      key: 'bases_max',
+      info: 'Number of Bases each Nation State starts with',
+      value: 3,
+      min: 0,
+      max: 5
+    }, {
+      key: 'cities_max',
+      info: 'Number of Cities each Nation State starts with',
+      value: 3,
+      min: 0,
+      max: 5
+    }, {
+      key: 'factories_max',
+      info: 'Number of Factories each Nation State starts with',
+      value: 3,
+      min: 0,
+      max: 5
+    }, {
+      key: 'units',
+      info: 'Starting Units for Factory',
+      value: 0,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'unit_rate',
+      info: 'Unit Production Rate for Factories',
+      value: 1,
+      min: 0,
+      max: 5
+    }, {
+      key: 'stock_bombers',
+      info: 'Number of Bombers each Base starts with',
+      value: 0,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'stock_fighters',
+      info: 'Number of Fighters each Base starts with',
+      value: 0,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'stock_icbms',
+      info: 'Number ICBMs each Base starts with. ICBMs launch intermittently below Defcon3. At Defcon 1, they all launch.',
+      value: 0,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'stock_abms',
+      info: 'Number ABMs each Base starts with. ABMs launch when ICBMs get close.',
+      value: 0,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'fighter_launch_max',
+      info: 'Number of Fighters each Base can have in air at any time.',
+      value: 10,
+      min: 0,
+      max: 100
+    }, {
+      key: 'bomber_launch_max',
+      info: 'Number of Bombers each Base can have in air at any time.',
+      value: 10,
+      min: 0,
+      max: 100
+    }, {
+      key: 'icbm_launch_max',
+      info: 'Number of ICBMs each Base can have in air at any time.',
+      value: 5,
+      min: 0,
+      max: 100
+    }, {
+      key: 'abm_launch_max',
+      info: 'Number of ABMs each Base can have in air at any time',
+      value: 10,
+      min: 0,
+      max: 100
+    }, {
+      key: 'sats_max',
+      info: 'Number of Satellites each Capital can have. Sats launch at Defcon 3.',
+      value: 1,
+      min: 0,
+      max: 10
+    }, {
+      key: 'first_strike',
+      info: 'First Strike',
+      value: 0,
+      min: 0,
+      max: 1
+    }, {
+      key: 'safe_mode',
+      info: 'Safe Mode',
+      value: 0,
+      min: 0,
+      max: 1
+    }];
+
+    self.params.forEach(function(param){
+      if(opts && opts.hasOwnProperty(param.key)){
+        if(opts[param.key] === 'true'){
+          self[param.key] = 1;
+        } else if(opts[param.key] === 'false'){
+          self[param.key] = 0;
+        } else {
+          self[param.key] = parseInt(opts[param.key], 10);
+        }
+      } else {
+        self[param.key] = param.value;
+      }
+    });
+  }
+
 
   function update(){
 
@@ -219,7 +205,7 @@ Scenes.coldwar = function(el, opts){
     views.map.ctx.save();
     views.map.ctx.clearRect(0, 0, views.map.w, views.map.h);
 
-    if(self.world.flash){
+    if(self.world.flash && !self.safe_mode){
       views.map.ctx.fillStyle='#ffffff';
       views.map.ctx.fillRect(0, 0, views.map.w, views.map.h);
     }
@@ -230,7 +216,7 @@ Scenes.coldwar = function(el, opts){
     views.elv.ctx.save();
     views.elv.ctx.clearRect(0, 0, views.elv.w, views.elv.h);
 
-    if(self.world.flash){
+    if(self.world.flash && !self.safe_mode){
       views.elv.ctx.fillStyle='#fff';
       views.elv.ctx.fillRect(0, 0, views.elv.w, views.elv.h);
     }
@@ -336,6 +322,22 @@ Scenes.coldwar = function(el, opts){
   }
 
   function init(){
+
+    // world size
+    self.max_x = 1600;
+    self.max_y = 500;
+    self.max_z = 200;
+
+    self.world = new World({
+      max_x: self.max_x,
+      max_y: self.max_y,
+      max_z: self.max_z
+    });
+
+    self.gameover = false;
+    self.raf = null;
+    self.stopped = false;
+    self.at = 0;
 
     self.gameover = false;
 
@@ -496,25 +498,8 @@ Scenes.coldwar = function(el, opts){
 
   }
 
-  function boot(){
-    init();
-    self.stopped = false;
-    self.at = Date.now();
-    self.raf = window.requestAnimationFrame(tick);
-  }
 
-  function setOpt(key, val){
-    self[key] = val;
-    var opts = [];
-    self.params.forEach(function(param){
-      opts.push(param.key + '=' + self[param.key]);
-    });
-    history.pushState(null, null, '?' + opts.join('&'));
-    restart();
-  }
-
-  function start(){
-
+  function render(){
     var html;
     html = '';
     html += '<div id="map" class="has-controls"><canvas id="cMap"></canvas></div>';
@@ -522,7 +507,7 @@ Scenes.coldwar = function(el, opts){
     html += '<div id="params">';
     html += '<h3>Cold War</h3>';
     html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
-    html += '<p><a href="https://coldwarjs-slack.herokuapp.com/" target="new">#coldwarjs</a></p>';
+    html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
 
     html += '<p>Type <strong>?</strong> for Help</p>';
 
@@ -587,9 +572,6 @@ Scenes.coldwar = function(el, opts){
     el.getElementsByTagName('button')[0].onclick=restart;
 
     self.params.forEach(function(param){
-      // if(param.key === 'first_strike'){
-      //   return;
-      // }
       var el = document.createElement('div');
       var html;
       html = '';
@@ -613,21 +595,25 @@ Scenes.coldwar = function(el, opts){
         setOpt(param.key, val);
       }, false);
     });
+  }
 
-    // el = document.createElement('div');
-    // html = '';
-    // html += '<label id="first_strike" title="First Strike">first_strike</label>';
-    // html += '<input type="checkbox" value="1" for="first_strike" />';
-    // el.innerHTML = html;
-    // elOptions.appendChild(el);
-    // if(self.first_strike){
-    //   el.getElementsByTagName('input')[0].checked=true;
-    // }
-    // el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
-    //   setOpt('first_strike', e.target.checked);
-    // });
+  function setOpt(key, val){
+    self[key] = val;
+    var opts = [];
+    self.params.forEach(function(param){
+      opts.push(param.key + '=' + self[param.key]);
+    });
+    history.pushState(null, null, '?' + opts.join('&'));
+    restart();
+  }
 
-    boot();
+  function start(){
+    render();
+    init();
+    self.stopped = false;
+    self.at = Date.now();
+    self.raf = window.requestAnimationFrame(tick);
+
   }
 
   function stop(){

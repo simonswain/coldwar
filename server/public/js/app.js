@@ -32,7 +32,6 @@ var App = function(){
     }
 
     this.view = new Scenes.coldwar(this.el, opts);
-    //this.view = new Scenes.war3d(this.el, opts);
     this.view.start();
   };
 
