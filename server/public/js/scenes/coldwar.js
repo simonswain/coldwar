@@ -629,6 +629,11 @@ Scenes.coldwar = function(el, opts){
     self.show_help_changed = true;
   }
 
+  function hideHelp(){
+    self.show_help = false;
+    self.show_help_changed = true;
+  }
+
   function toggleVectors(){
     self.world.show_vectors = !self.world.show_vectors;
   }
@@ -648,6 +653,7 @@ Scenes.coldwar = function(el, opts){
     stop: stop,
     toggleMeta: toggleMeta,
     toggleHelp: toggleHelp,
+    hideHelp: hideHelp,
     toggleVectors: toggleVectors
   };
 

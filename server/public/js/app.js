@@ -44,6 +44,12 @@ var App = function(){
     //console.log(e);
     switch(e.which){
 
+    case 27:
+      // 'esc'
+      e.preventDefault();
+      this.view.hideHelp();
+      break;
+
     case 220:
       // '\'
       e.preventDefault();
