@@ -138,17 +138,19 @@ Scenes.coldwar = function(el, opts){
       max: 1
     }];
 
+    self.opts = {};
+
     self.params.forEach(function(param){
       if(opts && opts.hasOwnProperty(param.key)){
         if(opts[param.key] === 'true'){
-          self[param.key] = 1;
+          self.opts[param.key] = 1;
         } else if(opts[param.key] === 'false'){
-          self[param.key] = 0;
+          self.opts[param.key] = 0;
         } else {
-          self[param.key] = parseInt(opts[param.key], 10);
+          self.opts[param.key] = parseInt(opts[param.key], 10);
         }
       } else {
-        self[param.key] = param.value;
+        self.opts[param.key] = param.value;
       }
     });
   }
@@ -177,7 +179,7 @@ Scenes.coldwar = function(el, opts){
       }
     }
 
-    if(self.capital_count > 1 && self.capitals.length <= 1 && ! self.gameover){
+    if(self.opts.capital_count > 1 && self.world.capitals.length <= 1 && ! self.gameover){
       self.gameover = true;
       setTimeout(init, 5000, self);
     }
@@ -205,7 +207,7 @@ Scenes.coldwar = function(el, opts){
     views.map.ctx.save();
     views.map.ctx.clearRect(0, 0, views.map.w, views.map.h);
 
-    if(self.world.flash && !self.safe_mode){
+    if(self.world.flash && !self.opts.safe_mode){
       views.map.ctx.fillStyle='#ffffff';
       views.map.ctx.fillRect(0, 0, views.map.w, views.map.h);
     }
@@ -216,7 +218,7 @@ Scenes.coldwar = function(el, opts){
     views.elv.ctx.save();
     views.elv.ctx.clearRect(0, 0, views.elv.w, views.elv.h);
 
-    if(self.world.flash && !self.safe_mode){
+    if(self.world.flash && !self.opts.safe_mode){
       views.elv.ctx.fillStyle='#fff';
       views.elv.ctx.fillRect(0, 0, views.elv.w, views.elv.h);
     }
@@ -234,20 +236,20 @@ Scenes.coldwar = function(el, opts){
 
     if(self.gameover && Date.now()/400 % 1 > 0.5){
 
-      if(self.capitals.length === 0){
+      if(self.world.capitals.length === 0){
         views.map.ctx.fillStyle = '#fff';
         views.map.ctx.font = '32pt ubuntu mono';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.1);
+        views.map.ctx.fillText('MAD', self.world.max_x/2, self.world.max_y * 0.1);
       }
 
-      if(self.capitals.length === 1){
+      if(self.world.capitals.length === 1){
         views.map.ctx.fillStyle = '#fff';
         views.map.ctx.font = '32pt ubuntu mono';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.1);
+        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.world.max_y * 0.1);
       }
 
     }
@@ -302,12 +304,12 @@ Scenes.coldwar = function(el, opts){
       views.map.ctx.textAlign = 'right';
       views.map.ctx.fillStyle = '#999';
 
-      views.map.ctx.fillText(self.bombers.length + ' bombers ', text_x, 120);
-      views.map.ctx.fillText(self.fighters.length + ' fighters', text_x, 144);
-      views.map.ctx.fillText(self.icbms.length + ' icbms   ', text_x, 168);
-      views.map.ctx.fillText(self.abms.length + ' abms    ', text_x, 192);
-      views.map.ctx.fillText(self.booms.length + ' booms   ', text_x, 216);
-      var total = self.bombers.length + self.fighters.length + self.icbms.length + self.abms.length + self.booms.length;
+      views.map.ctx.fillText(self.world.bombers.length + ' bombers ', text_x, 120);
+      views.map.ctx.fillText(self.world.fighters.length + ' fighters', text_x, 144);
+      views.map.ctx.fillText(self.world.icbms.length + ' icbms   ', text_x, 168);
+      views.map.ctx.fillText(self.world.abms.length + ' abms    ', text_x, 192);
+      views.map.ctx.fillText(self.world.booms.length + ' booms   ', text_x, 216);
+      var total = self.world.bombers.length + self.world.fighters.length + self.world.icbms.length + self.world.abms.length + self.world.booms.length;
       views.map.ctx.fillText(total + ' total   ', text_x, 240);
     }
 
@@ -341,23 +343,23 @@ Scenes.coldwar = function(el, opts){
 
     self.gameover = false;
 
-    self.world.booms = self.booms = [];
+    self.world.booms = [];
 
-    self.world.capitals = self.capitals = [];
-    self.world.cities = self.cities = [];
-    self.world.bases = self.bases = [];
-    self.world.factories = self.factories = [];
-    self.world.supplies = self.supplies = [];
+    self.world.capitals = [];
+    self.world.cities = [];
+    self.world.bases = [];
+    self.world.factories = [];
+    self.world.supplies = [];
 
-    self.world.bombers = self.bombers = [];
-    self.world.fighters = self.fighters = [];
-    self.world.icbms = self.icbms = [];
-    self.world.abms = self.abms = [];
-    self.world.sats = self.sats = [];
+    self.world.bombers = [];
+    self.world.fighters = [];
+    self.world.icbms = [];
+    self.world.abms = [];
+    self.world.sats = [];
 
     var capitals = [];
 
-    if(self.capital_count === 4){
+    if(self.opts.capital_count === 4){
 
       capitals.push({
         x: self.world.max_x * 0.2,
@@ -387,7 +389,7 @@ Scenes.coldwar = function(el, opts){
         color: '#090',
       });
 
-    } else if(self.capital_count === 3){
+    } else if(self.opts.capital_count === 3){
 
       capitals.push({
         x: self.world.max_x * 0.35,
@@ -410,7 +412,7 @@ Scenes.coldwar = function(el, opts){
         color: '#f00'
       });
 
-    } else if(self.capital_count === 1){
+    } else if(self.opts.capital_count === 1){
 
       capitals.push({
         x: self.world.max_x * 0.5,
@@ -434,7 +436,7 @@ Scenes.coldwar = function(el, opts){
     }
 
 
-    if(self.first_strike){
+    if(self.opts.first_strike){
       // select one capital to attack first
       capitals.forEach(function(attrs, xx){
         attrs.strike = false;
@@ -449,7 +451,7 @@ Scenes.coldwar = function(el, opts){
 
     capitals.forEach(function(attrs){
 
-      self.capitals.push(new Capital({
+      self.world.capitals.push(new Capital({
         x: attrs.x,
         y: attrs.y,
         z: attrs.z,
@@ -457,25 +459,25 @@ Scenes.coldwar = function(el, opts){
 
         world: self.world,
         strike: attrs.strike,
-        defcon: self.defcon,
-        unit_rate: self.unit_rate,
+        defcon: self.opts.defcon,
+        unit_rate: self.opts.unit_rate,
 
-        bases_max: self.bases_max,
-        cities_max: self.cities_max,
-        factories_max: self.factories_max,
-        sats_max: self.sats_max,
+        bases_max: self.opts.bases_max,
+        cities_max: self.opts.cities_max,
+        factories_max: self.opts.factories_max,
+        sats_max: self.opts.sats_max,
 
-        bomber_launch_max: self.bomber_launch_max,
-        fighter_launch_max: self.fighter_launch_max,
+        bomber_launch_max: self.opts.bomber_launch_max,
+        fighter_launch_max: self.opts.fighter_launch_max,
 
-        icbm_launch_max: self.icbm_launch_max,
-        abm_launch_max: self.abm_launch_max,
+        icbm_launch_max: self.opts.icbm_launch_max,
+        abm_launch_max: self.opts.abm_launch_max,
 
         stock: {
-          bombers: self.stock_bombers,
-          fighters: self.stock_fighters,
-          icbms: self.stock_icbms,
-          abms: self.stock_abms
+          bombers: self.opts.stock_bombers,
+          fighters: self.opts.stock_fighters,
+          icbms: self.opts.stock_icbms,
+          abms: self.opts.stock_abms
         }
 
       }));
@@ -483,17 +485,17 @@ Scenes.coldwar = function(el, opts){
     });
 
     sets = [
-      self.supplies,
-      self.capitals,
-      self.cities,
-      self.bases,
-      self.factories,
-      self.bombers,
-      self.fighters,
-      self.icbms,
-      self.abms,
-      self.booms,
-      self.sats
+      self.world.supplies,
+      self.world.capitals,
+      self.world.cities,
+      self.world.bases,
+      self.world.factories,
+      self.world.bombers,
+      self.world.fighters,
+      self.world.icbms,
+      self.world.abms,
+      self.world.booms,
+      self.world.sats
     ];
 
   }
@@ -576,8 +578,8 @@ Scenes.coldwar = function(el, opts){
       var html;
       html = '';
       html += '<label title="' + param.info + '">' + param.key + '</label>';
-      html += '<input type="range" value="' + self[param.key] + '" min="' + param.min + '" max="' + param.max + '" />';
-      html += '<span class="value">' + self[param.key] + '</span>';
+      html += '<input type="range" value="' + self.opts[param.key] + '" min="' + param.min + '" max="' + param.max + '" />';
+      html += '<span class="value">' + self.opts[param.key] + '</span>';
       el.innerHTML = html;
       elOptions.appendChild(el);
       el.getElementsByTagName('input')[0].addEventListener ('change', function(e){
@@ -598,10 +600,10 @@ Scenes.coldwar = function(el, opts){
   }
 
   function setOpt(key, val){
-    self[key] = val;
+    self.opts[key] = val;
     var opts = [];
     self.params.forEach(function(param){
-      opts.push(param.key + '=' + self[param.key]);
+      opts.push(param.key + '=' + self.opts[param.key]);
     });
     history.pushState(null, null, '?' + opts.join('&'));
     restart();
@@ -613,7 +615,6 @@ Scenes.coldwar = function(el, opts){
     self.stopped = false;
     self.at = Date.now();
     self.raf = window.requestAnimationFrame(tick);
-
   }
 
   function stop(){
@@ -646,11 +647,10 @@ Scenes.coldwar = function(el, opts){
     setTimeout(start, 100);
   }
 
-  //window.onresize = restart;
-
   return {
     start: start,
     stop: stop,
+    restart: restart,
     toggleMeta: toggleMeta,
     toggleHelp: toggleHelp,
     hideHelp: hideHelp,
