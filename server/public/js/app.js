@@ -11,7 +11,7 @@ var App = function(){
   this.el = document.getElementById('app');
 
   this.start = function(){
-      this.bindKeys();
+    this.bindKeys();
     this.render();
   };
 
@@ -43,6 +43,12 @@ var App = function(){
   this.onKey = function(e){
     //console.log(e);
     switch(e.which){
+
+    case 13:
+      // 'cr'
+      e.preventDefault();
+      this.view.restart();
+      break;
 
     case 27:
       // 'esc'
