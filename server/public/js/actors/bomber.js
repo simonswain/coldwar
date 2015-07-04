@@ -12,7 +12,7 @@ function Bomber(opts){
 
   this.base = opts.base;
   this.capital = opts.capital;
-  this.target = opts.target || null; 
+  this.target = opts.target || null;
 
   //this.speed = 0.6 + (0.35 * Math.random());
   this.speed = this.world.unit_speed * (0.3 + (Math.random() * 0.5));
@@ -24,9 +24,12 @@ function Bomber(opts){
   this.attack_z = 10;
   this.vel_z = 0.5;
 
-  this.separation_friend = this.world.max * 0.025;
-  this.separation_enemy = this.world.max * 0.2;
-  this.avoidance_enemy = this.world.max * 0.25;
+  this.separation_friend = this.world.max * this.world.opts.bomber_separation_friend;
+  this.separation_enemy = this.world.max * this.world.opts.bomber_separation_friend;
+
+  this.separation_friend = this.world.max * this.world.opts.bomber_separation_friend;
+  this.separation_enemy = this.world.max * this.world.opts.bomber_separation_enemy;
+  this.avoidance_enemy = this.world.max * this.world.opts.bomber_avoidance_enemy;
 
   this.hp = Math.floor(50 + (20*Math.random()));
   this.hp_max = this.hp;
@@ -34,7 +37,7 @@ function Bomber(opts){
   this.laser = null;
   this.laser_range = this.world.max * 0.1;
   this.laser_max = Math.floor(30 + (10*Math.random()));
-  this.laser_power = 0; // current laser charge 
+  this.laser_power = 0; // current laser charge
   this.laser_damage = 2;
 
   // range to start descent for bombing
@@ -95,7 +98,7 @@ Bomber.prototype.update = function(delta){
   } else if (this.base) {
     // return to base
     goal = this.base.pos.minus(this.pos).normalize();
-  }  
+  }
   // flock away from comrades
   var separation = this.separation();
 
@@ -228,7 +231,7 @@ Bomber.prototype.separation = function(){
     if(dist === 0){
       continue;
     }
-    
+
     if(other.capital === this.capital){
       if (dist > this.separation_friend){
         continue;
@@ -262,7 +265,7 @@ Bomber.prototype.avoid = function(){
   var laser_range = this.laser_range + 1;
 
   var avoidance = new Vec3();
-  
+
   for(i=0, ii=this.world.fighters.length; i<ii; i++){
     other = this.world.fighters[i];
 
@@ -375,7 +378,7 @@ Bomber.prototype.paint = function(view){
 
   if(this.hit){
     view.ctx.fillStyle = '#f00';
-    view.ctx.strokeStyle = '#f00';   
+    view.ctx.strokeStyle = '#f00';
   } else {
     view.ctx.fillStyle = this.color;
     view.ctx.strokeStyle = this.color;
@@ -389,7 +392,7 @@ Bomber.prototype.paint = function(view){
   view.ctx.lineTo(-z/2, 0);
   view.ctx.lineTo(-z, z);
   view.ctx.lineTo(z, 0);
-  view.ctx.closePath();     
+  view.ctx.closePath();
   view.ctx.fill();
 
   // view.ctx.fillStyle = this.color;
@@ -416,7 +419,7 @@ Bomber.prototype.elevation = function(view){
     view.ctx.stroke();
   }
 
-  view.ctx.save();  
+  view.ctx.save();
   view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
 
   view.ctx.fillStyle = this.color;

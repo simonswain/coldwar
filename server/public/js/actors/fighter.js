@@ -5,11 +5,11 @@
 function Fighter(opts){
 
   this.dead = false;
-
   this.color = opts.color;
   this.ttl = opts.ttl || 10000;
 
   this.world = opts.world;
+
   this.base = opts.base;
   this.capital = opts.capital;
 
@@ -22,14 +22,17 @@ function Fighter(opts){
   this.velo = new Vec3(Math.random() * this.speed, Math.random() * this.speed);
 
   this.max_z = Math.floor((this.world.max_z * 0.3) + ((this.world.max_z * 0.1) * Math.random()));
-  this.vel_z = 1;
+
+  this.z_vel = 0;
+  this.z_accel = 0.1;
+  this.z_vel_max = 0.1;
 
   // range where chasing enemies takes effect
   this.attack_range = this.world.max * 0.4;
 
 
-  this.separation_friend = this.world.max * 0.2;
-  this.separation_enemy = this.world.max * 0.1;
+  this.separation_friend = this.world.max * this.world.opts.fighter_separation_friend;
+  this.separation_enemy = this.world.max * this.world.opts.fighter_separation_enemy;
 
   this.hp = Math.floor(10 + (10*Math.random()));
 
@@ -89,19 +92,19 @@ Fighter.prototype.update = function(delta){
   // altitude
   if(this.mode === 'station'){
     if(this.pos.z < this.max_z){
-      this.pos.z += this.vel_z;
+      this.pos.z += this.z_vel;
     }
   }
 
   if(this.mode === 'attack'){
     if(this.pos.z < this.max_z){
-      this.pos.z += this.vel_z;
+      this.pos.z += this.z_vel;
     }
   }
 
   // if(this.mode === 'return'){
   //   if(this.pos.z > 0){
-  //     this.pos.z -= this.vel_z;
+  //     this.pos.z -= this.z_vel;
   //   }
   // }
 
