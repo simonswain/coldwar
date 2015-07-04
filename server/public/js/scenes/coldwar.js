@@ -5,7 +5,13 @@
 
 Scenes.coldwar = function(el, opts){
 
+  console.log(opts);
+
   var self = this;
+
+  var sets = [];
+  var scenarios = [];
+  loadScenarios();
 
   this.el = el;
   this.show_meta = false;
@@ -22,9 +28,6 @@ Scenes.coldwar = function(el, opts){
     paint: null
   };
 
-  var sets = [];
-  var scenarios = [];
-  loadScenarios();
   setParams(opts);
   init();
 
@@ -153,14 +156,14 @@ Scenes.coldwar = function(el, opts){
       key: 'fighter_separation_friend',
       info: 'Separation from Friend',
       value: 0.2,
-      min: 0,
+      min: 0.05,
       max: 1,
       step: 0.05
     }, {
       key: 'fighter_separation_enemy',
       info: 'Separation from Enemy',
       value: 0.1,
-      min: 0,
+      min: 0.05,
       max: 1,
       step: 0.05
     }, {
@@ -187,21 +190,21 @@ Scenes.coldwar = function(el, opts){
       key: 'bomber_separation_friend',
       info: 'Separation from Friend',
       value: 0.025,
-      min: 0,
+      min: 0.005,
       max: 0.2,
       step: 0.005
     }, {
       key: 'bomber_separation_enemy',
       info: 'Separation from Enemy',
       value: 0.02,
-      min: 0,
+      min: 0.005,
       max: 0.2,
       step: 0.005
     }, {
       key: 'bomber_avoidance_enemy',
       info: 'Avoidance from Enemy',
       value: 0.25,
-      min: 0,
+      min: 0.05,
       max: 1,
       step: 0.05
     }, {
@@ -246,13 +249,7 @@ Scenes.coldwar = function(el, opts){
 
     self.params.forEach(function(param){
       if(opts && opts.hasOwnProperty(param.key)){
-        if(opts[param.key] === 'true'){
-          self.opts[param.key] = 1;
-        } else if(opts[param.key] === 'false'){
-          self.opts[param.key] = 0;
-        } else {
-          self.opts[param.key] = parseInt(opts[param.key], 10);
-        }
+        self.opts[param.key] = Number(opts[param.key]);
       } else {
         self.opts[param.key] = param.value;
       }
@@ -345,7 +342,13 @@ Scenes.coldwar = function(el, opts){
         views.map.ctx.font = '32pt ubuntu mono';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('MAD', self.world.max_x/2, self.world.max_y * 0.1);
+        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.05);
+
+        views.elv.ctx.fillStyle = '#fff';
+        views.elv.ctx.font = '24pt ubuntu mono';
+        views.elv.ctx.textBaseline = 'middle';
+        views.elv.ctx.textAlign = 'center';
+        views.elv.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.05);
       }
 
       if(self.world.capitals.length === 1){
@@ -353,7 +356,13 @@ Scenes.coldwar = function(el, opts){
         views.map.ctx.font = '32pt ubuntu mono';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.world.max_y * 0.1);
+        views.map.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.05);
+
+        views.elv.ctx.fillStyle = '#fff';
+        views.elv.ctx.font = '24 ubuntu mono';
+        views.elv.ctx.textBaseline = 'middle';
+        views.elv.ctx.textAlign = 'center';
+        views.elv.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.05);
       }
 
     }

@@ -16,6 +16,7 @@ var App = function(){
   };
 
   this.render = function(scene){
+
     if(this.view){
       this.view.stop();
     }
@@ -27,7 +28,7 @@ var App = function(){
       pairs = window.location.search.substr(1).split('&');
       pairs.forEach(function(pair, ix){
         pair = pair.split('=');
-        opts[pair[0]] = pair[1];
+        opts[pair[0]] = Number(pair[1]);
       });
     }
 
