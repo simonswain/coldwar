@@ -45,6 +45,7 @@ module.exports = function(config){
   });
 
   var manifest = require( __dirname + '/manifest');
+  manifest.pub.opts.outUrl = config.docroot + '/assets';
   var assets = AssetManager.load(manifest);
 
   var appHandler = function (request, reply) {
