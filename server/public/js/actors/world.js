@@ -28,15 +28,15 @@ function World(opts){
 
   this.flash = 0;
 
-  this.sounds = { 
-    'egg': new Audio("sounds/joustegg.wav"),
-    'flap': new Audio("sounds/joustfla.wav"),
-    'pickup': new Audio("sounds/deflande.wav"),
-    'bd808': new Audio("sounds/808bd09.mp3"),
-    'oh909': new Audio("sounds/HHOD0.WAV"),
-    'bd909': new Audio("sounds/BT7A0DA.WAV"),
-    'sn909': new Audio("sounds/ST0T0S7.WAV"),
-  };
+  // this.sounds = { 
+  //   'egg': new Audio("sounds/joustegg.wav"),
+  //   'flap': new Audio("sounds/joustfla.wav"),
+  //   'pickup': new Audio("sounds/deflande.wav"),
+  //   'bd808': new Audio("sounds/808bd09.mp3"),
+  //   'oh909': new Audio("sounds/HHOD0.WAV"),
+  //   'bd909': new Audio("sounds/BT7A0DA.WAV"),
+  //   'sn909': new Audio("sounds/ST0T0S7.WAV"),
+  // };
   
   this.play = function(sound){
     if(this.opts.sounds === 0){
