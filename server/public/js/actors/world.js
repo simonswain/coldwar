@@ -42,10 +42,10 @@ function World(opts){
     if(this.opts.sounds === 0){
       return;
     }
+    // disabled
+    return;
     self.sounds[sound].play();
   }
-
-  this.play('bd909');
 
 }
 
