@@ -5,7 +5,6 @@
 function Icbm(opts){
 
   this.target = opts.target;
-
   this.color = opts.color;
 
   this.world = opts.world;
@@ -180,62 +179,20 @@ Icbm.prototype.paint = function(view){
 
   // flight object
   view.ctx.save();
+
   view.ctx.translate(this.pos.x, this.pos.y);
-  //view.ctx.rotate(this.direction * (this.phasec + (Math.PI)));
-  view.ctx.rotate(Math.PI);
+  view.ctx.rotate(this.target.pos.angleXYto(this.pos));
 
   view.ctx.fillStyle = this.color;
 
   var z = 4;
   view.ctx.beginPath();
-  view.ctx.moveTo(-this.direction * 2 * z, 0);
-  view.ctx.lineTo(-this.direction * -z, -z);
-  view.ctx.lineTo(-this.direction * -z, z);
-  view.ctx.lineTo(-this.direction * 2 * z, 0);
+  view.ctx.moveTo(2 * z, 0);
+  view.ctx.lineTo(-z, -z);
+  view.ctx.lineTo(-z, z);
+  view.ctx.lineTo(2 * z, 0);
   view.ctx.closePath();
   view.ctx.fill();
-
-
-  // if(this.trail.length > 0){
-  //   view.ctx.lineWidth = 1;
-  //   view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-  //   view.ctx.beginPath();
-  //   view.ctx.moveTo(this.trail[0][0], this.trail[0][1] - this.trail[0][2]);
-  //   for(i=0, ii=this.trail.length; i<ii; i++){
-  //     point = this.trail[i];
-  //     view.ctx.lineTo(point[0], point[1] - point[2]);
-  //   }
-  //   view.ctx.lineTo(this.pos.x, this.pos.y - this.pos.z);
-  //   view.ctx.stroke();
-  // }
-
-  // // flight object
-  // view.ctx.save();
-  // view.ctx.translate(this.pos.x, this.pos.y - this.pos.z);
-  // view.ctx.rotate(this.direction * (this.phasec + (Math.PI)));
-
-  // view.ctx.fillStyle = this.color;
-
-  // var z = 2;
-  // view.ctx.beginPath();
-  // view.ctx.moveTo(-this.direction * 2 * z, 0);
-  // view.ctx.lineTo(-this.direction * -z, -z);
-  // view.ctx.lineTo(-this.direction * -z, z);
-  // view.ctx.lineTo(-this.direction * 2 * z, 0);
-  // view.ctx.closePath();
-  // view.ctx.fill();
-
-  //
-
-  // shadow
-  // view.ctx.save();
-  // view.ctx.translate(this.pos.x, this.pos.y);
-  // view.ctx.rotate(this.velo.angleXY());
-  // view.ctx.fillStyle = this.color;
-  // view.ctx.beginPath();
-  // view.ctx.fillRect(-1, -1, 2, 2);
-  // view.ctx.restore();
-
 
   view.ctx.restore();
 };

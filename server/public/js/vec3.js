@@ -36,7 +36,7 @@ Vec3.prototype = {
   range: function(other) {
     var x = Math.abs(this.x - other.x);
     var y = Math.abs(this.y - other.y);
-    var z = Math.abs(this.z - other.z);   
+    var z = Math.abs(this.z - other.z);
     return Math.sqrt( (x*x) + (y*y) + (z*z) );
   },
 
@@ -44,7 +44,7 @@ Vec3.prototype = {
   range2: function(other) {
     var x = Math.abs(this.x - other.x);
     var y = Math.abs(this.y - other.y);
-    var z = Math.abs(this.z - other.z);   
+    var z = Math.abs(this.z - other.z);
     return (x*x) + (y*y) + (z*z);
   },
 
@@ -60,10 +60,9 @@ Vec3.prototype = {
   },
 
   angleXYto: function(other) {
-    var x = Math.abs(this.x - other.x);
-    var y = Math.abs(this.y - other.y);
-    var z = Math.abs(this.z - other.z);   
-    return Math.sqrt( (x*x) + (y*y) + (z*z) );
+    var x = this.x - other.x;
+    var y = this.y - other.y;
+    return Math.atan2(y, x);
   },
 
   mag: function () {
@@ -110,7 +109,7 @@ Vec3.prototype = {
     }
     return this;
   },
-  
+
   div: function (s) {
     this.x /= s;
     this.y /= s;
@@ -133,7 +132,7 @@ Vec3.prototype = {
   },
 
   zero:function () {
-    this.x = 0; 
+    this.x = 0;
     this.y = 0;
     this.z = 0;
     return this;
