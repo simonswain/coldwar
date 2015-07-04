@@ -125,6 +125,59 @@ Scenes.coldwar = function(el, opts){
       min: 0,
       max: 10
     }, {
+      key: 'fighter_range',
+      info: 'Max range from base',
+      value: 200,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'fighter_range',
+      info: 'Max range from base',
+      value: 200,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'fighter_separation_friend',
+      info: 'Separation from Friend',
+      value: 0.2,
+      min: 0,
+      max: 1,
+      step: 0.05
+    }, {
+      key: 'fighter_separation_enemy',
+      info: 'Separation from Enemy',
+      value: 0.1,
+      min: 0,
+      max: 1,
+      step: 0.05
+    }, {
+      key: 'fighter_gas',
+      info: 'Gas',
+      value: 600,
+      min: 0,
+      max: 1000
+    }, {
+      key: 'bomber_separation_friend',
+      info: 'Separation from Friend',
+      value: 0.025,
+      min: 0,
+      max: 0.2,
+      step: 0.005
+    }, {
+      key: 'bomber_separation_enemy',
+      info: 'Separation from Enemy',
+      value: 0.02,
+      min: 0,
+      max: 0.2,
+      step: 0.005
+    }, {
+      key: 'bomber_avoidance_enemy',
+      info: 'Avoidance from Enemy',
+      value: 0.25,
+      min: 0,
+      max: 1,
+      step: 0.05
+    }, {
       key: 'first_strike',
       info: 'First Strike',
       value: 0,
@@ -331,6 +384,7 @@ Scenes.coldwar = function(el, opts){
     self.max_z = 200;
 
     self.world = new World({
+      opts: self.opts,
       max_x: self.max_x,
       max_y: self.max_y,
       max_z: self.max_z
@@ -578,7 +632,7 @@ Scenes.coldwar = function(el, opts){
       var html;
       html = '';
       html += '<label title="' + param.info + '">' + param.key + '</label>';
-      html += '<input type="range" value="' + self.opts[param.key] + '" min="' + param.min + '" max="' + param.max + '" />';
+      html += '<input type="range" value="' + self.opts[param.key] + '" min="' + param.min + '" max="' + param.max + '" step="' + param.step + '" />';
       html += '<span class="value">' + self.opts[param.key] + '</span>';
       el.innerHTML = html;
       elOptions.appendChild(el);

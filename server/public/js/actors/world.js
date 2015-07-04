@@ -8,6 +8,8 @@ function World(opts){
     opts = {};
   }
 
+  this.opts = opts.opts;
+
   this.max_x = opts.max_x || 1600;
   this.max_y = opts.max_y || 900;
   this.max_z = opts.max_z || 200;
