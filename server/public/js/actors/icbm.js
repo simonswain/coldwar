@@ -219,19 +219,21 @@ Icbm.prototype.elevation = function(view){
 
   // flight object
 
+  var direction = this.target.pos.x > this.pos.x ? 1 : -1;
+
   view.ctx.save();
   view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
-  view.ctx.rotate(this.direction * (this.phasec + (Math.PI)));
+  view.ctx.rotate(direction * this.phasec);
 
   view.ctx.fillStyle = this.color;
 
   var z = 3;
   view.ctx.lineWidth = 1;
   view.ctx.beginPath();
-  view.ctx.moveTo(-this.direction * 2*z, 0);
-  view.ctx.lineTo(-this.direction * -z, -z);
-  view.ctx.lineTo(-this.direction * -z, z);
-  view.ctx.lineTo(-this.direction * 2*z, 0);
+  view.ctx.moveTo(direction * 2*z, 0);
+  view.ctx.lineTo(direction * -z, -z);
+  view.ctx.lineTo(direction * -z, z);
+  view.ctx.lineTo(direction * 2*z, 0);
   view.ctx.closePath();
   view.ctx.fill();
   view.ctx.restore();
