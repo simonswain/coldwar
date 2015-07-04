@@ -34,7 +34,7 @@ Scenes.coldwar = function(el, opts){
       info: 'Scenario',
       value: 0,
       min: 0,
-      max: scenarios.length
+      max: scenarios.length-1
     }, {
       key: 'capital_count',
       info: 'Capitals',
@@ -47,6 +47,12 @@ Scenes.coldwar = function(el, opts){
       value: 5,
       min: 1,
       max: 5
+    }, {
+      key: 'danger_close',
+      info: 'Danger Close',
+      value: 350,
+      min: 50,
+      max: 1000
     }, {
       key: 'bases_max',
       info: 'Number of Bases each Nation State starts with',
@@ -210,6 +216,30 @@ Scenes.coldwar = function(el, opts){
       value: 0,
       min: 0,
       max: 1
+    }, {
+      key: 'sounds',
+      info: 'Sounds',
+      value: 0,
+      min: 0,
+      max: 1
+    }, {
+      key: 'max_x',
+      info: 'Max X',
+      value: 1600,
+      min: 400,
+      max: 1600
+    }, {
+      key: 'max_y',
+      info: 'Max Y',
+      value: 500,
+      min: 200,
+      max: 1000
+    }, {
+      key: 'max_z',
+      info: 'Max Z',
+      value: 200,
+      min: 50,
+      max: 500
     }];
 
     self.opts = {};
@@ -400,15 +430,15 @@ Scenes.coldwar = function(el, opts){
   function init(){
 
     // world size
-    self.max_x = 1600;
-    self.max_y = 500;
-    self.max_z = 200;
+    self.max_x = self.opts.max_x;
+    self.max_y = self.opts.max_y;
+    self.max_z = self.opts.max_z;
 
     self.world = new World({
       opts: self.opts,
-      max_x: self.max_x,
-      max_y: self.max_y,
-      max_z: self.max_z
+      max_x: self.opts.max_x,
+      max_y: self.opts.max_y,
+      max_z: self.opts.max_z
     });
 
     self.gameover = false;
@@ -444,149 +474,152 @@ Scenes.coldwar = function(el, opts){
       self.world.sats
     ];
 
-    if(self.opts.scenario === 0){
-      initCapitals();
-    } else {
-      scenarios[self.opts.scenario-1]();
-    }
+    scenarios[self.opts.scenario]();
 
   }
-
-  function initCapitals(){
-
-    var capitals = [];
-
-    if(self.opts.capital_count === 4){
-
-      capitals.push({
-        x: self.world.max_x * 0.2,
-        y: self.world.max_y * 0.6,
-        z: 0,
-        color: '#fc0'
-      });
-
-      capitals.push({
-        x: self.world.max_x * 0.8,
-        y: self.world.max_y * 0.4,
-        z: 0,
-        color: '#0ff',
-      });
-
-      capitals.push({
-        x: self.world.max_x * 0.4,
-        y: self.world.max_y * 0.2,
-        z: 0,
-        color: '#f00'
-      });
-
-      capitals.push({
-        x: self.world.max_x * 0.6,
-        y: self.world.max_y * 0.9,
-        z: 0,
-        color: '#090',
-      });
-
-    } else if(self.opts.capital_count === 3){
-
-      capitals.push({
-        x: self.world.max_x * 0.35,
-        y: self.world.max_y * 0.8,
-        z: 0,
-        color: '#fc0'
-      });
-
-      capitals.push({
-        x: self.world.max_x * 0.65,
-        y: self.world.max_y * 0.8,
-        z: 0,
-        color: '#0ff',
-      });
-
-      capitals.push({
-        x: self.world.max_x * 0.5,
-        y: self.world.max_y * 0.2,
-        z: 0,
-        color: '#f00'
-      });
-
-    } else if(self.opts.capital_count === 1){
-
-      capitals.push({
-        x: self.world.max_x * 0.5,
-        y: self.world.max_y * 0.5,
-        z: 0,
-        color: '#0ff',
-      });
-
-    } else {
-      capitals = [{
-        x: self.world.max_x * 0.2,
-        y: self.world.max_y * 0.5,
-        z: 0,
-        color: '#fc0'
-      }, {
-        x: self.world.max_x * 0.8,
-        y: self.world.max_y * 0.5,
-        z: 0,
-        color: '#0ff',
-      }];
-    }
-
-
-    if(self.opts.first_strike){
-      // select one capital to attack first
-      capitals.forEach(function(attrs, xx){
-        attrs.strike = false;
-      });
-      capitals[Math.floor(Math.random() * capitals.length)].strike = true;
-    } else {
-      // all capitals attack
-      capitals.forEach(function(attrs){
-        attrs.strike = true;
-      });
-    }
-
-    capitals.forEach(function(attrs){
-
-      self.world.capitals.push(new Capital({
-        x: attrs.x,
-        y: attrs.y,
-        z: attrs.z,
-        color: attrs.color,
-
-        world: self.world,
-        strike: attrs.strike,
-        defcon: self.opts.defcon,
-        unit_rate: self.opts.unit_rate,
-
-        bases_max: self.opts.bases_max,
-        cities_max: self.opts.cities_max,
-        factories_max: self.opts.factories_max,
-        sats_max: self.opts.sats_max,
-
-        bomber_launch_max: self.opts.bomber_launch_max,
-        fighter_launch_max: self.opts.fighter_launch_max,
-
-        icbm_launch_max: self.opts.icbm_launch_max,
-        abm_launch_max: self.opts.abm_launch_max,
-
-        stock: {
-          bombers: self.opts.stock_bombers,
-          fighters: self.opts.stock_fighters,
-          icbms: self.opts.stock_icbms,
-          abms: self.opts.stock_abms
-        }
-
-      }));
-
-    });
-
-
-  }
-
 
   function loadScenarios(){
+
+
     scenarios[0] = function(){
+
+      // capital and rings
+
+      var capitals = [];
+
+      if(self.opts.capital_count === 4){
+
+        capitals.push({
+          x: self.world.max_x * 0.2,
+          y: self.world.max_y * 0.6,
+          z: 0,
+          color: '#fc0'
+        });
+
+        capitals.push({
+          x: self.world.max_x * 0.8,
+          y: self.world.max_y * 0.4,
+          z: 0,
+          color: '#0ff',
+        });
+
+        capitals.push({
+          x: self.world.max_x * 0.4,
+          y: self.world.max_y * 0.2,
+          z: 0,
+          color: '#f00'
+        });
+
+        capitals.push({
+          x: self.world.max_x * 0.6,
+          y: self.world.max_y * 0.9,
+          z: 0,
+          color: '#090',
+        });
+
+      } else if(self.opts.capital_count === 3){
+
+        capitals.push({
+          x: self.world.max_x * 0.35,
+          y: self.world.max_y * 0.8,
+          z: 0,
+          color: '#fc0'
+        });
+
+        capitals.push({
+          x: self.world.max_x * 0.65,
+          y: self.world.max_y * 0.8,
+          z: 0,
+          color: '#0ff',
+        });
+
+        capitals.push({
+          x: self.world.max_x * 0.5,
+          y: self.world.max_y * 0.2,
+          z: 0,
+          color: '#f00'
+        });
+
+      } else if(self.opts.capital_count === 1){
+
+        capitals.push({
+          x: self.world.max_x * 0.5,
+          y: self.world.max_y * 0.5,
+          z: 0,
+          color: '#0ff',
+        });
+
+      } else {
+        capitals = [{
+          x: self.world.max_x * 0.25,
+          y: self.world.max_y * 0.5,
+          z: 0,
+          color: '#fc0'
+        }, {
+          x: self.world.max_x * 0.75,
+          y: self.world.max_y * 0.5,
+          z: 0,
+          color: '#0ff',
+        }];
+      }
+
+
+      if(self.opts.first_strike){
+        // select one capital to attack first
+        capitals.forEach(function(attrs, xx){
+          attrs.strike = false;
+        });
+        capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      } else {
+        // all capitals attack
+        capitals.forEach(function(attrs){
+          attrs.strike = true;
+        });
+      }
+
+      capitals.forEach(function(attrs){
+
+        self.world.capitals.push(new Capital({
+          x: attrs.x,
+          y: attrs.y,
+          z: attrs.z,
+          color: attrs.color,
+
+          world: self.world,
+          strike: attrs.strike,
+          defcon: self.opts.defcon,
+          unit_rate: self.opts.unit_rate,
+
+          bases_max: self.opts.bases_max,
+          cities_max: self.opts.cities_max,
+          factories_max: self.opts.factories_max,
+          sats_max: self.opts.sats_max,
+
+          bomber_launch_max: self.opts.bomber_launch_max,
+          fighter_launch_max: self.opts.fighter_launch_max,
+
+          icbm_launch_max: self.opts.icbm_launch_max,
+          abm_launch_max: self.opts.abm_launch_max,
+
+          stock: {
+            bombers: self.opts.stock_bombers,
+            fighters: self.opts.stock_fighters,
+            icbms: self.opts.stock_icbms,
+            abms: self.opts.stock_abms
+          }
+
+        }));
+
+      });
+
+
+    }
+
+
+    scenarios[1] = function(){
+
+      // au vs nz
+
       var capitals = [];
 
       // au
@@ -817,11 +850,11 @@ Scenes.coldwar = function(el, opts){
 
     var el;
 
-    el = document.createElement('div');
-    el.innerHTML = '<button>Restart</label>';
-    el.classList.add('restart');
-    elParams.appendChild(el);
-    el.getElementsByTagName('button')[0].onclick=restart;
+    // el = document.createElement('div');
+    // el.innerHTML = '<button>Restart</label>';
+    // el.classList.add('restart');
+    // elParams.appendChild(el);
+    // el.getElementsByTagName('button')[0].onclick=restart;
 
     self.params.forEach(function(param){
       var el = document.createElement('div');

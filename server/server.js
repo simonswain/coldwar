@@ -99,6 +99,18 @@ module.exports = function(config){
 
   server.route({
     method: 'GET',
+    path: '/sounds/{path*}',
+    handler: {
+      directory: {
+        path: Path.join(__dirname, 'public/sounds'),
+        listing: false,
+        index: false
+      }
+    }
+  });
+
+  server.route({
+    method: 'GET',
     path: '/vendor/{path*}',
     handler: {
       directory: {

@@ -27,6 +27,12 @@ function Boom(opts){
 
   this.dead = false;
   this.rate = 0.5 + (Math.random() * 0.5);
+
+  if(this.style === 'zoom'){
+    this.world.play('bd909');
+    this.world.play('flap');
+  }
+
 }
 
 Boom.prototype.update = function(delta){

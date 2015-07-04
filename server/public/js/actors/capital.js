@@ -33,7 +33,7 @@ function Capital(opts) {
 
   this.defcon = opts.defcon || 1;
 
-  this.danger_close = 450;
+  this.danger_close = this.world.opts.danger_close;
 
   this.assets = opts.assets || {
     cities: [],
