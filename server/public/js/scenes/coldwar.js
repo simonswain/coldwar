@@ -346,7 +346,7 @@ Scenes.coldwar = function(el, opts){
         views.elv.ctx.font = '24pt ubuntu mono';
         views.elv.ctx.textBaseline = 'middle';
         views.elv.ctx.textAlign = 'center';
-        views.elv.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.05);
+        views.elv.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.1);
       }
 
       if(self.world.capitals.length === 1){
@@ -354,13 +354,13 @@ Scenes.coldwar = function(el, opts){
         views.map.ctx.font = '32pt ubuntu mono';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.05);
+        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.05);
 
         views.elv.ctx.fillStyle = '#fff';
         views.elv.ctx.font = '24 ubuntu mono';
         views.elv.ctx.textBaseline = 'middle';
         views.elv.ctx.textAlign = 'center';
-        views.elv.ctx.fillText('WIN', self.capitals[0].pos.x, self.max_y * 0.05);
+        views.elv.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.1);
       }
 
     }
