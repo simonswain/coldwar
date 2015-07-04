@@ -31,11 +31,11 @@ function Bomber(opts){
   this.separation_enemy = this.world.max * this.world.opts.bomber_separation_enemy;
   this.avoidance_enemy = this.world.max * this.world.opts.bomber_avoidance_enemy;
 
-  this.hp = Math.floor(50 + (20*Math.random()));
+  this.hp = (Math.floor(50 + (20*Math.random()))) * this.world.opts.bomber_hp_multiplier;
   this.hp_max = this.hp;
 
   this.laser = null;
-  this.laser_range = this.world.max * 0.1;
+  this.laser_range = this.world.max * this.world.opts.bomber_laser_range;
   this.laser_max = Math.floor(30 + (10*Math.random()));
   this.laser_power = 0; // current laser charge
   this.laser_damage = 2;

@@ -164,6 +164,20 @@ Scenes.coldwar = function(el, opts){
       min: 0,
       max: 1000
     }, {
+      key: 'bomber_hp_multiplier',
+      info: '.',
+      value: 1,
+      min: 0.1,
+      max: 10,
+      step: 0.1
+    }, {
+      key: 'bomber_laser_range',
+      info: '.',
+      value: 0.1,
+      min: 0.001,
+      max: 0.25,
+      step: 0.001
+    }, {
       key: 'bomber_separation_friend',
       info: 'Separation from Friend',
       value: 0.025,
