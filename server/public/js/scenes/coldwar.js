@@ -5,8 +5,6 @@
 
 Scenes.coldwar = function(el, opts){
 
-  console.log(opts);
-
   var self = this;
 
   var sets = [];
