@@ -35,6 +35,12 @@ function Capital(opts) {
 
   this.danger_close = 450;
 
+  this.assets = opts.assets || {
+    cities: [],
+    factories: [],
+    bases: []
+  };
+
   // starting stock for bases
   this.stock = opts.stock || {
     bombers: 0,
@@ -224,23 +230,50 @@ Capital.prototype.makeSat = function() {
 };
 
 Capital.prototype.addCities = function() {
+
+  var i, ii;
   var city;
   var max = (Math.min(this.world.max_x, this.world.max_y)) / 2;
-  var range, angle, pos;
-  while (this.myCities.length < this.cities_max) {
+  var range, theta, angle, pos;
+
+  var positions = [];
+
+  if(this.assets.cities.length > 0){
+    // manual placement
+    for(var i=0, ii=this.assets.cities.length; i<ii; i++){
+      positions.push({
+        x: this.pos.x + this.assets.cities[i][0],
+        y: this.pos.y + this.assets.cities[i][1],
+        z: 0
+      });
+    }
+  } else {
+    // auto placement
 
     // face away from enemy
-    var theta = Math.PI / (this.cities_max + 1);
-
+    theta = Math.PI / (this.cities_max + 1);
     angle = this.rot - (Math.PI * 0.5);
-    angle += theta * (this.myCities.length + 1);
 
-    range = this.city_r;
-    pos = new VecR(angle, range).vec3();
+    while (positions.length < this.cities_max) {
+      angle += theta * (this.myCities.length + 1);
+
+      range = this.city_r;
+      pos = new VecR(angle, range).vec3();
+
+      positions.push({
+        x: this.pos.x + pos.x,
+        y: this.pos.y + pos.y,
+        z: 0
+      });
+
+    }
+  }
+
+  for(i=0, ii=positions.length; i<ii; i++){
 
     city = new City({
-      x: this.pos.x + pos.x,
-      y: this.pos.y + pos.y,
+      x: positions[i].x,
+      y: positions[i].y,
       z: 0,
       world: this.world,
       capital: this,
@@ -259,25 +292,50 @@ Capital.prototype.addCities = function() {
 
 
 Capital.prototype.addFactories = function() {
+
+  var i, ii;
   var factory;
   var max = (Math.min(this.world.max_x, this.world.max_y)) / 2;
-  var range, angle, pos;
+  var range, theta, angle, pos;
 
-  while (this.myFactories.length < this.factories_max) {
+  var positions = [];
 
-    // face away from enemy
-    var theta = Math.PI / (this.factories_max + 1);
+  if(this.assets.factories.length > 0){
+    // manual placement
+    for(var i=0, ii=this.assets.factories.length; i<ii; i++){
+      positions.push({
+        x: this.pos.x + this.assets.factories[i][0],
+        y: this.pos.y + this.assets.factories[i][1],
+        z: 0
+      });
+    }
+  } else {
+    // auto placement
 
+    // position on side facing enemy
+    theta = Math.PI / (this.factories_max + 1);
     angle = this.rot + Math.PI / 2;
-    //angle = this.rot - (Math.PI * 0.5);
-    angle += theta * (this.myFactories.length + 1);
 
-    range = this.factory_r;
-    pos = new VecR(angle, range).vec3();
+    while (positions.length < this.factories_max) {
+      angle += theta * (this.myFactories.length + 1);
 
+      range = this.factory_r;
+      pos = new VecR(angle, range).vec3();
+
+      positions.push({
+        x: this.pos.x + pos.x,
+        y: this.pos.y + pos.y,
+        z: 0
+      });
+
+    }
+  }
+
+  for(i=0, ii=positions.length; i<ii; i++){
     factory = new Factory({
-      x: this.pos.x + pos.x,
-      y: this.pos.y + pos.y,
+      x: positions[i].x,
+      y: positions[i].y,
+      z: 0,
       world: this.world,
       capital: this,
       units: this.units,
@@ -295,24 +353,49 @@ Capital.prototype.addFactories = function() {
 };
 
 Capital.prototype.addBases = function() {
+
+  var i, ii;
   var base;
   var max = (Math.min(this.world.max_x, this.world.max_y)) / 2;
-  var range, angle, pos;
-  while (this.myBases.length < this.bases_max) {
+  var range, angle, pos, theta;
+
+  var positions = [];
+
+  if(this.assets.bases.length > 0){
+    // manual placement
+    for(var i=0, ii=this.assets.bases.length; i<ii; i++){
+      positions.push({
+        x: this.pos.x + this.assets.bases[i][0],
+        y: this.pos.y + this.assets.bases[i][1],
+        z: 0
+      });
+    }
+  } else {
+    // auto placement
 
     // position on side facing enemy
-
-    var theta = Math.PI / (this.bases_max + 1);
-
+    theta = Math.PI / (this.bases_max + 1);
     angle = this.rot + Math.PI / 2;
-    angle += theta * (this.myBases.length + 1);
 
-    range = this.base_r;
-    pos = new VecR(angle, range).vec3();
+    while (positions.length < this.bases_max) {
+      angle += theta * (this.myBases.length + 1);
 
+      range = this.base_r;
+      pos = new VecR(angle, range).vec3();
+
+      positions.push({
+        x: this.pos.x + pos.x,
+        y: this.pos.y + pos.y,
+        z: 0
+      });
+
+    }
+  }
+
+  for(i=0, ii=positions.length; i<ii; i++){
     base = new Base({
-      x: this.pos.x + pos.x,
-      y: this.pos.y + pos.y,
+      x: positions[i].x,
+      y: positions[i].y,
       z: 0,
       world: this.world,
       capital: this,
@@ -321,19 +404,17 @@ Capital.prototype.addBases = function() {
       fighter_launch_max: Math.floor(this.fighter_launch_max * Math.random()),
       icbm_launch_max: this.icbm_launch_max,
       abm_launch_max: this.abm_launch_max,
-
       stock: {
         bombers: this.stock.bombers,
         fighters: this.stock.fighters,
         icbms: this.stock.icbms,
         abms: this.stock.abms
       }
-
     });
-
     this.myBases.push(base);
     this.world.bases.push(base);
   }
+
 };
 
 Capital.prototype.paint = function(view) {

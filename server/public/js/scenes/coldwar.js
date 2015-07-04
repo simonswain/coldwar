@@ -12,9 +12,6 @@ Scenes.coldwar = function(el, opts){
   this.show_help = false;
   this.show_help_changed = false;
 
-  setParams(opts);
-  init();
-
   var views = {
     map: null,
     elevation: null
@@ -26,9 +23,19 @@ Scenes.coldwar = function(el, opts){
   };
 
   var sets = [];
+  var scenarios = [];
+  loadScenarios();
+  setParams(opts);
+  init();
 
   function setParams(){
     self.params = [{
+      key: 'scenario',
+      info: 'Scenario',
+      value: 0,
+      min: 0,
+      max: scenarios.length
+    }, {
       key: 'capital_count',
       info: 'Capitals',
       value: 2,
@@ -395,21 +402,43 @@ Scenes.coldwar = function(el, opts){
     self.stopped = false;
     self.at = 0;
 
-    self.gameover = false;
-
+    self.world.maps = [];
     self.world.booms = [];
-
     self.world.capitals = [];
     self.world.cities = [];
     self.world.bases = [];
     self.world.factories = [];
     self.world.supplies = [];
-
     self.world.bombers = [];
     self.world.fighters = [];
     self.world.icbms = [];
     self.world.abms = [];
     self.world.sats = [];
+
+    sets = [
+      self.world.maps,
+      self.world.supplies,
+      self.world.capitals,
+      self.world.cities,
+      self.world.bases,
+      self.world.factories,
+      self.world.bombers,
+      self.world.fighters,
+      self.world.icbms,
+      self.world.abms,
+      self.world.booms,
+      self.world.sats
+    ];
+
+    if(self.opts.scenario === 0){
+      initCapitals();
+    } else {
+      scenarios[self.opts.scenario-1]();
+    }
+
+  }
+
+  function initCapitals(){
 
     var capitals = [];
 
@@ -538,20 +567,173 @@ Scenes.coldwar = function(el, opts){
 
     });
 
-    sets = [
-      self.world.supplies,
-      self.world.capitals,
-      self.world.cities,
-      self.world.bases,
-      self.world.factories,
-      self.world.bombers,
-      self.world.fighters,
-      self.world.icbms,
-      self.world.abms,
-      self.world.booms,
-      self.world.sats
-    ];
 
+  }
+
+
+  function loadScenarios(){
+    scenarios[0] = function(){
+      var capitals = [];
+
+      // au
+      capitals.push({
+        x: self.world.max_x * 0.3,
+        y: self.world.max_y * 0.5,
+        z: 0,
+        color: '#fc0',
+        world: self.world,
+        strike: false,
+        defcon: self.opts.defcon,
+        unit_rate: self.opts.unit_rate,
+
+        bases_max: self.opts.bases_max,
+        cities_max: self.opts.cities_max,
+        factories_max: self.factories_max,
+        sats_max: self.opts.sats_max,
+
+        bomber_launch_max: self.opts.bomber_launch_max,
+        fighter_launch_max: self.opts.fighter_launch_max,
+
+        icbm_launch_max: self.opts.icbm_launch_max,
+        abm_launch_max: self.opts.abm_launch_max,
+
+        stock: {
+          bombers: self.opts.stock_bombers,
+          fighters: self.opts.stock_fighters,
+          icbms: self.opts.stock_icbms,
+          abms: self.opts.stock_abms
+        },
+
+        outline: [
+          [-200, -250, true],
+          [-150, -250],
+          [-150, -200],
+          [-60, -180],
+          [-50, -250],
+          [70, -60],
+          [20, 100],
+          [-70, 100],
+          [-90, 70],
+          [-150, 50],
+          [-250, 70],
+          [-300, 70],
+          [-320, 0],
+          [-330, -50],
+          [-200, -250],
+          [-200, -250],
+          // tas
+          [-50, 130, true],
+          [10, 130],
+          [-20, 180],
+          [-50, 130],
+
+        ],
+
+        assets: {
+          bases: [[30, -120], [30, 50],[-20, 150],[-300, 50]],
+          cities: [[50, -20], [-40, 100],[20, -70]],
+          factories: [[-50, -20]]
+        }
+
+
+      });
+
+      // nz
+      capitals.push({
+        x: self.world.max_x * 0.7,
+        y: self.world.max_y * 0.5,
+        z: 0,
+        color: '#0cc',
+
+        world: self.world,
+        strike: false,
+        defcon: self.opts.defcon,
+        unit_rate: self.opts.unit_rate,
+
+        bases_max: self.opts.bases_max,
+        cities_max: self.opts.cities_max,
+        factories_max: self.factories_max,
+        sats_max: self.opts.sats_max,
+
+        bomber_launch_max: self.opts.bomber_launch_max,
+        fighter_launch_max: self.opts.fighter_launch_max,
+
+        icbm_launch_max: self.opts.icbm_launch_max,
+        abm_launch_max: self.opts.abm_launch_max,
+
+        stock: {
+          bombers: self.opts.stock_bombers,
+          fighters: self.opts.stock_fighters,
+          icbms: self.opts.stock_icbms,
+          abms: self.opts.stock_abms
+        },
+
+        outline: [
+          // ni
+          [-30, 20, true],
+          [0, -60],
+          [-60, -90],
+          [0, -120],
+          [-20, -200],
+          [10, -230],
+          [40, -120],
+          [90, -120],
+          [90, -100],
+          [50, -60],
+          [70, -60],
+          [0, 40],
+          [-30, 20],
+          // si
+          [-60, 60, true],
+          [0, 70],
+          [20, 90],
+          [-40, 180],
+          [-40, 240],
+          [-120, 240],
+          [-100, 190],
+          [-60, 60],
+
+          // stewart island
+          [-100, 260, true],
+          [-60, 260],
+          [-80, 290],
+          [-100, 260],
+
+        ],
+
+        assets: {
+          bases: [[10, -150], [-40, -80], [-40, 70], [-90, 220]],
+          cities: [[30, -120], [-10, 140], [10, 100], [50, -40]],
+          factories: [[-50, 170], [20, -70], ]
+        }
+
+      });
+
+      if(self.first_strike){
+        // select one capital to attack first
+        capitals.forEach(function(attrs, xx){
+          attrs.strike = false;
+        });
+        capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      } else {
+        // all capitals attack
+        capitals.forEach(function(attrs){
+          attrs.strike = true;
+        });
+      }
+
+      capitals.forEach(function(attrs){
+        self.world.capitals.push(new Capital(attrs));
+        self.world.maps.push(new Map({
+          x: attrs.x,
+          y: attrs.y,
+          z: attrs.z,
+          color: attrs.color,
+          world: self.world,
+          outline: attrs.outline,
+        }));
+      });
+    };
   }
 
 
