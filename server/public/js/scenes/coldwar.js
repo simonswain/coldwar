@@ -12,6 +12,7 @@ Scenes.coldwar = function(el, opts){
   loadScenarios();
 
   this.el = el;
+  this.show_opts = true;
   this.show_meta = false;
   this.show_help = false;
   this.show_help_changed = false;
@@ -20,6 +21,10 @@ Scenes.coldwar = function(el, opts){
     map: null,
     elevation: null
   };
+
+  this.zoom = 1;
+  this.page_x = 0;
+  this.page_y = 0;
 
   var timers = {
     update: null,
@@ -303,8 +308,12 @@ Scenes.coldwar = function(el, opts){
 
     var timer = Date.now();
 
-    views.map.ctx.save();
+    // map
     views.map.ctx.clearRect(0, 0, views.map.w, views.map.h);
+    views.map.ctx.save();
+
+    views.map.ctx.scale(self.zoom, self.zoom);
+    views.map.ctx.translate(self.page_x, self.page_y);
 
     if(self.world.flash && !self.opts.safe_mode){
       views.map.ctx.fillStyle='#ffffff';
@@ -314,8 +323,13 @@ Scenes.coldwar = function(el, opts){
     views.map.ctx.translate(views.map.offset_x, views.map.offset_y);
     views.map.ctx.scale(views.map.scale, views.map.scale);
 
-    views.elv.ctx.save();
+    // elevation
     views.elv.ctx.clearRect(0, 0, views.elv.w, views.elv.h);
+    views.elv.ctx.save();
+
+    //views.elv.ctx.scale(self.zoom, self.zoom);
+    views.elv.ctx.translate(self.page_x, 0);
+
 
     if(self.world.flash && !self.opts.safe_mode){
       views.elv.ctx.fillStyle='#fff';
@@ -386,8 +400,7 @@ Scenes.coldwar = function(el, opts){
     }
 
     if(self.show_meta){
-
-      text_x = self.w - 240;
+      text_x = self.world.max_x - 200;
 
       views.map.ctx.font = '16pt ubuntu mono';
       views.map.ctx.textBaseline = 'middle';
@@ -792,19 +805,24 @@ Scenes.coldwar = function(el, opts){
 
 
   function render(){
+
     var html;
+    var c = self.show_opts ? 'has-controls' : '';
     html = '';
-    html += '<div id="map" class="has-controls"><canvas id="cMap"></canvas></div>';
-    html += '<div id="elevation" class="has-controls"><canvas id="cElevation"></canvas></div>';
+    html += '<div id="map" class="' + c + '"><canvas id="cMap"></canvas></div>';
+    html += '<div id="elevation" class="' + c + '"><canvas id="cElevation"></canvas></div>';
+    if(self.show_opts){
+    html += '<div id="controls">';
     html += '<div id="params">';
     html += '<h3>Cold War</h3>';
     html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
     html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
-
     html += '<p>Type <strong>?</strong> for Help</p>';
-
     html += '</div>';
     html += '<div id="options"></div>';
+    html += '</div>';
+    }
+
     self.el.innerHTML = html;
 
     self.w = self.el.offsetWidth;
@@ -852,11 +870,18 @@ Scenes.coldwar = function(el, opts){
     views.elv.offset_y = (views.elv.h/2) - (((views.elv.h / self.world.max_z) * views.elv.scale)/2);
     views.elv.yscale = views.elv.h / self.world.max_z / views.elv.scale;
 
+    if(self.show_opts){
+      paintOpts();
+    }
+
+  }
+
+  function paintOpts(){
+
     var elParams = document.getElementById('params');
     var elOptions = document.getElementById('options');
 
-    var el;
-
+    //var el;
     // el = document.createElement('div');
     // el.innerHTML = '<button>Restart</label>';
     // el.classList.add('restart');
@@ -889,6 +914,47 @@ Scenes.coldwar = function(el, opts){
     });
   }
 
+
+  this.mouseDown = false
+  this.drag_from_x = null;
+  this.drag_from_y = null;
+
+  function handleMouseMove (e){
+    if(self.mouseDown){
+      self.page_x += ((e.layerX - self.drag_from_x));
+      self.page_y += ((e.layerY - self.drag_from_y));
+    }
+    self.drag_from_x = e.layerX;
+    self.drag_from_y = e.layerY;
+  }
+
+  function handleMouseUp (e){
+    if(self.mouseDown){
+      self.mouseDown = false;
+      this.drag_from_x = null;
+      this.drag_from_y = null;
+    }
+  }
+
+  function handleMouseDown (e){
+    if(!self.mouseDown){
+      this.drag_from_x = null;
+      this.drag_from_y = null;
+      self.mouseDown = true;
+    }
+  }
+
+  function handleMouseWheel (e){
+    var delta = e.wheelDelta > 0 ? 1 : -1;
+    if(delta > 0){
+      self.zoom = self.zoom * 1.1;
+    }
+    if(delta < 0){
+      self.zoom = self.zoom * 0.9;
+    }
+  }
+
+
   function setOpt(key, val){
     self.opts[key] = val;
     var opts = [];
@@ -900,6 +966,12 @@ Scenes.coldwar = function(el, opts){
   }
 
   function start(){
+
+    self.el.onmousemove = handleMouseMove;
+    self.el.onmousedown = handleMouseDown;
+    self.el.onmouseup = handleMouseUp;
+    self.el.addEventListener("mousewheel", handleMouseWheel);
+
     render();
     init();
     self.stopped = false;
@@ -909,6 +981,11 @@ Scenes.coldwar = function(el, opts){
 
   function stop(){
     self.stopped = true;
+  }
+
+  function toggleOpts(){
+    self.show_opts = !self.show_opts;
+    render();
   }
 
   function toggleMeta(){
@@ -941,6 +1018,7 @@ Scenes.coldwar = function(el, opts){
     start: start,
     stop: stop,
     restart: restart,
+    toggleOpts: toggleOpts,
     toggleMeta: toggleMeta,
     toggleHelp: toggleHelp,
     hideHelp: hideHelp,

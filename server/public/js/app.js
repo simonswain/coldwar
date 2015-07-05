@@ -45,6 +45,12 @@ var App = function(){
     //console.log(e);
     switch(e.which){
 
+    case 9:
+      // 'tab'
+      e.preventDefault();
+      this.view.toggleOpts();
+      break;
+
     case 13:
       // 'cr'
       e.preventDefault();
