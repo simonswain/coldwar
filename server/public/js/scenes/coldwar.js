@@ -870,6 +870,12 @@ Scenes.coldwar = function(el, opts){
     views.elv.offset_y = (views.elv.h/2) - (((views.elv.h / self.world.max_z) * views.elv.scale)/2);
     views.elv.yscale = views.elv.h / self.world.max_z / views.elv.scale;
 
+    views.map.wrap.onmousemove = handleMouseMove;
+    views.map.wrap.onmousedown = handleMouseDown;
+    views.map.wrap.onmouseup = handleMouseUp;
+    views.map.wrap.addEventListener("mousewheel", handleMouseWheel);
+
+
     if(self.show_opts){
       paintOpts();
     }
@@ -966,12 +972,6 @@ Scenes.coldwar = function(el, opts){
   }
 
   function start(){
-
-    self.el.onmousemove = handleMouseMove;
-    self.el.onmousedown = handleMouseDown;
-    self.el.onmouseup = handleMouseUp;
-    self.el.addEventListener("mousewheel", handleMouseWheel);
-
     render();
     init();
     self.stopped = false;
