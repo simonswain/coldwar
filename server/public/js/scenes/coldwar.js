@@ -229,6 +229,12 @@ Scenes.coldwar = function(el, opts){
       min: 0,
       max: 1
     }, {
+      key: 'gameover_restart_delay',
+      info: 'Game Over restart delay',
+      value: 5,
+      min: 0,
+      max: 30
+    }, {
       key: 'max_x',
       info: 'Max X',
       value: 1600,
@@ -285,7 +291,7 @@ Scenes.coldwar = function(el, opts){
 
     if(self.opts.capital_count > 1 && self.world.capitals.length <= 1 && ! self.gameover){
       self.gameover = true;
-      setTimeout(init, 5000, self);
+      setTimeout(init, self.opts.gameover_restart_delay * 1000, self);
     }
 
     timers.update = Date.now() - timer;
