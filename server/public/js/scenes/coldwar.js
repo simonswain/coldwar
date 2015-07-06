@@ -318,8 +318,8 @@ Scenes.coldwar = function(el, opts){
     views.map.ctx.clearRect(0, 0, views.map.w, views.map.h);
     views.map.ctx.save();
 
-    views.map.ctx.scale(self.zoom, self.zoom);
     views.map.ctx.translate(self.page_x, self.page_y);
+    views.map.ctx.scale(self.zoom, self.zoom);
 
     if(self.world.flash && !self.opts.safe_mode){
       views.map.ctx.fillStyle='#ffffff';
@@ -333,8 +333,8 @@ Scenes.coldwar = function(el, opts){
     views.elv.ctx.clearRect(0, 0, views.elv.w, views.elv.h);
     views.elv.ctx.save();
 
+    //views.elv.ctx.translate(self.page_x, 0);
     //views.elv.ctx.scale(self.zoom, self.zoom);
-    views.elv.ctx.translate(self.page_x, 0);
 
 
     if(self.world.flash && !self.opts.safe_mode){
@@ -881,12 +881,58 @@ Scenes.coldwar = function(el, opts){
     views.map.wrap.onmouseup = handleMouseUp;
     views.map.wrap.addEventListener("mousewheel", handleMouseWheel);
 
-
     if(self.show_opts){
       paintOpts();
     }
 
+    doZoom(1);
+
   }
+
+  function doZoom(delta, x, y){
+
+    if(!x || !y){
+      x = self.world.max_x / 2;
+      y = self.world.max_y / 2;
+    }
+
+    var rx = (x / self.world.max_x);
+    var ry = (y / self.world.max_y);
+
+    var zoom;
+    var dx, dy, dz;
+
+    if(delta > 0){
+      zoom = self.zoom * 1.2;
+    }
+
+    if(delta < 0){
+      zoom = self.zoom * 0.83333;
+    }
+
+    if(zoom > 16){
+      zoom = 16;
+    }
+
+    if(zoom < 0.25){
+      zoom = 0.25;
+    }
+
+    dx = ((self.world.max_x * zoom) - (self.world.max_x)) * rx;
+    dy = ((self.world.max_y * zoom) - (self.world.max_y)) * ry;
+
+    self.page_x = - dx;
+    self.page_y = - dy;
+    self.zoom = zoom;
+
+  }
+
+  function resetZoom(){
+    self.zoom = 1;
+    self.page_x = 0;
+    self.page_y = 0;
+  }
+
 
   function paintOpts(){
 
@@ -958,12 +1004,9 @@ Scenes.coldwar = function(el, opts){
 
   function handleMouseWheel (e){
     var delta = e.wheelDelta > 0 ? 1 : -1;
-    if(delta > 0){
-      self.zoom = self.zoom * 1.1;
-    }
-    if(delta < 0){
-      self.zoom = self.zoom * 0.9;
-    }
+    var x = e.layerX;
+    var y = e.layerY;
+    doZoom(delta, x, y);
   }
 
 
@@ -1028,6 +1071,7 @@ Scenes.coldwar = function(el, opts){
     toggleMeta: toggleMeta,
     toggleHelp: toggleHelp,
     hideHelp: hideHelp,
+    resetZoom: resetZoom,
     toggleVectors: toggleVectors
   };
 

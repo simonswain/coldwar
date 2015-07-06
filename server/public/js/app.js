@@ -42,7 +42,7 @@ var App = function(){
   };
 
   this.onKey = function(e){
-    //console.log(e);
+    console.log(e);
     switch(e.which){
 
     case 9:
@@ -61,6 +61,12 @@ var App = function(){
       // 'esc'
       e.preventDefault();
       this.view.hideHelp();
+      break;
+
+    case 48:
+      // '0'
+      e.preventDefault();
+      this.view.resetZoom();
       break;
 
     case 220:
