@@ -42,7 +42,7 @@ var App = function(){
   };
 
   this.onKey = function(e){
-    console.log(e);
+    //console.log(e);
     switch(e.which){
 
     case 9:
