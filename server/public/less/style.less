@@ -140,6 +140,43 @@ body {
         background: #000;
     }
 
+    .expose {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        font-size: 32px;
+        text-align: center;
+        cursor: pointer;
+        z-index: 100;
+        &.active {
+            left: auto;
+            right: 0;
+        }
+        color: #666;
+        &:hover {
+            color: #fff;
+        }
+        &.expose-params {
+            top: 0;
+            left: 0;
+            &.expose-active {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        &.expose-help {
+            top: 0;
+            right: 0;
+            &.expose-active {
+                left: auto;
+                right: 0;
+            }
+        }
+
+    }
+
     #params {
         position: absolute;
         top: 0;
@@ -269,7 +306,7 @@ body {
     right: 0;
     padding: 32px;
     background: rgba(0, 0, 0, 0.65);
-    z-index: 1024;
+    z-index: 16;
     .content {
         max-width: 800px;
         margin-left: auto;

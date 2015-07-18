@@ -336,7 +336,6 @@ Scenes.coldwar = function(el, opts){
     //views.elv.ctx.translate(self.page_x, 0);
     //views.elv.ctx.scale(self.zoom, self.zoom);
 
-
     if(self.world.flash && !self.opts.safe_mode){
       views.elv.ctx.fillStyle='#fff';
       views.elv.ctx.fillRect(0, 0, views.elv.w, views.elv.h);
@@ -357,13 +356,13 @@ Scenes.coldwar = function(el, opts){
 
       if(self.world.capitals.length === 0){
         views.map.ctx.fillStyle = '#fff';
-        views.map.ctx.font = '32pt ubuntu mono';
+        views.map.ctx.font = '32pt ubuntu mono, monospace';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.05);
+        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.9);
 
         views.elv.ctx.fillStyle = '#fff';
-        views.elv.ctx.font = '24pt ubuntu mono';
+        views.elv.ctx.font = '24pt ubuntu mono, monospace';
         views.elv.ctx.textBaseline = 'middle';
         views.elv.ctx.textAlign = 'center';
         views.elv.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.1);
@@ -371,13 +370,13 @@ Scenes.coldwar = function(el, opts){
 
       if(self.world.capitals.length === 1){
         views.map.ctx.fillStyle = '#fff';
-        views.map.ctx.font = '32pt ubuntu mono';
+        views.map.ctx.font = '32pt ubuntu mono, monospace';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.05);
+        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.9);
 
         views.elv.ctx.fillStyle = '#fff';
-        views.elv.ctx.font = '24 ubuntu mono';
+        views.elv.ctx.font = '24 ubuntu mono, monospace';
         views.elv.ctx.textBaseline = 'middle';
         views.elv.ctx.textAlign = 'center';
         views.elv.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.1);
@@ -393,22 +392,21 @@ Scenes.coldwar = function(el, opts){
 
     if(self.gameover && Date.now()/1000 % 1 > 0.5){
       views.elv.ctx.fillStyle = '#f00';
-      views.elv.ctx.font = '24pt monospace';
+      views.elv.ctx.font = '24pt ubuntu mono, monospace';
       views.elv.ctx.textBaseline = 'middle';
       views.elv.ctx.textAlign = 'center';
       views.elv.ctx.fillText('GAME OVER', views.elv.w/2, views.elv.h/2);
 
       views.map.ctx.fillStyle = '#f00';
-      views.map.ctx.font = '48pt monospace';
+      views.map.ctx.font = '48pt ubuntu mono, monospace';
       views.map.ctx.textBaseline = 'middle';
       views.map.ctx.textAlign = 'center';
       views.map.ctx.fillText('GAME OVER', views.map.w/2, views.map.h/2);
     }
 
     if(self.show_meta){
-      text_x = self.world.max_x - 200;
-
-      views.map.ctx.font = '16pt ubuntu mono';
+      text_x = 148;
+      views.map.ctx.font = '16pt ubuntu mono, monospace';
       views.map.ctx.textBaseline = 'middle';
       views.map.ctx.textAlign = 'right';
 
@@ -429,18 +427,20 @@ Scenes.coldwar = function(el, opts){
       }
       views.map.ctx.fillText((timers.total) + 'ms total   ', text_x, 80);
 
-      views.map.ctx.font = '16pt ubuntu mono';
+      text_x = views.map.w - 24;
+
+      views.map.ctx.font = '16pt ubuntu mono, monospace';
       views.map.ctx.textBaseline = 'middle';
       views.map.ctx.textAlign = 'right';
       views.map.ctx.fillStyle = '#999';
-
-      views.map.ctx.fillText(self.world.bombers.length + ' bombers ', text_x, 120);
-      views.map.ctx.fillText(self.world.fighters.length + ' fighters', text_x, 144);
-      views.map.ctx.fillText(self.world.icbms.length + ' icbms   ', text_x, 168);
-      views.map.ctx.fillText(self.world.abms.length + ' abms    ', text_x, 192);
-      views.map.ctx.fillText(self.world.booms.length + ' booms   ', text_x, 216);
+      
+      views.map.ctx.fillText(self.world.bombers.length + ' bombers ', text_x, 32);
+      views.map.ctx.fillText(self.world.fighters.length + ' fighters', text_x, 56);
+      views.map.ctx.fillText(self.world.icbms.length + ' icbms   ', text_x, 80);
+      views.map.ctx.fillText(self.world.abms.length + ' abms    ', text_x, 104);
+      views.map.ctx.fillText(self.world.booms.length + ' booms   ', text_x, 128);
       var total = self.world.bombers.length + self.world.fighters.length + self.world.icbms.length + self.world.abms.length + self.world.booms.length;
-      views.map.ctx.fillText(total + ' total   ', text_x, 240);
+      views.map.ctx.fillText(total + ' total   ', text_x, 156);
     }
 
   }
@@ -448,9 +448,7 @@ Scenes.coldwar = function(el, opts){
   function tick(){
     update();
     paint();
-    if(!self.stopped){
-      self.raf = window.requestAnimationFrame(tick);
-    }
+    self.raf = window.requestAnimationFrame(tick);
   }
 
   function init(){
@@ -469,7 +467,6 @@ Scenes.coldwar = function(el, opts){
 
     self.gameover = false;
     self.raf = null;
-    self.stopped = false;
     self.at = 0;
 
     self.world.maps = [];
@@ -820,6 +817,7 @@ Scenes.coldwar = function(el, opts){
     if(self.show_opts){
       html += '<div id="controls">';
       html += '<div id="params">';
+      html += '<div class="expose expose-params expose-active">&equiv;</div>';
       html += '<h3>Cold War</h3>';
       html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
       html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
@@ -827,9 +825,21 @@ Scenes.coldwar = function(el, opts){
       html += '</div>';
       html += '<div id="options"></div>';
       html += '</div>';
+    } else {
+      html += '<div class="expose expose-params">&equiv;</div>';
     }
 
+    html += '<div class="expose expose-help">?</div>';
+
     self.el.innerHTML = html;
+
+    document.querySelector('.expose-params').addEventListener ('click', function(e){
+      toggleOpts();
+    }, false);
+
+    document.querySelector('.expose-help').addEventListener ('click', function(e){
+      toggleHelp();
+    }, false);
 
     self.w = self.el.offsetWidth;
     self.h = self.el.offsetHeight;
@@ -855,7 +865,6 @@ Scenes.coldwar = function(el, opts){
     views.map.offset_x = (views.map.w/2) - ((self.world.max_x * views.map.scale)/2);
     views.map.offset_y = (views.map.h/2) - ((self.world.max_y * views.map.scale)/2);
 
-
     views.elv = {};
     views.elv.wrap = document.getElementById('elevation');
     views.elv.el = document.getElementById('cElevation');
@@ -870,7 +879,7 @@ Scenes.coldwar = function(el, opts){
     views.elv.scale_x = views.elv.w / self.world.max_x;
     views.elv.scale_z = views.elv.h / (views.elv.h / self.world.max_z);
 
-    views.elv.scale = views.elv.scale_x; //Math.min(views.elv.scale_x, views.elv.scale_z);
+    views.elv.scale = views.elv.scale_x;
 
     views.elv.offset_x = (views.elv.w/2) - ((self.world.max_x * views.elv.scale)/2);
     views.elv.offset_y = (views.elv.h/2) - (((views.elv.h / self.world.max_z) * views.elv.scale)/2);
@@ -941,13 +950,6 @@ Scenes.coldwar = function(el, opts){
     var elParams = document.getElementById('params');
     var elOptions = document.getElementById('options');
 
-    //var el;
-    // el = document.createElement('div');
-    // el.innerHTML = '<button>Restart</label>';
-    // el.classList.add('restart');
-    // elParams.appendChild(el);
-    // el.getElementsByTagName('button')[0].onclick=restart;
-
     self.params.forEach(function(param){
       var el = document.createElement('div');
       var html;
@@ -973,7 +975,6 @@ Scenes.coldwar = function(el, opts){
       }, false);
     });
   }
-
 
   this.mouseDown = false
   this.drag_from_x = null;
@@ -1012,7 +1013,6 @@ Scenes.coldwar = function(el, opts){
     doZoom(delta, x, y);
   }
 
-
   function setOpt(key, val){
     self.opts[key] = val;
     var opts = [];
@@ -1026,13 +1026,14 @@ Scenes.coldwar = function(el, opts){
   function start(){
     render();
     init();
-    self.stopped = false;
     self.at = Date.now();
     self.raf = window.requestAnimationFrame(tick);
   }
 
   function stop(){
-    self.stopped = true;
+    if(self.raf){
+      window.cancelAnimationFrame(self.raf);
+    }
   }
 
   function toggleOpts(){
@@ -1059,9 +1060,6 @@ Scenes.coldwar = function(el, opts){
   }
 
   function restart(){
-    if(self.stopped){
-      return;
-    }
     stop();
     setTimeout(start, 100);
   }
