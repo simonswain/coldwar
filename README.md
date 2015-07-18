@@ -1,13 +1,15 @@
 # Cold War
 
-![](http://i.imgur.com/PNsaof4.gif) 
+![](http://i.imgur.com/PNsaof4.gif)
 
-## Comms
+## Talks
 
-Slack channel is available - get an invite here:
+Talks have been given on Coldwar at:
 
-https://coldwarjs-slack.herokuapp.com/
-
+* JSConf US, May 2015 (Jacksonville, Florida, US)
+* Web Directions Code, June 2015 (Melbourne, Australia)
+* SydJS, July 2015 (Sydney, Australia)
+* TX JS, July 2015 (Austin, Texas, US)
 
 ## Install
 
@@ -39,10 +41,10 @@ Cities (circles) send people to work at factories.
 
 Factories (triangles) make munitions and send them to bases
 
-Bases (square) stockpile munitions (counts, clockwise from top right: icbms, abms (anti ballistic missiles), 
+Bases (square) stockpile munitions (counts, clockwise from top right: icbms, abms (anti ballistic missiles),
 fighters and bombers.
 
-Bombers are big and slow (triangles) that select a target (factory, base, city, capital in that order), fly to it 
+Bombers are big and slow (triangles) that select a target (factory, base, city, capital in that order), fly to it
 and nuke it, reselecting a target if somebody else destroys it first.
 
 As defence perimeters are penetrated, defcon gets more scary.
