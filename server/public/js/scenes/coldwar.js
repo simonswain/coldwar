@@ -818,15 +818,15 @@ Scenes.coldwar = function(el, opts){
     html += '<div id="map" class="' + c + '"><canvas id="cMap"></canvas></div>';
     html += '<div id="elevation" class="' + c + '"><canvas id="cElevation"></canvas></div>';
     if(self.show_opts){
-    html += '<div id="controls">';
-    html += '<div id="params">';
-    html += '<h3>Cold War</h3>';
-    html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
-    html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
-    html += '<p>Type <strong>?</strong> for Help</p>';
-    html += '</div>';
-    html += '<div id="options"></div>';
-    html += '</div>';
+      html += '<div id="controls">';
+      html += '<div id="params">';
+      html += '<h3>Cold War</h3>';
+      html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
+      html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
+      html += '<p>Type <strong>?</strong> for Help</p>';
+      html += '</div>';
+      html += '<div id="options"></div>';
+      html += '</div>';
     }
 
     self.el.innerHTML = html;
