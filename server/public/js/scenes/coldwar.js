@@ -811,7 +811,7 @@ Scenes.coldwar = function(el, opts){
 
 
   function render(){
-
+    self.zoom = 1;
     var html;
     var c = self.show_opts ? 'has-controls' : '';
     html = '';
