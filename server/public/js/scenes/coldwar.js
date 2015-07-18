@@ -879,7 +879,9 @@ Scenes.coldwar = function(el, opts){
     views.map.wrap.onmousemove = handleMouseMove;
     views.map.wrap.onmousedown = handleMouseDown;
     views.map.wrap.onmouseup = handleMouseUp;
+
     views.map.wrap.addEventListener("mousewheel", handleMouseWheel);
+    views.map.wrap.addEventListener("DOMMouseScroll", handleMouseWheel);
 
     if(self.show_opts){
       paintOpts();
@@ -918,8 +920,8 @@ Scenes.coldwar = function(el, opts){
       zoom = 0.25;
     }
 
-    dx = ((self.world.max_x * zoom) - (self.world.max_x)) * rx;
-    dy = ((self.world.max_y * zoom) - (self.world.max_y)) * ry;
+    dx = ((self.world.max_x * zoom) - (self.world.max_x)) * (rx);
+    dy = ((self.world.max_y * zoom) - (self.world.max_y)) * (ry);
 
     self.page_x = - dx;
     self.page_y = - dy;
