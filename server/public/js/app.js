@@ -42,9 +42,7 @@ var App = function(){
   };
 
   this.onKey = function(e){
-    //console.log(e);
     switch(e.which){
-
     case 9:
       // 'tab'
       e.preventDefault();
@@ -69,6 +67,12 @@ var App = function(){
       this.view.resetZoom();
       break;
 
+    case 96:
+      // pad '0'
+      e.preventDefault();
+      this.view.resetZoom();
+      break;
+
     case 220:
       // '\'
       e.preventDefault();
@@ -78,7 +82,6 @@ var App = function(){
       break;
 
     case 191:
-
       // '?'
       e.preventDefault();
       if(e.shiftKey && this.view.hasOwnProperty('toggleHelp')){
