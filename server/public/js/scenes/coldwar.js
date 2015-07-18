@@ -1003,7 +1003,8 @@ Scenes.coldwar = function(el, opts){
   }
 
   function handleMouseWheel (e){
-    var delta = e.wheelDelta > 0 ? 1 : -1;
+    var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+    delta = delta > 0 ? 1 : -1;
     var x = e.layerX;
     var y = e.layerY;
     doZoom(delta, x, y);
