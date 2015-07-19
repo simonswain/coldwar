@@ -818,7 +818,7 @@ Scenes.coldwar = function(el, opts){
       html += '<div id="controls">';
       html += '<div id="params">';
       html += '<div class="expose expose-params expose-active">&equiv;</div>';
-      html += '<h3>Cold War</h3>';
+      html += '<div class="title">Cold War</div>';
       html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
       html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
       html += '<p>Type <strong>?</strong> for Help</p>';
@@ -826,6 +826,7 @@ Scenes.coldwar = function(el, opts){
       html += '<div id="options"></div>';
       html += '</div>';
     } else {
+      html += '<div class="title">Cold War</div>';
       html += '<div class="expose expose-params">&equiv;</div>';
     }
 
