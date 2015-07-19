@@ -8,25 +8,25 @@ function Sat(opts){
     opts.x,
     opts.y,
     opts.z
-  ); 
+  );
   this.color = opts.color;
   this.city = opts.city;
   this.world = opts.world;
   this.capital = opts.capital;
 
-  this.phase_x = Math.PI * Math.random(); 
-  this.phase_y = Math.PI * Math.random(); 
+  this.phase_x = Math.PI * Math.random();
+  this.phase_y = Math.PI * Math.random();
 
   this.speed_x = (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random());
   this.speed_y = (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random());
 
-  this.angle = Math.PI * Math.random(); 
+  this.angle = Math.PI * Math.random();
   this.rotation = (Math.PI * 0.005) + (Math.PI * 0.005 * Math.random());
 
   this.laser = null;
   this.laser_range = this.world.max * 0.25;
   this.laser_max = Math.floor(30 + (10*Math.random()));
-  this.laser_power = 0; // current laser charge 
+  this.laser_power = 0; // current laser charge
 
 
   this.dead = false;
@@ -63,7 +63,7 @@ Sat.prototype.shootLaser = function(){
   var laser_range = this.laser_range + 1;
 
   for(i=0, ii=this.world.icbms.length; i<ii; i++){
-   
+
     other = this.world.icbms[i];
     if(other.capital === this.capital){
       continue;
@@ -119,7 +119,7 @@ Sat.prototype.paint = function(view){
   // view.ctx.beginPath();
   // view.ctx.lineWidth = 1;
   // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
-  // view.ctx.strokeStyle = '#222'; 
+  // view.ctx.strokeStyle = '#222';
   // view.ctx.stroke();
 
   view.ctx.fillStyle = '#000';
@@ -154,13 +154,13 @@ Sat.prototype.elevation = function(view){
     view.ctx.stroke();
   }
 
-  view.ctx.save();  
+  view.ctx.save();
   view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
 
   // view.ctx.beginPath();
   // view.ctx.lineWidth = 1;
   // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
-  // view.ctx.strokeStyle = '#222'; 
+  // view.ctx.strokeStyle = '#222';
   // view.ctx.stroke();
 
   view.ctx.fillStyle = this.color;
