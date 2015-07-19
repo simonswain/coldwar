@@ -12,7 +12,7 @@ Scenes.coldwar = function(el, opts){
   loadScenarios();
 
   this.el = el;
-  this.show_opts = true;
+  this.show_opts = false;
   this.show_meta = false;
   this.show_help = false;
   this.show_help_changed = false;
@@ -433,7 +433,7 @@ Scenes.coldwar = function(el, opts){
       views.map.ctx.textBaseline = 'middle';
       views.map.ctx.textAlign = 'right';
       views.map.ctx.fillStyle = '#999';
-      
+
       views.map.ctx.fillText(self.world.bombers.length + ' bombers ', text_x, 32);
       views.map.ctx.fillText(self.world.fighters.length + ' fighters', text_x, 56);
       views.map.ctx.fillText(self.world.icbms.length + ' icbms   ', text_x, 80);
