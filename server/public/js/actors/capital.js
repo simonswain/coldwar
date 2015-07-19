@@ -218,7 +218,7 @@ Capital.prototype.makeSat = function() {
   var sat = new Sat({
     x: x,
     y: y,
-    z: this.world.max_z * 0.9,
+    z: this.world.max_z * 0.85,
     world: this.world,
     capital: this,
     color: this.color,
