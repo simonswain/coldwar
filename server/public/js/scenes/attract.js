@@ -1209,7 +1209,7 @@ Scenes.attract = function(el, opts) {
     html = '';
     html += '<div id="map"><canvas id="cMap"></canvas></div>';
     html += '<div id="elevation"><canvas id="cElevation"></canvas></div>';
-    html += '<div class="title">Cold War</div>';
+    html += '<div class="title title-large">Cold War</div>';
 
     self.el.innerHTML = html;
 
