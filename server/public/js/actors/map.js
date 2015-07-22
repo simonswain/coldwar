@@ -32,7 +32,7 @@ Map.prototype.paint = function(view) {
 
     view.ctx.lineWidth = 4;
 
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.color) + ',0.4)';
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.color) + ',0.7)';
     if(Math.random() < 0.1){
       view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.color) + ',0.25)';
     }
@@ -57,11 +57,11 @@ Map.prototype.paint = function(view) {
   }
 
   if (this.title) {
-    view.ctx.fillStyle = this.color;
-    view.ctx.font = '10pt monospace';
+    view.ctx.fillStyle = '#fff'; //this.color;
+    view.ctx.font = '24pt ubuntu mono, monospace';
     view.ctx.textBaseline = 'middle';
     view.ctx.textAlign = 'center';
-    view.ctx.fillText(this.title, 0, 32);
+    view.ctx.fillText(this.title, 0, 210);
   }
 
   view.ctx.restore();

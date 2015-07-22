@@ -519,14 +519,6 @@ Capital.prototype.paint = function(view) {
 
   view.ctx.fillText(this.defcon, 0, 1);
 
-  if (this.title) {
-    view.ctx.fillStyle = this.color;
-    view.ctx.font = '10pt monospace';
-    view.ctx.textBaseline = 'middle';
-    view.ctx.textAlign = 'center';
-    view.ctx.fillText(this.title, 0, 32);
-  }
-
   view.ctx.restore();
 
 };

@@ -586,7 +586,6 @@ Scenes.coldwar = function(el, opts){
         }];
       }
 
-
       if(self.opts.first_strike){
         // select one capital to attack first
         capitals.forEach(function(attrs, xx){
@@ -673,7 +672,7 @@ Scenes.coldwar = function(el, opts){
           icbms: self.opts.stock_icbms,
           abms: self.opts.stock_abms
         },
-
+        title: 'AU',
         outline: [
           [-200, -250, true],
           [-150, -250],
@@ -738,6 +737,7 @@ Scenes.coldwar = function(el, opts){
           abms: self.opts.stock_abms
         },
 
+        title: 'NZ',
         outline: [
           // ni
           [-30, 20, true],
@@ -800,15 +800,173 @@ Scenes.coldwar = function(el, opts){
           z: attrs.z,
           color: attrs.color,
           world: self.world,
+          title: attrs.title,
           outline: attrs.outline,
         }));
       });
+
+    }
+
+    scenarios[2] = function(){
+
+        // ca vs tx
+
+        var capitals = [];
+
+        // ca
+        capitals.push({
+          x: self.world.max_x * 0.3,
+          y: self.world.max_y * 0.5,
+          z: 0,
+          color: '#fc0',
+          world: self.world,
+          strike: false,
+          defcon: self.opts.defcon,
+          unit_rate: self.opts.unit_rate,
+
+          bases_max: self.opts.bases_max,
+          cities_max: self.opts.cities_max,
+          factories_max: self.factories_max,
+          sats_max: self.opts.sats_max,
+
+          bomber_launch_max: self.opts.bomber_launch_max,
+          fighter_launch_max: self.opts.fighter_launch_max,
+
+          icbm_launch_max: self.opts.icbm_launch_max,
+          abm_launch_max: self.opts.abm_launch_max,
+
+          stock: {
+            bombers: self.opts.stock_bombers,
+            fighters: self.opts.stock_fighters,
+            icbms: self.opts.stock_icbms,
+            abms: self.opts.stock_abms
+          },
+
+          title: 'CA',
+          outline: [
+            [20, -180, true],
+            [20, -80],
+            [150, 160],
+            [150, 170],
+            [140, 190],
+            [140, 200],
+            [140, 200],
+            [80, 210],
+            [70, 180],
+            [0, 130],
+            [0, 120],
+            [-100, -100],
+            [-80, -170],
+            [-80, -200],
+            [20, -180]
+          ],
+
+          assets: {
+            bases: [[-30, -150], [30, 50],[90, 200],[20, -80]],
+            cities: [[45, 160], [-70, -60],[-30, 40], [-10, 90]],
+            factories: [[-50, -20],[60, 100]]
+          }
+
+
+        });
+
+        // tx
+        capitals.push({
+          x: self.world.max_x * 0.7,
+          y: self.world.max_y * 0.5,
+          z: 0,
+          color: '#0cc',
+
+          world: self.world,
+          strike: false,
+          defcon: self.opts.defcon,
+          unit_rate: self.opts.unit_rate,
+
+          bases_max: self.opts.bases_max,
+          cities_max: self.opts.cities_max,
+          factories_max: self.factories_max,
+          sats_max: self.opts.sats_max,
+
+          bomber_launch_max: self.opts.bomber_launch_max,
+          fighter_launch_max: self.opts.fighter_launch_max,
+
+          icbm_launch_max: self.opts.icbm_launch_max,
+          abm_launch_max: self.opts.abm_launch_max,
+
+          stock: {
+            bombers: self.opts.stock_bombers,
+            fighters: self.opts.stock_fighters,
+            icbms: self.opts.stock_icbms,
+            abms: self.opts.stock_abms
+          },
+
+          title: 'TX',
+          outline: [
+            [0, -190, true],
+            [0, -80],
+            [100, -70],
+            [150, -80],
+            [180, -70],
+            [180, 0],
+            [200, 35],
+            [190, 80],
+            [80, 140],
+            [80, 200],
+            [20, 180],
+            [-40, 100],
+            [-70, 100],
+            [-90, 120],
+            [-100, 120],
+            [-120, 120],
+            [-150, 60],
+            [-200, 0],
+            [-100, 0],
+            [-100, -190],
+            [0, -190]
+
+
+          ],
+
+          assets: {
+            bases: [[100, 40], [-50, -160], [-190, 0], [100, 140]],
+            cities: [[-50, -100], [-50, 40], [-80, 70], [50, -40]],
+            factories: [[100, -40], [150, 100]]
+          }
+
+        });
+
+      if(self.first_strike){
+        // select one capital to attack first
+        capitals.forEach(function(attrs, xx){
+          attrs.strike = false;
+        });
+        capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      } else {
+        // all capitals attack
+        capitals.forEach(function(attrs){
+          attrs.strike = true;
+        });
+      }
+
+      capitals.forEach(function(attrs){
+        self.world.capitals.push(new Capital(attrs));
+        self.world.maps.push(new Map({
+          x: attrs.x,
+          y: attrs.y,
+          z: attrs.z,
+          color: attrs.color,
+          world: self.world,
+          title: attrs.title,
+          outline: attrs.outline,
+        }));
+      });
+
     };
   }
 
 
   function render(){
-    self.zoom = 1;
+    resetZoom();
     var html;
     var c = self.show_opts ? 'has-controls' : '';
     html = '';
@@ -896,8 +1054,6 @@ Scenes.coldwar = function(el, opts){
     if(self.show_opts){
       paintOpts();
     }
-
-    doZoom(1);
 
   }
 
