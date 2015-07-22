@@ -453,6 +453,10 @@ Scenes.coldwar = function(el, opts){
 
   function init(){
 
+    self.gameover = false;
+    self.raf = null;
+    self.at = 0;
+
     // world size
     self.max_x = self.opts.max_x;
     self.max_y = self.opts.max_y;
@@ -464,10 +468,6 @@ Scenes.coldwar = function(el, opts){
       max_y: self.opts.max_y,
       max_z: self.opts.max_z
     });
-
-    self.gameover = false;
-    self.raf = null;
-    self.at = 0;
 
     self.world.maps = [];
     self.world.booms = [];
