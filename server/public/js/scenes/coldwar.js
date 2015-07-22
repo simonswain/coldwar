@@ -359,7 +359,7 @@ Scenes.coldwar = function(el, opts){
         views.map.ctx.font = '32pt ubuntu mono, monospace';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.9);
+        views.map.ctx.fillText('MAD', self.max_x/2, self.max_y * 0.1);
 
         views.elv.ctx.fillStyle = '#fff';
         views.elv.ctx.font = '24pt ubuntu mono, monospace';
@@ -373,7 +373,7 @@ Scenes.coldwar = function(el, opts){
         views.map.ctx.font = '32pt ubuntu mono, monospace';
         views.map.ctx.textBaseline = 'middle';
         views.map.ctx.textAlign = 'center';
-        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.9);
+        views.map.ctx.fillText('WIN', self.world.capitals[0].pos.x, self.max_y * 0.1);
 
         views.elv.ctx.fillStyle = '#fff';
         views.elv.ctx.font = '24 ubuntu mono, monospace';
@@ -976,7 +976,7 @@ Scenes.coldwar = function(el, opts){
       html += '<div id="controls">';
       html += '<div id="params">';
       html += '<div class="expose expose-params expose-active">&equiv;</div>';
-      html += '<div class="title">Cold War</div>';
+      html += '<div class="title"><a href="attract">Cold War</a></div>';
       html += '<p><a href="https://twitter.com/simon_swain" target="new">@simon_swain</a></p>';
       html += '<p><a href="https://github.com/simonswain/coldwar" target="new">#coldwar</a></p>';
       html += '<p>Type <strong>?</strong> for Help</p>';
@@ -984,7 +984,7 @@ Scenes.coldwar = function(el, opts){
       html += '<div id="options"></div>';
       html += '</div>';
     } else {
-      html += '<div class="title">Cold War</div>';
+      html += '<div class="title"><a href="attract">Cold War</a></div>';
       html += '<div class="expose expose-params">&equiv;</div>';
     }
 
