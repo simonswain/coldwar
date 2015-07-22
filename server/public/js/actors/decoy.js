@@ -11,7 +11,7 @@ function Decoy(opts){
   this.hidden = opts.hidden || false;
   this.color = opts.color || '#fff';
   this.dead = false;
-  console.log(this.color);
+
   this.bombers = opts.bombers || 0;
   this.fighters = opts.fighters || 0;
   this.icbms = opts.icbms || 0;
@@ -30,7 +30,6 @@ Decoy.prototype.update = function(delta){
 };
 
 Decoy.prototype.destroy = function(){
-  console.log('destroy');
 };
 
 Decoy.prototype.launch = function(){

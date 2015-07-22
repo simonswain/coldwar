@@ -24,6 +24,13 @@ var App = function(){
     var pairs, opts;
     opts = {};
 
+    var path = window.location.pathname.split('/');
+    if(path.pop() === 'attract'){
+      this.view = new Scenes.attract(this.el);
+      this.view.start();
+      return;
+    }
+
     if(window.location.search.substr(0,1) === '?'){
       pairs = window.location.search.substr(1).split('&');
       pairs.forEach(function(pair, ix){
