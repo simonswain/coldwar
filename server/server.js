@@ -11,7 +11,7 @@ var AssetManager = require('./assets');
 module.exports = function(config){
 
   config = config || {};
- 
+
   if(!config.hasOwnProperty('server')){
     config.server = {
       host: '127.0.0.1',
@@ -46,6 +46,7 @@ module.exports = function(config){
 
   var manifest = require( __dirname + '/manifest');
   manifest.pub.opts.outUrl = config.docroot + '/assets';
+  manifest.pub.opts.url = config.docroot;
   var assets = AssetManager.load(manifest);
 
   var appHandler = function (request, reply) {
@@ -56,7 +57,7 @@ module.exports = function(config){
       ga_id: config.ga_id
     });
   };
- 
+
   server.route({
     method: 'GET',
     path: '/',
