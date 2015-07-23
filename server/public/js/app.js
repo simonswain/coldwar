@@ -25,11 +25,13 @@ var App = function(){
     opts = {};
 
     var path = window.location.pathname.split('/');
-    if(path.pop() === 'attract'){
+
+    if(path.pop() === "attract"){
       this.view = new Scenes.attract(this.el);
       this.view.start();
       return;
     }
+
 
     if(window.location.search.substr(0,1) === '?'){
       pairs = window.location.search.substr(1).split('&');
@@ -37,6 +39,12 @@ var App = function(){
         pair = pair.split('=');
         opts[pair[0]] = Number(pair[1]);
       });
+    }
+
+    if(opts.hasOwnProperty('attract') && opts.attract){
+      this.view = new Scenes.attract(this.el);
+      this.view.start();
+      return;
     }
 
     this.view = new Scenes.coldwar(this.el, opts);

@@ -50,6 +50,7 @@ module.exports = function(config){
 
   var appHandler = function (request, reply) {
     reply.view('app', {
+      root: config.docroot,
       js: assets.keys.pub.js(),
       css: assets.keys.pub.css(),
       ga_id: config.ga_id
