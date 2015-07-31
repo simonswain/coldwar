@@ -11,6 +11,8 @@ Talks have been given on Coldwar at:
 * SydJS, July 2015 (Sydney, Australia)
 * TX JS, July 2015 (Austin, Texas, US)
 
+[Video of Coldwar talk at TXJS 2015](https://www.youtube.com/watch?v=hXW7kkyhtqo&list=PLMWftTFfsA8Om-GqKm46bw8GVxyKXRz0X&index=1)
+
 ## Install
 
 ```bash
