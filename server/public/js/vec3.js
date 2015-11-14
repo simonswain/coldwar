@@ -13,6 +13,13 @@ Vec3.prototype = {
     return this;
   },
 
+  plus: function(other){
+    var x = this.x + other.x;
+    var y = this.y + other.y;
+    var z = this.z + other.z;
+    return new Vec3(x, y, z);
+  },
+
   sub: function(other){
     this.x = this.x - other.x;
     this.y = this.y - other.y;
@@ -40,7 +47,6 @@ Vec3.prototype = {
     return Math.sqrt( (x*x) + (y*y) + (z*z) );
   },
 
-
   range2: function(other) {
     var x = Math.abs(this.x - other.x);
     var y = Math.abs(this.y - other.y);
@@ -65,8 +71,22 @@ Vec3.prototype = {
     return Math.atan2(y, x);
   },
 
+  rotateZ: function(angle) {
+    var sin = Math.sin(angle);
+    var cos = Math.cos(angle);
+    var x = this.x;
+    var y = this.y;
+    this.x = (cos * x) - (sin * y);
+    this.y = (cos * y) + (sin * x);
+    return this;
+  },
+
   mag: function () {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  },
+
+  magXY: function () {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   },
 
   magSq: function () {
@@ -136,7 +156,7 @@ Vec3.prototype = {
     this.y = 0;
     this.z = 0;
     return this;
-  }
+  },
 
 };
 

@@ -1,74 +1,96 @@
-/*global Vec3:true, Boom:true, pickOne:true, hex2rgb */
+/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function Supply(opts){
+Actors.Supply = function(env, refs, attrs){
+  this.env = env;
+  this.refs = refs;
+  this.opts = this.genOpts();
+  this.attrs = this.genAttrs(attrs);
+  this.init();
+};
 
-  this.color = opts.color;
-  this.world = opts.world;
-  this.capital = opts.capital;
+Actors.Supply.prototype = Object.create(Actor.prototype);
 
-  this.target = opts.target;
-  this.units = opts.units || null; 
-  this.stock = opts.stock || null;
+Actors.Supply.prototype.title = 'Supply';
 
-  this.pos = new Vec3(opts.x, opts.y, 0);
-  this.velo = new Vec3(); 
+Actors.Supply.prototype.genAttrs = function(attrs){
+  return {
+    x: attrs.x,
+    y: attrs.y,
+    z: attrs.z,
+    radius: attrs.radius || this.opts.radius,
+    color: attrs.color || '#f0f',
+    dead: false,
+    speed: 1,
+    supply_range: 8,
+    units: attrs.units || null,
+    stock: attrs.stock || null
+  };
+};
 
-  this.speed = this.world.unit_speed * 1;
+Actors.Supply.prototype.init = function(){
+  this.pos = new Vec3(
+    this.attrs.x,
+    this.attrs.y,
+    this.attrs.z
+  );
+  this.velo = new Vec3();
+};
 
-  this.supply_range = 8;
+Actors.Supply.prototype.defaults = [{
+  key: 'radius',
+  info: '',
+  value: 25,
+  min: 10,
+  max: 100
+}];
 
-  this.dead = false;
+Actors.Supply.prototype.update = function(delta) {
 
-}
-
-Supply.prototype.update = function(delta){
-
-  this.ttl --;
-
-  if(!this.target || this.target.dead){
-    this.dead = true;
+  if(!this.refs.target || this.refs.target.dead){
+    this.attrs.dead = true;
     return;
   }
 
   // distance to target
-  var range = this.pos.rangeXY(this.target.pos);
-  if(range <= this.supply_range){
-    if(this.units){
-      this.target.addUnits(this.units);
+  var range = this.pos.rangeXY(this.refs.target.pos);
+
+  if(range <= this.attrs.supply_range){
+    if(this.attrs.units){
+      this.refs.target.addUnits(this.attrs.units);
     }
-    if(this.stock){
-      this.target.addStock(this.stock);
+    if(this.attrs.stock){
+      this.refs.target.addStock(this.attrs.stock);
     }
-    this.dead = true;
+    this.attrs.dead = true;
     return;
   }
 
-  var vector = this.target.pos.minus(this.pos).normalize();
-  vector.scale(this.speed);
+  var vector = this.refs.target.pos.minus(this.pos).normalize();
+  vector.scale(this.attrs.speed);
   this.pos.add(vector);
 
 };
 
-
-Supply.prototype.paint = function(view){
+Actors.Supply.prototype.paint = function(view) {
 
   view.ctx.save();
   view.ctx.translate(this.pos.x, this.pos.y);
 
-  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.color) + ', 0.5)';
-  //view.ctx.fillStyle = this.color;
+  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)';
+  //view.ctx.fillStyle = this.attrs.color;
   view.ctx.beginPath();
 
-  if(this.stock){
+  if(this.attrs.stock){
     // munitions
     view.ctx.fillRect(-2, -2, 4, 4);
   } else {
     // raw materials
-    view.ctx.beginPath();     
+    view.ctx.beginPath();
     view.ctx.arc(0, 0, 2, 0, 2*Math.PI);
-    view.ctx.closePath();     
+    view.ctx.closePath();
     view.ctx.fill();
   }
 
@@ -76,25 +98,22 @@ Supply.prototype.paint = function(view){
 
 };
 
+Actors.Supply.prototype.elevation = function(view) {
 
-Supply.prototype.elevation = function(view){
+  view.ctx.save();
+  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)));
 
-  var scale = view.yscale;
+  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)';
+  //view.ctx.fillStyle = this.attrs.color;
 
-  view.ctx.save();  
-  view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
-
-  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.color) + ', 0.5)';
-  //view.ctx.fillStyle = this.color;
-
-  if(this.stock){
+  if(this.attrs.stock){
     // munitions
     view.ctx.fillRect(-3, -3, 2, 2);
   } else {
     // raw materials
-    view.ctx.beginPath();     
+    view.ctx.beginPath();
     view.ctx.arc(-2, -2, 1, 0, 2*Math.PI);
-    view.ctx.closePath();     
+    view.ctx.closePath();
     view.ctx.fill();
   }
 

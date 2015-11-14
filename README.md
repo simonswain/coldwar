@@ -4,17 +4,21 @@
 
 ## Talks
 
-* [Video of Coldwar talk at TXJS 2015](https://www.youtube.com/watch?v=hXW7kkyhtqo&list=PLMWftTFfsA8Om-GqKm46bw8GVxyKXRz0X&index=1)
-* [Video of Coldwar talk at Web Directions CODE 2015](https://vimeo.com/132786140)
-
 Talks have been given on Coldwar at:
 
 * JSConf US, May 2015 (Jacksonville, Florida, US)
 * Web Directions Code, June 2015 (Melbourne, Australia)
 * SydJS, July 2015 (Sydney, Australia)
 * TX JS, July 2015 (Austin, Texas, US)
+* Talk.js, November 2015 (Singapore)
+
+## Stickers
+
+[Stickers available here](https://www.stickermule.com/marketplace/9199-coldwar-dot-io)
 
 ## Install
+
+You'll need node.js version 4 or above.
 
 ```bash
 git clone git@github.com:simonswain/coldwar.git
@@ -23,50 +27,21 @@ cp config/index.sample.js config/index.js
 npm install
 node run
 
-# http://localhost:3002
+# http://localhost:4002
 ```
 
-## Shortcuts
+## Key Controls
 
-Press `?` for help.
+`tab` toggle options
+`esc` back to index
+`enter` restart scene
 
-Press `\` for diagnostics.
+`?` help.
+`\` diagnostics.
 
-## About
-
-There are two views, top view and elevation view. All the actors have an x, y and z.
-
-Each of the circle structures is a nation state.
-
-It has a capital at the center (square, blinking). Defcon is the number in the capital.
-
-Cities (circles) send people to work at factories.
-
-Factories (triangles) make munitions and send them to bases
-
-Bases (square) stockpile munitions (counts, clockwise from top right: icbms, abms (anti ballistic missiles),
-fighters and bombers.
-
-Bombers are big and slow (triangles) that select a target (factory, base, city, capital in that order), fly to it
-and nuke it, reselecting a target if somebody else destroys it first.
-
-As defence perimeters are penetrated, defcon gets more scary.
-
-Fighters launch at Defcon 4 and attempt to destroy bombers.
-
-At Defcon 3, Bases launch ICBMs a low probability amount of the time.
-
-Satellites launch at Defcon 2, and can shoot ICBMs out of the sky, but have fire/recharge lasers.
-
-When one of a nation's assets (factory, base, city) is nuked, they go to Defcon 1.
-
-If your enemy goes to Defcon 1, so do you.
-
-At Defcon 1, all ICBMs will fire.
-
-When your capital is destroyed, it's Game Over.
-
-The control panel lets you tweak the starting parameters. There are a lot more controls for all the actors (e.g, how close do bombers flock.) than are not exposed here.
+`drag` pan
+`+`, `-`, '0' zoom
+`mousewheel` zoom.
 
 ## References
 
@@ -84,6 +59,6 @@ The control panel lets you tweak the starting parameters. There are a lot more c
 
 ## History
 
-2015-05-27 0.0.1 Initial public release
+2015-11-17 1.0.0 Initial public release
 
 MIT Licence

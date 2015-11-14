@@ -1,8 +1,9 @@
-/*global Vec3:true */
+/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function World(opts){
+Actors.World = function(opts){
 
   var self = this;
 
@@ -28,16 +29,6 @@ function World(opts){
 
   this.flash = 0;
 
-  // this.sounds = { 
-  //   'egg': new Audio("sounds/joustegg.wav"),
-  //   'flap': new Audio("sounds/joustfla.wav"),
-  //   'pickup': new Audio("sounds/deflande.wav"),
-  //   'bd808': new Audio("sounds/808bd09.mp3"),
-  //   'oh909': new Audio("sounds/HHOD0.WAV"),
-  //   'bd909': new Audio("sounds/BT7A0DA.WAV"),
-  //   'sn909': new Audio("sounds/ST0T0S7.WAV"),
-  // };
-  
   this.play = function(sound){
     if(this.opts.sounds === 0){
       return;
@@ -47,15 +38,15 @@ function World(opts){
     self.sounds[sound].play();
   }
 
-}
+};
 
-World.prototype.update = function(delta){
+Actors.World.prototype.update = function(delta){
   if(this.flash>0){
     this.flash --;
   }
 };
 
-World.prototype.paint = function(view){
+Actors.World.prototype.paint = function(view){
   view.ctx.strokeStyle= 'rgba(255, 255, 255, 0.2)';
   view.ctx.lineWidth = 1;
   view.ctx.beginPath();

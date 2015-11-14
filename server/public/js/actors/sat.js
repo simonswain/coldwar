@@ -1,79 +1,102 @@
-/*global Vec3:true */
+/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function Sat(opts){
+Actors.Sat = function(env, refs, attrs){
+  this.env = env;
+  this.refs = refs;
+  this.opts = this.genOpts();
+  this.attrs = this.genAttrs(attrs);
+  this.init();
+};
+
+Actors.Sat.prototype = Object.create(Actor.prototype);
+
+Actors.Sat.prototype.title = 'Sat';
+
+Actors.Sat.prototype.init = function(){
 
   this.pos = new Vec3(
-    opts.x,
-    opts.y,
-    opts.z
+    this.attrs.x,
+    this.attrs.y,
+    this.attrs.z
   );
-  this.color = opts.color;
-  this.city = opts.city;
-  this.world = opts.world;
-  this.capital = opts.capital;
 
-  this.phase_x = Math.PI * Math.random();
-  this.phase_y = Math.PI * Math.random();
+};
 
-  this.speed_x = (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random());
-  this.speed_y = (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random());
+Actors.Sat.prototype.defaults = [{
+  key: 'laser_range',
+  info: '.',
+  value: 0.2,
+  min: 0.2,
+  max: 0.5,
+  step: 0.01
+}];
 
-  this.angle = Math.PI * Math.random();
-  this.rotation = (Math.PI * 0.005) + (Math.PI * 0.005 * Math.random());
+Actors.Sat.prototype.genAttrs = function(attrs){
+  return {
+    x: attrs.x,
+    y: attrs.y,
+    z: attrs.z,
+    color: attrs.color || '#f0f',
+    dead: false,
+    phase_x: Math.PI * Math.random(),
+    phase_y: Math.PI * Math.random(),
+    speed_x: (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random()),
+    speed_y: (Math.PI * 0.0025) + (Math.PI * 0.0025 * Math.random()),
+    angle: Math.PI * Math.random(),
+    rotation: (Math.PI * 0.005) + (Math.PI * 0.005 * Math.random()),
+    laser: null,
+    laser_range: attrs.laser_range || this.refs.scene.opts.max * this.opts.laser_range,
+    laser_max: Math.floor(30 + (10*Math.random())),
+    laser_power: 0 // current laser charge
 
-  this.laser = null;
-  this.laser_range = this.world.max * 0.25;
-  this.laser_max = Math.floor(30 + (10*Math.random()));
-  this.laser_power = 0; // current laser charge
+  };
+};
 
+Actors.Sat.prototype.update = function(delta) {
 
-  this.dead = false;
+  this.attrs.phase_x += this.attrs.speed_x;
+  this.attrs.phase_y += this.attrs.speed_y;
 
-}
+  this.attrs.angle += this.attrs.rotation;
 
-Sat.prototype.update = function(delta){
-
-  this.phase_x += this.speed_x;
-  this.phase_y += this.speed_y;
-
-  this.angle += this.rotation;
-
-  this.pos.x = (this.world.max_x * 0.5) + (this.world.max_x * 0.1 * Math.sin(this.phase_x));
-  this.pos.y = (this.world.max_y * 0.5) + (this.world.max_y * 0.3 * Math.sin(this.phase_y));
+  this.pos.x = (this.refs.scene.opts.max_x * 0.5) + (this.refs.scene.opts.max_x * 0.1 * Math.sin(this.attrs.phase_x));
+  this.pos.y = (this.refs.scene.opts.max_y * 0.5) + (this.refs.scene.opts.max_y * 0.3 * Math.sin(this.attrs.phase_y));
 
   // reset laser
-  this.laser = null;
+  this.attrs.laser = null;
 
   // charge laser
-  if(this.laser_power < this.laser_max){
-    this.laser_power ++;
+  if(this.attrs.laser_power < this.attrs.laser_max){
+    this.attrs.laser_power ++;
   }
 
   this.shootLaser();
 
 };
 
-Sat.prototype.shootLaser = function(){
+
+Actors.Sat.prototype.shootLaser = function(){
 
   var i, ii;
   var target, other;
   var dist, distX;
-  var laser_range = this.laser_range + 1;
+  var laser_range = this.attrs.laser_range + 1;
 
-  for(i=0, ii=this.world.icbms.length; i<ii; i++){
+  for(i=0, ii=this.refs.scene.icbms.length; i<ii; i++){
 
-    other = this.world.icbms[i];
-    if(other.capital === this.capital){
+    other = this.refs.scene.icbms[i];
+    if(other.refs.capital === this.refs.capital){
       continue;
     }
     distX = this.pos.range(other.pos);
-    if(distX > this.laser_range){
+    if(distX > this.attrs.laser_range){
       continue;
     }
     dist = this.pos.range(other.pos);
-    if(dist < this.laser_range){
+    if(dist < this.attrs.laser_range){
       laser_range = dist;
       target = other;
     }
@@ -85,48 +108,49 @@ Sat.prototype.shootLaser = function(){
 
 };
 
-Sat.prototype.shoot = function(target){
+Actors.Sat.prototype.shoot = function(target){
 
-  if(this.laser_power <= 0){
+  if(this.attrs.laser_power <= 0){
     return;
   }
 
   // so it takes time to charge up
-  this.laser_power -= 5;
+  this.attrs.laser_power -= 5;
 
-  this.laser = new Vec3().copy(target.pos);
+  this.attrs.laser = new Vec3().copy(target.pos);
   target.destroy();
 
 };
 
-Sat.prototype.paint = function(view){
 
-  if(this.laser){
+Actors.Sat.prototype.paint = function(view) {
+
+  if(this.attrs.laser){
     view.ctx.beginPath();
     view.ctx.lineWidth = 2;
     view.ctx.strokeStyle = '#fff';
     view.ctx.moveTo(this.pos.x, this.pos.y);
-    //view.ctx.lineTo(this.laser.x, this.laser.y - this.laser.z); // fake3d
-    view.ctx.lineTo(this.laser.x, this.laser.y); // fake3d
+    //view.ctx.lineTo(this.attrs.laser.x, this.attrs.laser.y - this.attrs.laser.z); // fake3d
+    view.ctx.lineTo(this.attrs.laser.x, this.attrs.laser.y); // fake3d
     view.ctx.stroke();
   }
 
   view.ctx.save();
   view.ctx.translate(this.pos.x, this.pos.y);
-  view.ctx.rotate(this.angle);
+  view.ctx.rotate(this.attrs.angle);
 
   // range
   // view.ctx.beginPath();
   // view.ctx.lineWidth = 1;
-  // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
+  // view.ctx.arc(0, 0, this.attrs.laser_range, 0, 2*Math.PI);
   // view.ctx.strokeStyle = '#222';
   // view.ctx.stroke();
 
   view.ctx.fillStyle = '#000';
   view.ctx.fillRect(-6, -6, 12, 12);
 
-  view.ctx.fillStyle = this.color;
-  view.ctx.strokeStyle = this.color;
+  view.ctx.fillStyle = this.attrs.color;
+  view.ctx.strokeStyle = this.attrs.color;
   view.ctx.lineWidth = 2;
 
   view.ctx.beginPath();
@@ -141,29 +165,22 @@ Sat.prototype.paint = function(view){
   view.ctx.restore();
 };
 
-Sat.prototype.elevation = function(view){
+Actors.Sat.prototype.elevation = function(view) {
 
-  var scale = view.yscale;
-
-  if(this.laser){
+  if(this.attrs.laser){
     view.ctx.beginPath();
     view.ctx.lineWidth = 1;
     view.ctx.strokeStyle= '#fff';
-    view.ctx.moveTo(this.pos.x, (this.world.max_z - this.pos.z) * scale);
-    view.ctx.lineTo(this.laser.x, (this.world.max_z - this.laser.z) * scale);
+    view.ctx.moveTo(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z));
+    view.ctx.lineTo(this.attrs.laser.x, (this.refs.scene.opts.max_z - this.attrs.laser.z));
     view.ctx.stroke();
   }
 
   view.ctx.save();
-  view.ctx.translate(this.pos.x, (this.world.max_z - this.pos.z) * scale);
+  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z));
 
-  // view.ctx.beginPath();
-  // view.ctx.lineWidth = 1;
-  // view.ctx.arc(0, 0, this.laser_range, 0, 2*Math.PI);
-  // view.ctx.strokeStyle = '#222';
-  // view.ctx.stroke();
 
-  view.ctx.fillStyle = this.color;
+  view.ctx.fillStyle = this.attrs.color;
   view.ctx.beginPath();
   view.ctx.fillRect(-2, -2, 4, 4);
 

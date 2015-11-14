@@ -1,19 +1,20 @@
 {
   "name": "coldwar",
   "description": "",
-  "version": "0.0.1",
-  "homepage": "https://simonswain.com/coldwar",
+  "version": "1.0.0",
+  "homepage": "https://coldwar.io",
   "author": {
     "name": "Simon Swain",
-    "email": "simon@simonswain.com"
+    "email": "simon@simonswain.com",
+    "url": "https://simonswain.com"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/simonswain/coldwar"
   },
   "main": "lib/index.js",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 4.2.0"
   },
   "scripts": {
     "test": "grunt test",
@@ -35,5 +36,11 @@
     "grunt-contrib-nodeunit": "^0.4.1",
     "nodeunit": "^0.9.1",
     "nodeunit-httpclient": "^0.2.1"
-  }
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/simonswain/coldwar/blob/master/LICENSE-MIT"
+    }
+  ]
 }

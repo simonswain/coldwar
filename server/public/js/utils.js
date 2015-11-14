@@ -16,3 +16,32 @@ function hex2rgb(hex, f){
   rgb.push(parseInt(hex.substr(3,1), 16) * f);
   return rgb.join(',');
 }
+
+function dec2hex(d, padding) {
+  var hex = Number(d).toString(16);
+  padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+  while (hex.length < padding) {
+    hex = "0" + hex;
+  }
+  return hex;
+}
+
+function random0to (max) {
+  return Math.floor( Math.random() * max );
+}
+
+function random1to (max) {
+  return 1 + Math.floor( Math.random() * max );
+}
+
+var random = {
+  from0upto: function (max) {
+    return Math.floor( Math.random() * (max));
+  },
+  from0to: function (max) {
+    return Math.floor( Math.random() * (max + 1));
+  },
+  from1to: function (max) {
+    return 1 + Math.floor( Math.random() * max );
+  }
+};

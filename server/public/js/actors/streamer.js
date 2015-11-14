@@ -1,6 +1,7 @@
-/*global Vec3:true, Boom:true */
+/*global Actors:true, Vec3:true, VecR:true, hex2rgb:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
 function Streamer(opts){
 
@@ -9,9 +10,9 @@ function Streamer(opts){
   this.pos = new Vec3(
     opts.x,
     opts.y
-  ); 
+  );
 
-  this.target = opts.target; 
+  this.target = opts.target;
 
   // target was destroyed before we could aim at it
   if(!this.target){
@@ -32,7 +33,7 @@ function Streamer(opts){
 }
 
 Streamer.prototype.update = function(delta){
-  
+
   if(!this.target){
     this.dead = true;
     return;

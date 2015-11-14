@@ -1,43 +1,109 @@
-/*global Vec3:true, Interceptor:true, pickOne:true */
+/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true, pickOne:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function Silo(opts){
+Actors.Silo = function(env, opts, attrs){
+  this.env = env;
+  this.opts = this.genOpts();
+  this.attrs = this.genAttrs(attrs);
 
-  this.booms = opts.booms;
-  this.bombs = opts.bombs;
-  this.interceptors = opts.interceptors;
+  this.world = opts.world;
+  // access via world
+  // this.booms = opts.booms;
+  // this.bombs = opts.bombs;
+  // this.interceptors = opts.interceptors;
 
-  this.h = opts.h || Infinity;
+  this.init();
+};
 
+Actors.Silo.prototype.title = 'Silo';
+
+Actors.Silo.prototype.init = function(){
   this.pos = new Vec3(
-    opts.x, 
-    opts.y
+    this.attrs.x,
+    this.attrs.y,
+    this.attrs.z
   );
+  this.attrs.stock = this.opts.stock;
+};
 
-  this.launch_max = opts.launch_max || 1;
-  this.launch_per_tick = opts.launch_per_tick || 1;
-  this.stock = opts.stock || 1000;
-  this.color = opts.color || '#fff';
+Actors.Silo.prototype.defaults = [{
+  key: 'launch_max',
+  info: '',
+  value: 2,
+  min: 1,
+  max: 100
+}, {
+  key: 'launch_per_tick',
+  info: '',
+  value: 1,
+  min: 1,
+  max: 100
+}, {
+  key: 'color',
+  info: 'spectrum',
+  value: 4,
+  min: 0,
+  max: 7
+}, {
+  key: 'stock',
+  info: '',
+  value: 1000,
+  min: 0,
+  max: 10000
+}];
 
-  // interceptor reduces this count to false when it dies
-  this.launched = 0;
+// spectrum 000 00f f00 f0f 0f0 0ff ff0 fff
 
-  this.timer = 0;
-  this.flash = false;
+Actors.Silo.prototype.getParams = function(){
+  return this.defaults;
+};
 
-  this.dead = false;
+Actors.Silo.prototype.genOpts = function(args){
+  var opts = {};
+  var params = this.getParams();
+  params.forEach(function(param){
+    if(args && args.hasOwnProperty(param.key)){
+      opts[param.key] = Number(args[param.key]);
+    } else {
+      opts[param.key] = param.value;
+    }
+  }, this);
+  return opts;
+};
 
-}
+Actors.Silo.prototype.genAttrs = function(attrs){
+  return {
+    x: attrs.x,
+    y: attrs.y,
+    z: attrs.z,
+    launched: 0,
+    stock: this.opts.stock,
+    dead: false,
+    flash: false
+  };
+};
 
-Silo.prototype.update = function(delta){
+Actors.Silo.prototype.x = function(f){
+  return this.opts.max_x * f;
+};
+
+Actors.Silo.prototype.y = function(f){
+  return this.opts.max_y * f;
+};
+
+Actors.Silo.prototype.z = function(f){
+  return this.opts.max_z * f;
+};
+
+
+Actors.Silo.prototype.update = function(delta){
 
   var bomb;
   var launched_this_tick = 0;
-
-  while(this.stock > 0 && this.launched < this.launch_max && launched_this_tick < this.launch_per_tick){
-
-    bomb = pickOne(this.bombs);
+  while(this.attrs.stock > 0 && this.attrs.launched < this.opts.launch_max && launched_this_tick < this.opts.launch_per_tick){
+    bomb = pickOne(this.world.bombs);
 
     if(!bomb){
       break;
@@ -48,42 +114,41 @@ Silo.prototype.update = function(delta){
       continue;
     }
 
-    this.interceptors.push(new Interceptor({
-      x: this.pos.x,
-      y: this.pos.y,
-      silo: this,
-      target: bomb,
-      booms: this.booms,
-      bombs: this.bombs
-    }));
+    this.world.interceptors.push(new Actors.Interceptor(
+      this.env, {
+        world: this.world,
+        silo: this,
+        target: bomb
+      },{
+        x: this.pos.x,
+        y: this.pos.y,
+        z: this.pos.z
+      }));
 
-    this.launched ++;
+    this.attrs.launched ++;
     launched_this_tick ++;
-    this.stock --;
+    this.attrs.stock --;
   }
 
-  this.timer += delta;
-
-  if(this.timer > 10){
-    this.flash = false;
-  }
+  // if(this.env.timer > 10){
+  //   this.attrs.flash = false;
+  // }
 
 
-  if(this.timer > 75){
-    this.timer = 0;
-    this.flash = true;
-  }
+  // if(this.env.timer > 75){
+  //   this.timer = 0;
+  //   this.flash = true;
+  // }
 
 };
 
-Silo.prototype.paint = function(view){
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
+Actors.Silo.prototype.paint = function(view){
 
   view.ctx.strokeStyle = this.color;
+  view.ctx.strokeStyle = '#fff';
   view.ctx.fillStyle = '#000';
   view.ctx.lineWidth= 2;
-  
+
   if(this.flash){
     view.ctx.fillStyle = this.color;
   } else {
@@ -98,7 +163,31 @@ Silo.prototype.paint = function(view){
   view.ctx.font = '12pt monospace';
   view.ctx.textBaseline = 'middle';
   view.ctx.textAlign = 'center';
-  view.ctx.fillText(this.stock, 0,  32);
+  view.ctx.fillText(this.attrs.stock, 0,  32);
 
-  view.ctx.restore();
+};
+
+Actors.Silo.prototype.elevation = function(view){
+
+  view.ctx.strokeStyle = this.color;
+  view.ctx.strokeStyle = '#fff';
+  view.ctx.fillStyle = '#000';
+  view.ctx.lineWidth= 2;
+
+  if(this.flash){
+    view.ctx.fillStyle = this.color;
+  } else {
+    view.ctx.fillStyle = '#000';
+  }
+
+  view.ctx.beginPath();
+  view.ctx.fillRect(-16, -16, 32, 32);
+  view.ctx.strokeRect(-16, -16, 32, 32);
+
+  view.ctx.fillStyle = '#0cc';
+  view.ctx.font = '12pt monospace';
+  view.ctx.textBaseline = 'middle';
+  view.ctx.textAlign = 'center';
+  view.ctx.fillText(this.attrs.stock, 0,  32);
+
 };

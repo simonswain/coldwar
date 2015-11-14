@@ -1,353 +1,456 @@
 body {
-    background: #000;
-    color: #fff;
-    scroll-y: none;
-    overflow: hidden;
-    font-family: "ubuntu mono", monospace;
-    font-size: 24pt;
+  background: #000;
+  color: #fff;
+  scroll-y: none;
+  overflow: hidden;
+  font-family: "ubuntu mono", monospace;
+  font-size: 24pt;
 }
 
+::-webkit-scrollbar {
+  background-color: #222;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  background-color: #111;
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  background-color: #444;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background-color: #444;
+}
 
 .scrollbars {
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-    &::-webkit-scrollbar-button:start:decrement,
-    &::-webkit-scrollbar-button:end:increment {
-        display: block;
-        height: 0;
-        background-color: transparent;
-    }
-    &::-webkit-scrollbar-track-piece {
-        -webkit-border-radius: 0;
-        -webkit-border-bottom-right-radius: 4px;
-        -webkit-border-bottom-left-radius: 4px;
-    }
+  &::-webkit-scrollbar-button:start:decrement,
+  &::-webkit-scrollbar-button:end:increment {
+    display: block;
+    height: 0;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track-piece {
+    -webkit-border-radius: 0;
+    -webkit-border-bottom-right-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+  }
 
-    &::-webkit-scrollbar-thumb:vertical {
-        height: 8px;
-        background-color: rgba(255, 255, 255, 0.1);
-        -webkit-border-radius: 4px;
-    }
+  &::-webkit-scrollbar-thumb:vertical {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    -webkit-border-radius: 4px;
+  }
 
-    &::-webkit-scrollbar-thumb:horizontal {
-        width: 8px;
-        background-color: rgba(255, 255, 255, 0.1);
-        -webkit-border-radius: 4px;
-    }
+  &::-webkit-scrollbar-thumb:horizontal {
+    width: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    -webkit-border-radius: 4px;
+  }
 }
 
 #app {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+
+  #gl {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 416px;
+    z-index: 20;
+  }
+
+  #ex {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     overflow: hidden;
+    &.has-controls {
+      left: 417px;
+    }
+    &.has-sx {
+      top: 30%;
+    }
+    z-index: 10;
+    cursor: pointer;
+  }
 
-    h1 {
-        text-align: center;
-        position: absolute;
-        top: 50%;
+  #fx {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    &.has-controls {
+      left: 417px;
+    }
+    &.has-sx {
+      top: 30%;
+    }
+  }
+
+  #gx {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    &.has-controls {
+      left: 417px;
+    }
+    &.has-sx {
+      top: 30%;
+    }
+  }
+
+  #sx {
+    cursor: pointer;
+    position: absolute;
+    height: 30%;
+    top: 0;
+    right: 0;
+    left: 0;
+    &.has-controls {
+      left: 416px;
+    }
+    background: #000;
+  }
+
+  .expose {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    font-size: 32px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 100;
+    &.active {
+      left: auto;
+      right: 0;
+    }
+    color: #999;
+    &:hover {
+      color: #fff;
+    }
+    &.expose-params {
+      top: 0;
+      left: 0;
+      &.expose-active {
+        color: #fff;
+      }
+    }
+
+    &.expose-help {
+      top: 0;
+      right: 0;
+      &.expose-active {
+        left: auto;
         right: 0;
-        left: 0;
-        color: #0f0;
-        transform: translateY(-50%);
-        text-shadow: 0 0 32px rgba(0, 0, 0, 0.8);
-        span {
-            color: #0f0;
-        }
+      }
     }
 
-    h2 {
-        font-family: "ubuntu mono", monospace;
-        text-transform: lowercase;
-        text-align: center;
-        position: absolute;
-        text-align: center;
-        position: absolute;
-        top: 40%;
-        right: 0;
-        left: 0;
-        color: #0f0;
+  }
+
+  .title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #0f0;
+    font-size: 14pt;
+    padding: 16px;
+    font-weight: bold;
+    &.title-large {
+      font-size: 36pt;
     }
-
-    #gl {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 416px;
-        z-index: 1;
+    a {
+      color: #0f0;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
+  }
 
-
-    #ex {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-    }
-
-    #fx {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-    }
-
-    #gx {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-    }
-
-    #map {
-        cursor: pointer;
-        position: absolute;
-        top: 30%;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        &.has-controls {
-            left: 416px;
-        }
-    }
-
-    #elevation {
-        cursor: pointer;
-        position: absolute;
-        height: 30%;
-        top: 0;
-        right: 0;
-        left: 0;
-        &.has-controls {
-            left: 416px;
-        }
-        border-bottom: 1px solid #333;
-        background: #000;
-    }
-
-    .expose {
-        position: absolute;
-        width: 48px;
-        height: 48px;
-        line-height: 48px;
-        font-size: 32px;
-        text-align: center;
-        cursor: pointer;
-        z-index: 100;
-        &.active {
-            left: auto;
-            right: 0;
-        }
-        color: #999;
-        &:hover {
-            color: #fff;
-        }
-        &.expose-params {
-            top: 0;
-            left: 0;
-            &.expose-active {
-                left: auto;
-                right: 0;
-            }
-        }
-
-        &.expose-help {
-            top: 0;
-            right: 0;
-            &.expose-active {
-                left: auto;
-                right: 0;
-            }
-        }
-
-    }
-
-    .title {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        color: #0f0;
-        font-size: 14pt;
-        padding: 16px;
-        font-weight: bold;
-        &.title-large {
-            font-size: 36pt;
-        }
-        a {
-            color: #0f0;
-            text-decoration: none;
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    #params {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 416px;
-        padding-top: 48px;
-        height: auto;
-        border-right: 1px solid #222;
-        background: #000;
-
-        p {
-            margin: 8px 0 8px 0;
-            font-size: 10pt;
-            color: #0f0;
-            text-align: center;
-            a {
-                color: #0f0;
-                text-decoration: none;
-                &:hover {
-                    color: #fff;
-                    text-decoration: underline;
-                }
-            }
-        }
-
-
-        .restart {
-            margin: 16px 8px;
-        }
-
-        button {
-            font-family: "ubuntu mono", monospace;
-            margin: 0 8px;
-            padding: 12px;
-            width: 160px;
-            font-size: 12pt;
-            text-align: center;
-            background: #111;
-            color: #0ff;
-            border: none;
-            cursor: pointer;
-            &:hover {
-                color: #fff;
-                background: #222;
-            }
-        }
-
-    }
-
-    #options {
-        .scrollbars;
-        position: absolute;
-        top: 144px;
-        left: 0;
-        bottom: 0;
-        width: 416px;
-        height: auto;
-        border-right: 1px solid #222;
-        background: #000;
-        div {
-            margin: 0;
-            width: 200px;
-            height: 40px;
-            float: left;
-            position: relative;
-
-            .value {
-                z-index: 1;
-                position: absolute;
-                top: 0;
-                right: 8px;
-                font-size: 11pt;
-                text-align: right;
-                color: #999;
-            }
-
-            label {
-                z-index: 1;
-                position: absolute;
-                top: 2px;
-                left: 6px;
-                font-size: 9pt;
-                text-align: right;
-                color: #999;
-            }
-
-            input {
-                font-family: "ubuntu mono", monospace;
-                position: absolute;
-                top: 0;
-                left: 4px;
-                width: 192px;
-                padding: 8px 0;
-                font-size: 11pt;
-                text-align: right;
-                background: none;
-                color: #fff;
-                border: none;
-            }
-
-            &:hover {
-                input {
-                    background: #111;
-                }
-            }
-
-
-        }
-    }
-
-}
-
-#help {
-    .scrollbars;
-    display: none;
+  #params {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    right: 0;
-    padding: 32px;
-    background: rgba(0, 0, 0, 0.65);
-    z-index: 16;
-    .content {
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+    width: 416px;
+    padding-top: 48px;
+    height: auto;
+    border-right: 1px solid #222;
+    background: rgba(0, 0, 0, 0.75);
 
-        h1 {
+    p {
+      margin: 8px 0 8px 0;
+      font-size: 10pt;
+      color: #0f0;
+      text-align: center;
+      a {
+        color: #0f0;
+        text-decoration: none;
+        &:hover {
+          color: #fff;
+          text-decoration: underline;
+        }
+      }
+    }
+
+
+    .restart {
+      margin: 16px 8px;
+    }
+
+    button {
+      font-family: "ubuntu mono", monospace;
+      margin: 0 8px;
+      padding: 12px;
+      width: 160px;
+      font-size: 12pt;
+      text-align: center;
+      background: #111;
+      color: #0ff;
+      border: none;
+      cursor: pointer;
+      &:hover {
+        color: #fff;
+        background: #222;
+      }
+    }
+
+  }
+
+  #options {
+    .scrollbars;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    width: 416px;
+    height: auto;
+    border-right: 1px solid #222;
+
+    h3{
+      display: block;
+      margin: 0;
+      clear: both;
+      border-top: 2px solid #222;
+      padding: 8px;
+      font-size: 18px;
+    }
+
+    .opts {
+
+      display: table;
+      margin: 0;
+      padding: 0;
+      display: block;
+
+      .opt {
+        display: inline-block;
+        margin: 4px;
+        width: 192px;
+        height: 40px;
+        float: left;
+        position: relative;
+        &.opt-wide {
+          width: 394px;
+          height: 108px;
         }
 
-        h2 {
-            font-size: 80%;
+        margin-bottom: 16px;
+        .value {
+          z-index: 1;
+          position: absolute;
+          top: 0;
+          right: 8px;
+          font-size: 11pt;
+          text-align: right;
+          color: #999;
         }
 
-        p {
+        label {
+          z-index: 1;
+          position: absolute;
+          top: 2px;
+          left: 6px;
+          font-size: 9pt;
+          text-align: right;
+          color: #999;
         }
 
-        a {
-            color: #fff;
+        input {
+          font-family: "ubuntu mono", monospace;
+          position: absolute;
+          top: 0;
+          left: 4px;
+          width: 192px;
+          padding: 8px 0;
+          font-size: 11pt;
+          text-align: right;
+          background: none;
+          color: #fff;
+          border: none;
         }
 
-        ul {
-            list-style: none;
-            li {
-                margin: 12px 0;
-            }
+        textarea {
+          font-family: "ubuntu mono", monospace;
+          position: absolute;
+          top: 20px;
+          left: 4px;
+          width: 366px;
+          height: 64px;
+          padding: 8px;
+          font-size: 11pt;
+          background: none;
+          color: #ccc;
+          background: #111;
+          border: none;
+          border: 1px solid #333;
         }
+
+        &:hover {
+          input {
+            background: #111;
+          }
+        }
+      }
 
     }
+  }
+
+}
+
+
+#content {
+  .scrollbars;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 32px;
+  z-index: 16;
+
+  &.has-controls {
+    left: 417px;
+  }
+
+  .index {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+
+    .color-cycle {
+      color: hsla(170, 100%, 100%, 1);
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    h1 {
+      a {
+        display: block;
+        text-decoration: none;
+        color: #0f0;
+      }
+    }
+
+    h2 {
+      font-size: 80%;
+    }
+
+    p {
+      margin-top: 32px;
+      a {
+        color: #0f0;
+      }
+    }
+
+    a {
+      color: #fff;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      li {
+        display: inline-block;
+        width: 200px;
+        margin: 8px;
+        padding: 0;
+        a {
+          background: rgba(0, 0, 0, 0.65);
+          display: block;
+          padding: 24px 0;
+          font-size: 24px;
+          border: 2px solid #066;
+          text-decoration: none;
+          color: #999;
+          &:hover {
+            color: #fff;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #0ff;
+          }
+        }
+      }
+    }
+
+  }
+}
+
+#help {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow-y: scroll;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 64;
+
+  .help-content {
+
+    h1 {
+      font-size: 36pt;
+      text-align: center;
+    }
+
+    a {
+      color: #0ff;
+    }
+    max-width: 720px;
+    margin: 64px auto;
+  }
+
 }

@@ -8,7 +8,7 @@ module.exports = function(env){
 
   var server = {
     host: '0.0.0.0',
-    port: 3002,
+    port: 4002,
     mount: ''
   }
 

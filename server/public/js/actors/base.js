@@ -1,57 +1,134 @@
-/*global Vec3:true, pickOne:true, Bomber:true, Fighter:true, Icbm:true, Abm:true */
+/*global Actors:true, Actor:true, Vec3:true79, VecR:true, hex2rgb:true, pickOne:true */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function Base(opts){
+Actors.Base = function(env, refs, attrs){
+  this.env = env;
+  this.refs = refs;
+  this.opts = this.genOpts();
+  this.attrs = this.genAttrs(attrs);
+  this.init();
+};
 
-  this.dead = false;
+Actors.Base.prototype = Object.create(Actor.prototype);
 
-  this.pos = new Vec3(opts.x, opts.y, opts.z);
-  this.capital = opts.capital || false;
+Actors.Base.prototype.title = 'Base';
 
-  this.title = opts.title || false;
+Actors.Base.prototype.genAttrs = function(attrs){
 
-  this.color = opts.color || '#fff';
-
-  this.stock = {
-    bombers: 0,
-    fighters: 0,
-    icbms: 0,
-    abms: 0
-  };
-
-  if(opts.stock){
-    this.stock.bombers = opts.stock.bombers || 0;
-    this.stock.fighters = opts.stock.fighters || 0;
-    this.stock.icbms = opts.stock.icbms || 0;
-    this.stock.abms = opts.stock.abms || 0;
-  }
-
-  this.world = opts.world;
-
-  this.icbms_launched = 0;
-  this.icbm_launch_max = opts.icbm_launch_max || 0;
-  this.icbm_launch_per_tick = opts.icbm_launch_per_tick || 1;
-
-  this.abms_launched = 0;
-  this.abm_launch_max = opts.abm_launch_max || 0;
-  this.abm_launch_per_tick = opts.abm_launch_per_tick || 1;
-
-  this.bombers_launched = 0;
-  this.bomber_launch_max = opts.bomber_launch_max || 0;
-  this.bomber_launch_per_tick = opts.bomber_launch_per_tick || 1;
-
-  this.fighters_launched = 0;
-
-  this.fighter_launch_max = opts.fighter_launch_max || 0;
-  this.fighter_launch_per_tick = opts.fighter_launch_per_tick || 1;
+  return {
+    x: attrs.x,
+    y: attrs.y,
+    z: attrs.z,
+    color: attrs.color || '#f0f',
+    title: attrs.title || '',
+    dead: false,
 
   // launch fighters when bombers within this range
-  this.danger_close = 400;
+    danger_close: this.refs.scene.opts.max_x * this.opts.danger_close,
 
-}
+    // bomber_launch_max: Math.floor(this.bomber_launch_max * Math.random()),
+    // fighter_launch_max: Math.floor(this.fighter_launch_max * Math.random()),
+    // icbm_launch_max: this.icbm_launch_max,
+    // abm_launch_max: this.abm_launch_max,
 
-Base.prototype.update = function(delta){
+    bombers_launched: 0,
+    bomber_launch_max: this.opts.bomber_launch_max || 0,
+    bomber_launch_per_tick: this.opts.bomber_launch_per_tick || 1,
+
+    fighters_launched: 0,
+    fighter_launch_max: this.opts.fighter_launch_max || 0,
+    fighter_launch_per_tick: this.opts.fighter_launch_per_tick || 1,
+
+    icbms_launched: 0,
+    icbm_launch_max: this.opts.icbm_launch_max || 0,
+    icbm_launch_per_tick: this.opts.icbm_launch_per_tick || 1,
+
+    abms_launched: 0,
+    abm_launch_max: this.opts.abm_launch_max || 0,
+    abm_launch_per_tick: this.opts.abm_launch_per_tick || 1,
+
+    stock: {
+      bombers: (attrs.stock && attrs.stock.bombers) ? attrs.stock.bombers : this.opts.stock_bombers,
+      fighters: (attrs.stock && attrs.stock.fighters) ? attrs.stock.fighters : this.opts.stock_fighters,
+      icbms: (attrs.stock && attrs.stock.icbms) ? attrs.stock.icbms : this.opts.stock_icbms,
+      abms: (attrs.stock && attrs.stock.abms) ? attrs.stock.abms : this.opts.stock_abms
+    }
+  };
+};
+
+Actors.Base.prototype.init = function(){
+  this.pos = new Vec3(
+    this.attrs.x,
+    this.attrs.y,
+    this.attrs.z
+  );
+};
+
+Actors.Base.prototype.defaults = [{
+  key: 'stock_bombers',
+  info: '',
+  value: 0,
+  min: 10,
+  max: 1000
+}, {
+  key: 'stock_fighters',
+  info: '',
+  value: 0,
+  min: 0,
+  max: 1000
+}, {
+  key: 'stock_icbms',
+  info: '',
+  value: 0,
+  min: 0,
+  max: 1000
+}, {
+  key: 'stock_abms',
+  info: '',
+  value: 0,
+  min: 0,
+  max: 10000
+}, {
+  key: 'sats_max',
+  info: '',
+  value: 1,
+  min: 0,
+  max: 10
+}, {
+  key: 'fighter_launch_max',
+  info: '',
+  value: 5,
+  min: 0,
+  max: 100
+}, {
+  key: 'bomber_launch_max',
+  info: '',
+  value: 3,
+  min: 0,
+  max: 100
+}, {
+  key: 'icbm_launch_max',
+  info: '',
+  value: 3,
+  min: 0,
+  max: 100
+}, {
+  key: 'abm_launch_max',
+  info: '',
+  value: 10,
+  min: 0,
+  max: 100
+}, {
+  key: 'danger_close',
+  info: '',
+  value: 0.2,
+  min: 0.01,
+  max: 0.5
+}];
+
+Actors.Base.prototype.update = function(delta) {
   this.launchBombers();
   this.launchFighters();
   this.launchIcbms();
@@ -59,18 +136,20 @@ Base.prototype.update = function(delta){
 };
 
 // factory will add stock to base
-Base.prototype.addStock = function(stock){
-  this.stock.bombers += stock.bombers || 0;
-  this.stock.fighters += stock.fighters || 0;
-  this.stock.icbms += stock.icbms || 0;
-  this.stock.abms += stock.abms || 0;
+Actors.Base.prototype.addStock = function(stock){
+  this.attrs.stock.bombers += stock.bombers || 0;
+  this.attrs.stock.fighters += stock.fighters || 0;
+  this.attrs.stock.icbms += stock.icbms || 0;
+  this.attrs.stock.abms += stock.abms || 0;
 };
 
+Actors.Base.prototype.launchBombers = function(){
 
+  if(!this.refs.capital){
+    return;
+  }
 
-Base.prototype.launchBombers = function(){
-
-  if(this.capital.defcon > 3 && !this.capital.strike){
+  if(this.refs.capital.attrs.defcon > 3 && !this.refs.capital.attrs.strike){
     return;
   }
 
@@ -79,45 +158,40 @@ Base.prototype.launchBombers = function(){
 
   var i, ii;
 
-  if(!this.capital){
+  if(this.attrs.stock.bombers <= 0 || this.attrs.bombers_launched >= this.attrs.bomber_launch_max){
     return;
   }
-
-  if(this.stock.bombers <= 0 || this.bombers_launched >= this.bomber_launch_max){
-    return;
-  }
-
   targets = [];
 
   if(targets.length === 0){
-    for(i = 0, ii=this.world.factories.length; i<ii; i++){
-      if(this.world.factories[i].capital !== this.capital){
-        targets.push(this.world.factories[i]);
+    for(i = 0, ii=this.refs.scene.factories.length; i<ii; i++){
+      if(this.refs.scene.factories[i].refs.capital !== this.refs.capital){
+        targets.push(this.refs.scene.factories[i]);
       }
     }
   }
 
   if(targets.length === 0){
-    for(i = 0, ii=this.world.cities.length; i<ii; i++){
-      if(this.world.cities[i].capital !== this.capital){
-        targets.push(this.world.cities[i]);
+    for(i = 0, ii=this.refs.scene.cities.length; i<ii; i++){
+      if(this.refs.scene.cities[i].refs.capital !== this.refs.capital){
+        targets.push(this.refs.scene.cities[i]);
       }
     }
   }
 
   // only attack capital if nothing else left
   if(targets.length === 0){
-    for(i = 0, ii=this.world.capitals.length; i<ii; i++){
-      if(this.world.capitals[i] !== this.capital){
-        targets.push(this.world.capitals[i]);
+    for(i = 0, ii=this.refs.scene.capitals.length; i<ii; i++){
+      if(this.refs.scene.capitals[i].refs !== this.refs.capital){
+        targets.push(this.refs.scene.capitals[i]);
       }
     }
   }
 
   if(targets.length === 0){
-    for(i = 0, ii=this.world.bases.length; i<ii; i++){
-      if(this.world.bases[i].capital !== this.capital){
-        targets.push(this.world.bases[i]);
+    for(i = 0, ii=this.refs.scene.bases.length; i<ii; i++){
+      if(this.refs.scene.bases[i].refs.capital !== this.refs.capital){
+        targets.push(this.refs.scene.bases[i]);
       }
     }
   }
@@ -126,30 +200,32 @@ Base.prototype.launchBombers = function(){
     return;
   }
 
-  while(this.stock.bombers > 0 && this.bombers_launched < this.bomber_launch_max && launched_this_tick < this.bomber_launch_per_tick){
+  while(this.attrs.stock.bombers > 0 && this.attrs.bombers_launched < this.attrs.bomber_launch_max && launched_this_tick < this.attrs.bomber_launch_per_tick){
 
     target = pickOne(targets);
 
-    this.world.bombers.push(new Bomber({
+    this.refs.scene.bombers.push(new Actors.Bomber(
+      this.env, {
+        scene: this.refs.scene,
+        base: this,
+        capital: this.refs.capital,
+        target: target
+      },{
       x: this.pos.x,
       y: this.pos.y,
-      world: this.world,
-      base: this,
-      capital: this.capital,
-      target: target,
-      color: this.color
+      color: this.attrs.color
     }));
     launched_this_tick ++;
-    this.bombers_launched ++;
-    this.stock.bombers --;
+    this.attrs.bombers_launched ++;
+    this.attrs.stock.bombers --;
   }
 
 };
 
 
-Base.prototype.launchFighters = function(){
+Actors.Base.prototype.launchFighters = function(){
 
-  if(this.capital.defcon > 4){
+  if(this.refs.capital.defcon > 4){
     return;
   }
 
@@ -158,11 +234,11 @@ Base.prototype.launchFighters = function(){
 
   var launched_this_tick = 0;
 
-  if(!this.capital){
+  if(!this.refs.capital){
     return;
   }
 
-  if(this.stock.fighters <= 0 || this.fighter_launch_max < this.fighters_launched){
+  if(this.attrs.stock.fighters <= 0 || this.attrs.fighter_launch_max < this.attrs.fighters_launched){
     return;
   }
 
@@ -171,52 +247,54 @@ Base.prototype.launchFighters = function(){
   // if any bomber is in range, then attack. Later, this logic should
   // use warnings from sats or capital
 
-  // incoming bomber detection
-  // for(i = 0, ii=this.world.bombers.length; i<ii; i++){
-  //   target = this.world.bombers[i];
+  //incoming bomber detection
+  for(i = 0, ii=this.refs.scene.bombers.length; i<ii; i++){
+    target = this.refs.scene.bombers[i];
 
-  //   if(target.capital === this.capital){
-  //     continue;
-  //   }
+    if(target.refs.capital === this.refs.capital){
+      continue;
+    }
 
-  //   if(this.pos.range(target.pos) < this.danger_close){
-  //     targets.push(target);
-  //     break;
-  //   }
-  // }
+    if(this.pos.range(target.pos) < this.attrs.danger_close){
+      targets.push(target);
+      break;
+    }
+  }
 
-  // if(targets.length === 0){
-  //   return;
-  // }
+  if(targets.length === 0){
+    return;
+  }
 
-  while(this.stock.fighters > 0 && this.fighters_launched < this.fighter_launch_max && launched_this_tick < this.fighter_launch_per_tick){
+  while(this.attrs.stock.fighters > 0 && this.attrs.fighters_launched < this.attrs.fighter_launch_max && launched_this_tick < this.attrs.fighter_launch_per_tick){
 
     // fighter will pick it's own target
 
-    this.world.fighters.push(new Fighter({
-      x: this.pos.x,
-      y: this.pos.y,
-      world: this.world,
-      base: this,
-      capital: this.capital,
-      color: this.color
-    }));
+    this.refs.scene.fighters.push(new Actors.Fighter(
+      this.refs, {
+        base: this,
+        scene: this.refs.scene,
+        capital: this.refs.capital,
+      }, {
+        x: this.pos.x,
+        y: this.pos.y,
+        color: this.attrs.color
+      }));
     launched_this_tick ++;
-    this.fighters_launched ++;
-    this.stock.fighters --;
+    this.attrs.fighters_launched ++;
+    this.attrs.stock.fighters --;
   }
 
 };
 
 
-Base.prototype.launchIcbms = function(){
+Actors.Base.prototype.launchIcbms = function(){
 
-  if(this.capital.defcon > 3){
+  if(this.refs.capital.attrs.defcon > 3){
     return;
   }
 
   // 1% chance if defcon 3 or 2
-  if(this.capital.defcon > 1 && Math.random() > 0.001){
+  if(this.refs.capital.attrs.defcon > 1 && Math.random() > 0.001){
     return;
   }
 
@@ -225,39 +303,39 @@ Base.prototype.launchIcbms = function(){
 
   var i, ii;
 
-  if(!this.capital){
+  if(!this.refs.capital){
     return;
   }
 
-  if(this.stock.icbms <= 0 || this.icbms_launched > this.icbm_launch_max){
+  if(this.attrs.stock.icbms <= 0 || this.attrs.icbms_launched > this.attrs.icbm_launch_max){
     return;
   }
 
   targets = [];
 
   if(targets.length === 0){
-    for(i = 0, ii=this.world.capitals.length; i<ii; i++){
-      if(this.world.capitals[i] !== this.capital){
-        targets.push(this.world.capitals[i]);
+    for(i = 0, ii=this.refs.scene.capitals.length; i<ii; i++){
+      if(this.refs.scene.capitals[i] !== this.refs.capital){
+        targets.push(this.refs.scene.capitals[i]);
       }
     }
   }
 
-  for(i = 0, ii=this.world.factories.length; i<ii; i++){
-    if(this.world.factories[i].capital !== this.capital && !this.world.factories[i].dead){
-      targets.push(this.world.factories[i]);
+  for(i = 0, ii=this.refs.scene.factories.length; i<ii; i++){
+    if(this.refs.scene.factories[i].refs.capital !== this.refs.capital && !this.refs.scene.factories[i].dead){
+      targets.push(this.refs.scene.factories[i]);
     }
   }
 
-  for(i = 0, ii=this.world.bases.length; i<ii; i++){
-    if(this.world.bases[i].capital !== this.capital && !this.world.bases[i].dead){
-      targets.push(this.world.bases[i]);
+  for(i = 0, ii=this.refs.scene.bases.length; i<ii; i++){
+    if(this.refs.scene.bases[i].refs.capital !== this.refs.capital && !this.refs.scene.bases[i].dead){
+      targets.push(this.refs.scene.bases[i]);
     }
   }
 
-  for(i = 0, ii=this.world.cities.length; i<ii; i++){
-    if(this.world.cities[i].capital !== this.capital && !this.world.cities[i].dead){
-      targets.push(this.world.cities[i]);
+  for(i = 0, ii=this.refs.scene.cities.length; i<ii; i++){
+    if(this.refs.scene.cities[i].refs.capital !== this.refs.capital && !this.refs.scene.cities[i].dead){
+      targets.push(this.refs.scene.cities[i]);
     }
   }
 
@@ -266,55 +344,53 @@ Base.prototype.launchIcbms = function(){
     return;
   }
 
-  while(this.stock.icbms > 0 && this.icbms_launched < this.icbm_launch_max && launched_this_tick < this.icbm_launch_per_tick){
+  while(this.attrs.stock.icbms > 0 && this.attrs.icbms_launched < this.attrs.icbm_launch_max && launched_this_tick < this.attrs.icbm_launch_per_tick){
 
     target = pickOne(targets);
-
-    this.world.icbms.push(new Icbm({
+    this.refs.scene.icbms.push(new Actors.Icbm(
+      this.env, {
+        scene: this.refs.scene,
+        base: this,
+        capital: this.refs.capital,
+        target: target
+      },{
       x: this.pos.x,
       y: this.pos.y,
-      z: this.pos.z,
-      base: this,
-      world: this.world,
-      capital: this.capital,
-      target: target,
-      color: this.color
+      color: this.attrs.color
     }));
 
     launched_this_tick ++;
-    this.icbms_launched ++;
-    this.stock.icbms --;
+    this.attrs.icbms_launched ++;
+    this.attrs.stock.icbms --;
   }
 
 };
 
-Base.prototype.launchAbms = function(){
+Actors.Base.prototype.launchAbms = function(){
 
   var launched_this_tick = 0;
   var range, targets, target;
 
-  if(this.stock.abms <= 0 || this.abms_launched >= this.abm_launch_max){
+  if(this.attrs.stock.abms <= 0 || this.attrs.abms_launched >= this.attrs.abm_launch_max){
     return;
   }
 
   targets = [];
 
-  var danger = (this.world.max_x) * 0.2;
   var icbm;
 
-  for(var i = 0, ii=this.world.icbms.length; i<ii; i++){
+  for(var i = 0, ii=this.refs.scene.icbms.length; i<ii; i++){
+    icbm = this.refs.scene.icbms[i];
 
-    icbm = this.world.icbms[i];
-
-    if(icbm.dead){
+    if(icbm.attrs.dead){
       continue;
     }
 
-    if(icbm.capital === this.capital){
+    if(icbm.refs.capital === this.refs.capital){
       continue;
     }
 
-    if(Math.abs(icbm.pos.x - this.pos.x) < danger){
+    if(Math.abs(icbm.pos.x - this.pos.x) < this.attrs.danger_close){
       targets.push(icbm);
     }
   }
@@ -323,94 +399,167 @@ Base.prototype.launchAbms = function(){
     return;
   }
 
-  while(this.stock.abms > 0 && this.abms_launched < this.abm_launch_max && launched_this_tick < this.abm_launch_per_tick){
-
+  while(this.attrs.stock.abms > 0 && this.attrs.abms_launched < this.attrs.abm_launch_max && launched_this_tick < this.attrs.abm_launch_per_tick){
     target = pickOne(targets);
 
-    this.world.abms.push(new Abm({
-      x: this.pos.x,
-      y: this.pos.y,
-      world: this.world,
-      base: this,
-      target: target,
-      color: this.color
-    }));
+    this.refs.scene.abms.push(new Actors.Abm(
+      this.env, {
+        scene: this.refs.scene,
+        target: target,
+        base: this
+      }, {
+        x: this.pos.x,
+        y: this.pos.y,
+        color: this.attrs.color
+      }));
 
     launched_this_tick ++;
-    this.abms_launched ++;
-    this.stock.abms --;
+    this.attrs.abms_launched ++;
+    this.attrs.stock.abms --;
   }
 
 };
 
-Base.prototype.paint = function(view){
 
+Actors.Base.prototype.paint = function(view) {
 
+  var val, mod;
+  var yf = 4;
+  var xf = 10;
+  var xo = 4; // offset for values
+  var limit = 16;
+  var yh = 3;
+  var tip_color = '#000';
   view.ctx.save();
   view.ctx.translate(this.pos.x, this.pos.y);
 
-  view.ctx.strokeStyle = this.color;
+  view.ctx.strokeStyle = this.attrs.color;
   view.ctx.lineWidth= 2;
 
   view.ctx.beginPath();
-  view.ctx.rect(-12, -12, 24, 24);
+  view.ctx.rect(-xf, -xf, xf*2, xf*2);
   view.ctx.fillStyle = '#000';
   view.ctx.fill();
   view.ctx.stroke();
 
   // show danger close
   // view.ctx.beginPath();
-  // view.ctx.arc(0, 0, this.danger_close, 0, 2*Math.PI);
+  // view.ctx.arc(0, 0, this.attrs.danger_close, 0, 2*Math.PI);
   // view.ctx.strokeStyle = '#222';
   // view.ctx.stroke();
 
 
-  view.ctx.fillStyle = this.color;
-  view.ctx.font = '9pt monospace';
+  view.ctx.fillStyle = this.attrs.color;
+  view.ctx.font = '9px ubuntu mono, monospace';
   view.ctx.textBaseline = 'middle';
 
+
   view.ctx.textAlign = 'right';
-  if(this.stock.bombers>0){
-    view.ctx.fillText(this.stock.bombers, -20, -7);
+  if(this.attrs.stock.bombers>0){
+    //view.ctx.fillText(this.attrs.stock.bombers, -14, -7);
+    val = this.attrs.stock.bombers;
+    mod = val % limit;
+    if(val>limit){
+      val = limit;
+    }
+
+    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.beginPath();
+    view.ctx.rect(-val - xf - xo, -yf, val, yh);
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
+    view.ctx.fill();
+
+    view.ctx.fillStyle = tip_color;
+    view.ctx.beginPath();
+    view.ctx.rect(-xf - mod - xo, -yf, yh, yh);
+    view.ctx.fill();
   }
-  if(this.stock.fighters>0){
-    view.ctx.fillText(this.stock.fighters, -20, 7);
+
+  if(this.attrs.stock.fighters>0){
+    //view.ctx.fillText(this.attrs.stock.fighters, -20, 7);
+    val = this.attrs.stock.fighters;
+    mod = val % limit;
+    if(val>limit){
+      val = limit;
+    }
+    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.beginPath();
+    view.ctx.rect(-val - xf - xo, yf, val, yh);
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
+    view.ctx.fill();
+
+    view.ctx.fillStyle = tip_color;
+    view.ctx.beginPath();
+    view.ctx.rect(-xf - mod - xo, yf, yh, yh);
+    view.ctx.fill();
   }
 
   view.ctx.textAlign = 'left';
-  if(this.stock.icbms>0){
-    view.ctx.fillText(this.stock.icbms, 20, -7);
+  if(this.attrs.stock.icbms>0){
+    //view.ctx.fillText(this.attrs.stock.icbms, 20, -7);
+    val = this.attrs.stock.icbms;
+    mod = val % limit;
+    if(val>limit){
+      val = limit;
+    }
+    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.beginPath();
+    view.ctx.rect(xf + xo, -yf, val, yh);
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
+    view.ctx.fill();
+
+    view.ctx.fillStyle = tip_color;
+    view.ctx.beginPath();
+    view.ctx.rect(xf + mod + xo, -yf, yh, yh);
+    view.ctx.fill();
+
+
   }
-  if(this.stock.abms>0){
-    view.ctx.fillText(this.stock.abms, 20, 7);
+  if(this.attrs.stock.abms>0){
+    //view.ctx.fillText(this.attrs.stock.abms, 20, 7);
+    val = this.attrs.stock.abms;
+    mod = val % limit;
+    if(val>limit){
+      val = limit;
+    }
+    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.beginPath();
+    view.ctx.rect(xf + xo, yf, val, yh);
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
+    view.ctx.fill();
+
+    view.ctx.fillStyle = tip_color;
+    view.ctx.beginPath();
+    view.ctx.rect(xf + mod + xo, yf, yh, yh);
+    view.ctx.fill();
   }
 
-  if(this.title){
-    view.ctx.fillStyle = this.color;
+  if(this.attrs.title){
+    view.ctx.fillStyle = this.attrs.color;
     view.ctx.font = '10pt monospace';
     view.ctx.textBaseline = 'middle';
     view.ctx.textAlign = 'center';
-    view.ctx.fillText(this.title, 0, 32);
+    view.ctx.fillText(this.attrs.title, 0, 32);
   }
 
   view.ctx.restore();
 
 };
 
+Actors.Base.prototype.elevation = function(view) {
 
-Base.prototype.elevation = function(view){
-
-  var scale = view.yscale;
+  var val;
+  var xf = 8;
 
   view.ctx.save();
-  view.ctx.translate(this.pos.x, ((this.world.max_z - this.pos.z) * scale) - 1);
+  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)));
 
   view.ctx.lineWidth = 2;
-  view.ctx.strokeStyle = this.color;
+  view.ctx.strokeStyle = this.attrs.color;
   view.ctx.fillStyle = '#000';
 
   view.ctx.beginPath();
-  view.ctx.rect(-6, -12, 12, 12);
+  view.ctx.rect(-xf/2, -xf/2, xf, xf);
   view.ctx.stroke();
   view.ctx.fill();
 

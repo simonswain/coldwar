@@ -10,11 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="apple-touch-icon" href="/images/logo.png">
-    <link type="image/x-icon" rel="shortcut icon" href="/images/favicon.ico">
+    <link type="image/x-icon" rel="shortcut icon" href="/favicon.png">
     <title>Cold War</title>
-<script>
-var ROOT="{{{root}}}";
-</script>
     {{{css}}}
     <style>
 /* cribbed from http://codepen.io/collection/DgYaMj/ */
@@ -86,7 +83,6 @@ input[type='range']::-webkit-slider-thumb {
   height: 1.25em;
   border-radius: 50%;
   background: #000;
-  cursor: none;
 }
 input[type='range']::-webkit-slider-thumb:hover {
   border: solid 0.125em #c0c;
@@ -98,7 +94,6 @@ input[type='range']::-moz-range-thumb {
   height: 1.25em;
   border-radius: 50%;
   background: #000;
-  cursor: none;
 }
 input[type='range']::-ms-thumb {
   box-sizing: border-box;
@@ -107,7 +102,6 @@ input[type='range']::-ms-thumb {
   height: 1.25em;
   border-radius: 50%;
   background: #000;
-  cursor: none;
 }
 input[type='range']::-webkit-slider-runnable-track:before, input[type='range'] /deep/ #track:before {
   position: absolute;
@@ -149,125 +143,6 @@ input[type='range']:focus {
   </head>
   <body>
     <div id="app"></div>
-    <div id="help">
-    <div class="content">
-<h1>Cold War</h1>
-
-<p>
-  Cold War models the escalation and execution of nuclear combat.
-</p>
-
-<h2>Controls</h2>
-
-<ul>
-  <li><strong>tab</strong> toggle options</li>
-  <li><strong>?</strong> toggle help</li>
-  <li><strong>\</strong> toggle diagnostics</li>
-  <li><strong>enter</strong> restart sim</li>
-  <li>mousewheel and drag to explore main view</li>
-
-</ul>
-
-<h2>Sharing</h2>
-
-<p>
-Any time you change params, the url becomes a link to those settings.
-Copy the address from your browser and share #coldwar
-</p>
-
-<p>
-Source is
-at <a href="https://github.com/simonswain/coldwar" target="_new">https://github.com/simonswain/coldwar</a>
-<p>
-
-<h2>About</h2>
-
-<p>
-  An Actor is any element in the game. Actors follow rules over time.
-  These rules determine the actor's behaviour.
-</p>
-
-<p>
-  There are two views, top view and elevation view. All the actors have
-  an x, y and z position on the surface or in airspace.
-</p>
-
-<p>
-  Each of the circled groupings is a nation state. It is controlled by
-  it's Capital.
-</p>
-
-<p>
-  The Capital is at the center of the Nation State. (square,
-  blinking). The lower the Defcon number in the Capital, the more
-  aggressive the Nation State will be.
-</p>
-
-<p>
-  Cities (circles) send people to work at factories.
-</p>
-
-<p>
-  Factories (triangles) make munitions and send them to bases.
-</p>
-
-<p>
-  Bases (square) stockpile munitions (counts, clockwise from top right:
-  icbms, abms (anti ballistic missiles), fighters and bombers.
-</p>
-
-<p>
-  Bombers are big and slow (triangles) that select a target (factory,
-  base, city, capital in that order), fly to it and nuke it, re-selecting
-  a target if somebody else destroys it first.
-</p>
-
-<p>
-  As deeper defence perimeters are penetrated, Defcon gets more scary.
-</p>
-
-<p>
-  Fighters launch at Defcon 4 and attempt to destroy bombers.
-</p>
-
-<p>
-  At Defcon 3, Bases launch ICBMs a low probability amount of the time.
-</p>
-
-<p>
-  Satellites launch at Defcon 2, and can shoot ICBMs out of the sky, but
-  have fire/recharge lasers, so won't get them all.
-</p>
-
-<p>
-  When one of a nation's assets (factory, base, city) is nuked, they go
-  to Defcon 1.
-</p>
-
-<p>
-  If your enemy goes to Defcon 1, so do you.
-</p>
-
-<p>
-  At Defcon 1, all ICBMs will fire.
-</p>
-
-<p>
-  When your capital is destroyed, it's Game Over.
-</p>
-
-<p>
-  The control panel lets you tweak the starting parameters. There are a
-  lot more controls for all the actors (e.g, how close do bombers
-  flock.) that are not exposed here.
-</p>
-
-<p>
-  This is Version 0.2.
-</p>
-
-</div>
-</div>
     {{{js}}}
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

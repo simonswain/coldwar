@@ -45,13 +45,11 @@ module.exports = function(config){
   });
 
   var manifest = require( __dirname + '/manifest');
-  manifest.pub.opts.outUrl = '/' + config.docroot + '/assets';
-  manifest.pub.opts.url = '/' + config.docroot;
+  manifest.pub.opts.outUrl = config.docroot + '/assets';
   var assets = AssetManager.load(manifest);
 
   var appHandler = function (request, reply) {
     reply.view('app', {
-      root: config.docroot,
       js: assets.keys.pub.js(),
       css: assets.keys.pub.css(),
       ga_id: config.ga_id
@@ -71,7 +69,7 @@ module.exports = function(config){
     method: 'GET',
     path: '/favicon.ico',
     handler: {
-      file: Path.join(__dirname, 'images/favicon.ico')
+      file: Path.join(__dirname, 'public/images/favicon.ico')
     }
   });
 
@@ -87,44 +85,6 @@ module.exports = function(config){
       }
     }
   });
-
-  server.route({
-    method: 'GET',
-    path: '/images/{path*}',
-    handler: {
-      directory: {
-        path: Path.join(__dirname, 'public/images'),
-        listing: false,
-        index: false
-      }
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/sounds/{path*}',
-    handler: {
-      directory: {
-        path: Path.join(__dirname, 'public/sounds'),
-        listing: false,
-        index: false
-      }
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/vendor/{path*}',
-    handler: {
-      directory: {
-        path: Path.join(__dirname, 'vendor'),
-        listing: false,
-        index: false
-      }
-    }
-  });
-
-  // public routes
 
   server.route({
     method: 'GET',

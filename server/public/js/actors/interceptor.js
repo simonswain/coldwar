@@ -1,75 +1,129 @@
-/*global Vec3:true, Boom:true, pickOne:true */
+/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true, pickOne */
 /*jshint browser:true */
 /*jshint strict:false */
+/*jshint latedef:false */
 
-function Interceptor(opts){
-
-  // taget will be a Bomb
-  this.target = opts.target; 
-
+Actors.Interceptor = function(env, opts, attrs){
+  this.env = env;
+  this.opts = this.genOpts();
+  this.attrs = this.genAttrs(attrs);
+  this.world = opts.world;
   this.silo = opts.silo;
-  this.bombs = opts.bombs;
-  this.booms = opts.booms;
+  this.target = opts.target;
+  this.init();
+};
 
+Actors.Interceptor.prototype.title = 'Interceptor';
+
+Actors.Interceptor.prototype.init = function(){
   this.pos = new Vec3(
-    opts.x,
-    opts.y
-  ); 
-
-  this.velo = new Vec3(); 
-  this.sensitivity = 48;
-
-  this.ttl = 100;
+    this.attrs.x,
+    this.attrs.y
+  );
+  this.velo = new Vec3();
   this.gravity = new Vec3(0, 0.1);
+};
 
-  this.speed = 0.2 + (Math.random() * 0.1);
+Actors.Interceptor.prototype.defaults = [{
+  key: 'sensitivity',
+  info: '',
+  value: 48,
+  min: 1,
+  max: 128
+}, {
+  key: 'ttl',
+  info: '',
+  value: 100,
+  min: 0,
+  max: 1000
+}];
 
-  this.dead = false;
+// spectrum 000 00f f00 f0f 0f0 0ff ff0 fff
 
-}
+Actors.Interceptor.prototype.getParams = function(){
+  return this.defaults;
+};
 
-Interceptor.prototype.update = function(delta){
+Actors.Interceptor.prototype.genOpts = function(args){
+  var opts = {};
+  var params = this.getParams();
+  params.forEach(function(param){
+    if(args && args.hasOwnProperty(param.key)){
+      opts[param.key] = Number(args[param.key]);
+    } else {
+      opts[param.key] = param.value;
+    }
+  }, this);
+  return opts;
+};
 
-  this.ttl --;
+Actors.Interceptor.prototype.genAttrs = function(attrs){
+  return {
+    x: attrs.x,
+    y: attrs.y,
+    z: attrs.z,
+    sensitivity: this.opts.sensitivity,
+    ttl: this.opts.ttl,
+    dead: false,
+    speed: 0.2 + (Math.random() * 0.1)
+  };
+};
 
-  if(this.ttl < 0){
-    this.silo.launched --;
-    this.dead = true;
-    this.booms.push(new Boom({
-      radius: 10,
-      ttl: 30,
-      style: '',
-      x: this.pos.x,
-      y: this.pos.y,
-      color: '0,255,255'
-    }));
+Actors.Interceptor.prototype.x = function(f){
+  return this.opts.max_x * f;
+};
+
+Actors.Interceptor.prototype.y = function(f){
+  return this.opts.max_y * f;
+};
+
+Actors.Interceptor.prototype.z = function(f){
+  return this.opts.max_z * f;
+};
+
+Actors.Interceptor.prototype.update = function(delta){
+
+   this.attrs.ttl --;
+  if(this.attrs.ttl < 0){
+    this.silo.attrs.launched --;
+    this.attrs.dead = true;
+    this.world.booms.push(new Actors.Boom(
+      this.env, {
+      }, {
+        radius: 10,
+        ttl: 30,
+        style: '',
+        x: this.pos.x,
+        y: this.pos.y,
+        color: '0,255,255'
+      }));
   }
 
   // target died? pick another
   var bomb;
-  if(!this.target || this.target.dead){
-    bomb = pickOne(this.bombs);
+  if(!this.target || this.target.attrs.dead){
+    bomb = pickOne(this.world.bombs);
     if(bomb){
       this.target = bomb;
     }
 
   }
 
-  // 
-  
-  var accel = this.target.pos.minus(this.pos).normalize().scale(this.speed);
+  //
+
+  var accel = this.target.pos.minus(this.pos).normalize().scale(this.attrs.speed);
   this.velo.add(accel);
   this.pos.add(this.velo);
   this.velo.add(this.gravity);
 
   // hit target?
   var range = this.pos.range(this.target.pos);
-
-  if(range < this.sensitivity){
-    this.dead = true;
-    this.target.dead = true;
-    this.silo.launched --;
-    this.booms.push(new Boom({
+  if(range < this.opts.sensitivity){
+    this.attrs.dead = true;
+    this.target.attrs.dead = true;
+    this.silo.attrs.launched --;
+    this.world.booms.push(new Actors.Boom(this.env, {
+    }, {
       style: '',
       radius: 25,
       x: this.pos.x,
@@ -80,9 +134,8 @@ Interceptor.prototype.update = function(delta){
 
 };
 
-Interceptor.prototype.paint = function(view){
+Actors.Interceptor.prototype.paint = function(view){
   view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
   view.ctx.rotate(this.velo.angleXY());
   view.ctx.fillStyle= '#0cc';
   view.ctx.beginPath();
