@@ -67,7 +67,7 @@ Factory.prototype.makeMunitions = function(){
 
   if(this.units === 0){
     return;
-  } 
+  }
 
   if(!this.capital){
     return;
@@ -88,7 +88,7 @@ Factory.prototype.makeMunitions = function(){
     return;
   }
 
-  
+
   this.amount.bombers += 0.025 * this.units;
   this.amount.fighters += 0.05 * this.units;
   this.amount.icbms += 0.001 * this.units;
@@ -132,9 +132,9 @@ Factory.prototype.launchAbms = function(){
 
   var launched_this_tick = 0;
   var range, targets, target;
-  
+
   var abm_cost = 10;
-  
+
   if(this.units.abms < abm_cost || this.stock.abms < 1){
     return;
   }
@@ -142,7 +142,7 @@ Factory.prototype.launchAbms = function(){
   if(this.abms_launched >= this.abm_launch_max){
     return;
   }
-  
+
   targets = [];
 
   var midway = this.world.max_x/2;
@@ -171,7 +171,7 @@ Factory.prototype.launchAbms = function(){
     return;
   }
   while((this.stock.abms > 0 || this.units > abm_cost) && this.abms_launched < this.abm_launch_max && launched_this_tick < this.abm_launch_per_tick){
-    
+
     target = pickOne(targets);
     this.world.abms.push(new Abm({
       x: this.pos.x,
@@ -216,13 +216,13 @@ Factory.prototype.paint = function(view){
 
   view.ctx.strokeStyle = this.color;
   view.ctx.lineWidth = 2;
-  
+
   view.ctx.beginPath();
   view.ctx.moveTo(0, -12);
   view.ctx.lineTo(12, 12);
   view.ctx.lineTo(-12, 12);
-  view.ctx.closePath();     
-  view.ctx.fillStyle = '#000'; 
+  view.ctx.closePath();
+  view.ctx.fillStyle = '#000';
   view.ctx.fill();
   view.ctx.stroke();
   view.ctx.closePath();
@@ -252,13 +252,13 @@ Factory.prototype.elevation = function(view){
 
   var scale = view.yscale;
 
-  view.ctx.save();  
+  view.ctx.save();
   view.ctx.translate(this.pos.x, ((this.world.max_z - this.pos.z) * scale) - 1);
 
   view.ctx.strokeStyle = this.color;
   view.ctx.fillStyle = '#000';
   view.ctx.lineWidth = 2;
-  
+
   view.ctx.beginPath();
   view.ctx.moveTo(-6, 0);
   view.ctx.lineTo(0, -12);
