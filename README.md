@@ -32,16 +32,14 @@ node run
 
 ## Key Controls
 
-`tab` toggle options
-`esc` back to index
-`enter` restart scene
-
-`?` help.
-`\` diagnostics.
-
-`drag` pan
-`+`, `-`, '0' zoom
-`mousewheel` zoom.
+* `tab` toggle options
+* `esc` back to index
+* `enter` restart scene
+* `?` help.
+* `\` diagnostics.
+* `drag` pan
+* `+`, `-`, '0' zoom
+* `mousewheel` zoom.
 
 ## References
 
