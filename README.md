@@ -41,6 +41,10 @@ node run
 * `+`, `-`, '0' zoom
 * `mousewheel` zoom.
 
+## Hacking
+
+Start by looking in `server/public/js/scenes` and `server/public/js/actors`. These are the only two places you'll need to mess with to write your own sims. Create a Scene and fill it with Actors. Start simple and build it up.
+
 ## References
 
 * [SAGE](https://www.youtube.com/results?search_query=sage+computer)
