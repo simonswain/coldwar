@@ -4,6 +4,9 @@
 
 ## Talks
 
+* [Video of Coldwar talk at TXJS 2015](https://www.youtube.com/watch?v=hXW7kkyhtqo&list=PLMWftTFfsA8Om-GqKm46bw8GVxyKXRz0X&index=1)
+* [Video of Coldwar talk at Web Directions CODE 2015](https://vimeo.com/132786140)
+
 Talks have been given on Coldwar at:
 
 * JSConf US, May 2015 (Jacksonville, Florida, US)
