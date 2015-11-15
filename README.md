@@ -51,7 +51,7 @@ node run
 * `?` help.
 * `\` diagnostics.
 * `drag` pan
-* `+`, `-`, '0' zoom
+* `+` `-` `0` zoom
 * `mousewheel` zoom.
 
 ## References
