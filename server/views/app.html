@@ -5,153 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <meta name="google" value="notranslate">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="apple-touch-icon" href="/images/logo.png">
     <link type="image/x-icon" rel="shortcut icon" href="/favicon.ico">
-    <title>Cold War</title>
+    <title>Cold War - Simulation Platform</title>
     {{{css}}}
-    <style>
-/* cribbed from http://codepen.io/collection/DgYaMj/ */
-input[type='range'] {
-  display: block;
-  border: none;
-  margin: 0 auto;
-  padding: 0;
-  width: 34.25em;
-  height: 2em;
-  opacity: .7;
-  background: nonerepeating-linear-gradient(90deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.32) 1px, transparent 1px, transparent 3em) no-repeat 50% 50% content-box;
-  background-size: calc(27em + 1px) 100%;
-  font-size: 1em;
-  cursor: pointer;
-}
-input[type='range'], input[type='range']::-webkit-slider-runnable-track, input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-}
-input[type='range']::-webkit-slider-runnable-track {
-  position: relative;
-  width: 34.25em;
-  height: 0.75em;
-  border-radius: 0.25em;
-  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.32);
-}
-input[type='range']::-webkit-slider-runnable-track {
-  position: relative;
-  width: 34.25em;
-  height: 0.75em;
-  border-radius: 0.25em;
-  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.32);
-}
-.js input[type='range']::-webkit-slider-runnable-track {
-  background: linear-gradient(#ffffff, #ffffff) no-repeat rgba(255, 255, 255, 0.32);
-}
-input[type='range']::-moz-range-track {
-  width: 34.25em;
-  height: 0.75em;
-  border-radius: 0.25em;
-  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.32);
-}
-input[type='range']::-ms-track {
-  border: none;
-  width: 34.25em;
-  height: 0.75em;
-  border-radius: 0.25em;
-  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.32);
-  color: transparent;
-}
-input[type='range']::-moz-range-progress {
-  height: 0.75em;
-  border-radius: 0.25em;
-  background: #fff;
-}
-input[type='range']::-ms-fill-lower {
-  border-radius: 0.25em;
-  background: #fff;
-}
-input[type='range']::-webkit-slider-thumb {
-  margin-top: -0.25em;
-  box-sizing: border-box;
-  border: solid 0.125em #606;
-  width: 1.25em;
-  height: 1.25em;
-  border-radius: 50%;
-  background: #000;
-}
-input[type='range']::-webkit-slider-thumb:hover {
-  border: solid 0.125em #c0c;
-}
-input[type='range']::-moz-range-thumb {
-  box-sizing: border-box;
-  border: solid 0.125em #0ff;
-  width: 1.25em;
-  height: 1.25em;
-  border-radius: 50%;
-  background: #000;
-}
-input[type='range']::-ms-thumb {
-  box-sizing: border-box;
-  border: solid 0.125em #0ff;
-  width: 1.25em;
-  height: 1.25em;
-  border-radius: 50%;
-  background: #000;
-}
-input[type='range']::-webkit-slider-runnable-track:before, input[type='range'] /deep/ #track:before {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  color: #fff;
-  line-height: 1.5;
-}
-[class*=webkit] input[type='range']::-webkit-slider-thumb:before, [class*=webkit] input[type='range']::-webkit-slider-thumb:after, [class*=webkit] input[type='range'] /deep/ #thumb:before, [class*=webkit] input[type='range'] /deep/ #thumb:after {
-  position: absolute;
-  bottom: 0;
-  color: #fff;
-  line-height: 1;
-}
-[class*=webkit] input[type='range']::-webkit-slider-thumb:before, [class*=webkit] input[type='range'] /deep/ #thumb:before {
-  box-sizing: border-box;
-  left: 100%;
-  padding-right: .0625em;
-  width: 2em;
-  transform: translateY(8px);
-  font-size: 3em;
-  text-align: right;
-}
-[class*=webkit] input[type='range']::-webkit-slider-thumb:after, [class*=webkit] input[type='range'] /deep/ #thumb:after {
-  left: calc(100% + 8em);
-  font-size: 0.75em;
-}
-.js input[type='range']:nth-of-type(1)::-webkit-slider-runnable-track {
-  background-size: 9.09091% 100%;
-}
-.js input[type='range']:nth-of-type(3)::-webkit-slider-runnable-track {
-  background-size: 9.09091% 100%;
-}
-input[type='range']:focus {
-  outline: none;
-  opacity: .99;
-}
-</style>
+    <link rel="stylesheet" href="/css/sliders.css">
   </head>
   <body>
     <div id="app"></div>
     {{{js}}}
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <div class="about">
+      <h1>Cold War</h1>
+      <p><strong>Coldwar is a simulation platform. You can explore it's built in scenes, or use it as a starting point for writing your own.</strong></p>
 
-  ga('create', '{{{ga_id}}}', 'auto');
-  ga('send', 'pageview');
-</script>
+      <p>The platform builds on concepts presented at JSConf.US 2015, Web Directions Code (<a href="https://vimeo.com/132786140" target="_new">video</a>), TX.js (<a href="https://www.youtube.com/watch?v=hXW7kkyhtqo" target="_new">video</a>), JSConf.Asia 2014 (<a href="https://www.youtube.com/watch?v=0HJPilemNns" target="_new">video</a>) and Talk.js Singapore November 2015 <a href="https://www.youtube.com/watch?v=4lmJJX2KoKY">video</a>).
+</p>
+
+      <p>Source is at <a href="https://github.com/simonswain/coldwar">github.com/simonswain/coldwar</a></p>
+
+      <p>TAB toggles scene options<br />ENTER restarts scene<br />\ toggles diagnostics<br />? toggles help<br />Mousewheel and Drag to zoom and pan<br />+/- to zoom<br />0 to reset zoom<br />ESC to get back to Index',
+
+      <p>Follow <a href="https://twitter.com/simon_swain">@simon_swain</a> on Twitter for updates</p>
+
+      <p>Use #coldwar to tag</p>
+    </div> 
   </body>
 </html>
