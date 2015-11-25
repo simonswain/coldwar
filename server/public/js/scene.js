@@ -1,7 +1,7 @@
 function Scene(){
 }
 
-Scene.prototype.title = 'Default Scece';
+Scene.prototype.title = 'Default Scene';
 
 Scene.prototype.init = function(){
   this.attrs = this.genAttrs();
@@ -60,4 +60,3 @@ Scene.prototype.elevation = function(view){
 Scene.prototype.getHelp = function(){
   return '';
 };
-
