@@ -18,6 +18,7 @@
   },
   "scripts": {
     "test": "grunt test",
+    "setup": "cp config/index.sample.js config/index.js",
     "start": "node run.js"
   },
   "dependencies": {
