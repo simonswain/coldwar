@@ -1,6 +1,6 @@
 {
   "name": "coldwar",
-  "description": "",
+  "description": "Simulation Platform",
   "version": "1.0.0",
   "homepage": "https://coldwar.io",
   "author": {
@@ -8,6 +8,11 @@
     "email": "simon@simonswain.com",
     "url": "https://simonswain.com"
   },
+  "contributors": [{
+    "name": "Sebastiaan Deckers",
+    "email": "seb@ninja.sg",
+    "url": "https://ninja.sg"
+  }],
   "repository": {
     "type": "git",
     "url": "https://github.com/simonswain/coldwar"
@@ -17,8 +22,9 @@
     "node": ">= 4.2.0"
   },
   "scripts": {
-    "test": "grunt test",
-    "start": "node server.js"
+    "test": "standard",
+    "start": "node run.js",
+    "postinstall": "rsync --ignore-existing config/index.sample.js config/index.js"
   },
   "dependencies": {
     "async": "^0.9.0",
@@ -31,16 +37,7 @@
     "winston": "^0.9.0"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.1",
-    "grunt-contrib-nodeunit": "^0.4.1",
-    "nodeunit": "^0.9.1",
-    "nodeunit-httpclient": "^0.2.1"
+    "standard": "^5.4.1"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/simonswain/coldwar/blob/master/LICENSE-MIT"
-    }
-  ]
+  "license": "MIT"
 }
