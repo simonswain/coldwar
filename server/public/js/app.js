@@ -538,6 +538,9 @@ Coldwar.prototype.hideHelp = function(){
 };
 
 Coldwar.prototype.restart = function(){
+  if(this.scene && typeof this.scene.stop === 'function'){
+    this.scene.stop();
+  }
   this.stop();
   if(this.restartTimeout){
     clearTimeout(this.restartTimeout);

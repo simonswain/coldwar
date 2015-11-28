@@ -103,6 +103,18 @@ module.exports = function(config){
     }
   });
 
+  server.route({
+    method: 'GET',
+    path: '/css/{path*}',
+    handler: {
+      directory: {
+        path: Path.join(__dirname, 'public/css'),
+        listing: false,
+        index: false
+      }
+    }
+  });
+
   server.register({
     register: require('hapi-less'),
     options: {
@@ -114,7 +126,7 @@ module.exports = function(config){
     }
   }, function (err) {
   });
-
+  
   server.register({
     register: require('hapi-less'),
     options: {
