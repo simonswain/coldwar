@@ -1,21 +1,18 @@
-/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Actors, Actor, Vec3, hex2rgb */
 
-Actors.Supply = function(env, refs, attrs){
-  this.env = env;
-  this.refs = refs;
-  this.opts = this.genOpts();
-  this.attrs = this.genAttrs(attrs);
-  this.init();
-};
+Actors.Supply = function (env, refs, attrs) {
+  this.env = env
+  this.refs = refs
+  this.opts = this.genOpts()
+  this.attrs = this.genAttrs(attrs)
+  this.init()
+}
 
-Actors.Supply.prototype = Object.create(Actor.prototype);
+Actors.Supply.prototype = Object.create(Actor.prototype)
 
-Actors.Supply.prototype.title = 'Supply';
+Actors.Supply.prototype.title = 'Supply'
 
-Actors.Supply.prototype.genAttrs = function(attrs){
+Actors.Supply.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
     y: attrs.y,
@@ -27,17 +24,17 @@ Actors.Supply.prototype.genAttrs = function(attrs){
     supply_range: 8,
     units: attrs.units || null,
     stock: attrs.stock || null
-  };
-};
+  }
+}
 
-Actors.Supply.prototype.init = function(){
+Actors.Supply.prototype.init = function () {
   this.pos = new Vec3(
     this.attrs.x,
     this.attrs.y,
     this.attrs.z
-  );
-  this.velo = new Vec3();
-};
+  )
+  this.velo = new Vec3()
+}
 
 Actors.Supply.prototype.defaults = [{
   key: 'radius',
@@ -45,78 +42,72 @@ Actors.Supply.prototype.defaults = [{
   value: 25,
   min: 10,
   max: 100
-}];
+}]
 
-Actors.Supply.prototype.update = function(delta) {
-
-  if(!this.refs.target || this.refs.target.dead){
-    this.attrs.dead = true;
-    return;
+Actors.Supply.prototype.update = function (delta) {
+  if (!this.refs.target || this.refs.target.dead) {
+    this.attrs.dead = true
+    return
   }
 
   // distance to target
-  var range = this.pos.rangeXY(this.refs.target.pos);
+  var range = this.pos.rangeXY(this.refs.target.pos)
 
-  if(range <= this.attrs.supply_range){
-    if(this.attrs.units){
-      this.refs.target.addUnits(this.attrs.units);
+  if (range <= this.attrs.supply_range) {
+    if (this.attrs.units) {
+      this.refs.target.addUnits(this.attrs.units)
     }
-    if(this.attrs.stock){
-      this.refs.target.addStock(this.attrs.stock);
+    if (this.attrs.stock) {
+      this.refs.target.addStock(this.attrs.stock)
     }
-    this.attrs.dead = true;
-    return;
+    this.attrs.dead = true
+    return
   }
 
-  var vector = this.refs.target.pos.minus(this.pos).normalize();
-  vector.scale(this.attrs.speed);
-  this.pos.add(vector);
+  var vector = this.refs.target.pos.minus(this.pos).normalize()
+  vector.scale(this.attrs.speed)
+  this.pos.add(vector)
+}
 
-};
+Actors.Supply.prototype.paint = function (view) {
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, this.pos.y)
 
-Actors.Supply.prototype.paint = function(view) {
+  view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)'
+  // view.ctx.fillStyle = this.attrs.color
+  view.ctx.beginPath()
 
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
-
-  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)';
-  //view.ctx.fillStyle = this.attrs.color;
-  view.ctx.beginPath();
-
-  if(this.attrs.stock){
+  if (this.attrs.stock) {
     // munitions
-    view.ctx.fillRect(-2, -2, 4, 4);
+    view.ctx.fillRect(-2, -2, 4, 4)
   } else {
     // raw materials
-    view.ctx.beginPath();
-    view.ctx.arc(0, 0, 2, 0, 2*Math.PI);
-    view.ctx.closePath();
-    view.ctx.fill();
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, 2, 0, 2 * Math.PI)
+    view.ctx.closePath()
+    view.ctx.fill()
   }
 
-  view.ctx.restore();
+  view.ctx.restore()
+}
 
-};
+Actors.Supply.prototype.elevation = function (view) {
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)))
 
-Actors.Supply.prototype.elevation = function(view) {
+  view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)'
+  // view.ctx.fillStyle = this.attrs.color
 
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)));
-
-  view.ctx.fillStyle= 'rgba(' + hex2rgb(this.attrs.color) + ', 0.5)';
-  //view.ctx.fillStyle = this.attrs.color;
-
-  if(this.attrs.stock){
+  if (this.attrs.stock) {
     // munitions
-    view.ctx.fillRect(-3, -3, 2, 2);
+    view.ctx.fillRect(-3, -3, 2, 2)
   } else {
     // raw materials
-    view.ctx.beginPath();
-    view.ctx.arc(-2, -2, 1, 0, 2*Math.PI);
-    view.ctx.closePath();
-    view.ctx.fill();
+    view.ctx.beginPath()
+    view.ctx.arc(-2, -2, 1, 0, 2 * Math.PI)
+    view.ctx.closePath()
+    view.ctx.fill()
   }
 
-  view.ctx.restore();
-
-};
+  view.ctx.restore()
+}

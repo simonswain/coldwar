@@ -1,60 +1,54 @@
-/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Actors, Actor, hex2rgb */
 
-Actors.Map = function(env, refs, attrs){
-  this.env = env;
-  this.refs = refs;
-  this.opts = this.genOpts();
-  this.attrs = this.genAttrs(attrs);
-  this.init();
-};
+Actors.Map = function (env, refs, attrs) {
+  this.env = env
+  this.refs = refs
+  this.opts = this.genOpts()
+  this.attrs = this.genAttrs(attrs)
+  this.init()
+}
 
-Actors.Map.prototype = Object.create(Actor.prototype);
+Actors.Map.prototype = Object.create(Actor.prototype)
 
-Actors.Map.prototype.title = 'Map';
+Actors.Map.prototype.title = 'Map'
 
-Actors.Map.prototype.genAttrs = function(attrs){
+Actors.Map.prototype.genAttrs = function (attrs) {
   return {
     color: this.opts.color > -1 ? this.colors[this.opts.color] : '#f0f',
     title: attrs.title || false,
     outline: attrs.outline || false
-  };
-};
+  }
+}
 
-Actors.Map.prototype.init = function(){
+Actors.Map.prototype.init = function () {
+  var p0, p1
+  var map = Actors.Map.prototype.maps[this.opts.map]
 
-  var x, y, z;
-  var p0, p1;
-  var map = Actors.Map.prototype.maps[this.opts.map];
-
-  this.outline = [];
-  var quantize = function(point){
-    var res = [];
-    if(point.length === 2 || point.length === 3){
-      p0 = point[0] + 180;
-      p1 = point[1] + 180;
-      if(this.opts.quantize > 0){
-        res[0] = Math.floor(p0 / this.opts.quantize) * this.opts.quantize;
-        res[1] = Math.floor(p1 / this.opts.quantize) * this.opts.quantize;
-        res[0] -= 180;
-        res[1] -= 180;
+  this.outline = []
+  var quantize = function (point) {
+    var res = []
+    if (point.length === 2 || point.length === 3) {
+      p0 = point[0] + 180
+      p1 = point[1] + 180
+      if (this.opts.quantize > 0) {
+        res[0] = Math.floor(p0 / this.opts.quantize) * this.opts.quantize
+        res[1] = Math.floor(p1 / this.opts.quantize) * this.opts.quantize
+        res[0] -= 180
+        res[1] -= 180
       } else {
-        res[0] = Number(point[0].toFixed(this.opts.dp));
-        res[1] = Number(point[1].toFixed(this.opts.dp));
+        res[0] = Number(point[0].toFixed(this.opts.dp))
+        res[1] = Number(point[1].toFixed(this.opts.dp))
       }
     }
-    return res;
-  }.bind(this);
+    return res
+  }.bind(this)
 
-  for(var i=0, ii=map.length; i<ii; i++){
-    this.outline.push(quantize(map[i]));
+  for (var i = 0, ii = map.length; i < ii; i++) {
+    this.outline.push(quantize(map[i]))
   }
+}
 
-};
-
-Actors.Map.prototype.colors = ['#000', '#00f', '#f00','#f0f', '#0f0', '#0ff','#ff0','#fff'];
+Actors.Map.prototype.colors = ['#000', '#00f', '#f00', '#f0f', '#0f0', '#0ff', '#ff0', '#fff']
 
 Actors.Map.prototype.defaults = [{
   key: 'pos_x',
@@ -96,7 +90,7 @@ Actors.Map.prototype.defaults = [{
   key: 'color',
   value: -1,
   min: -1,
-  max: 7,
+  max: 7
 }, {
   key: 'opacity',
   value: 1,
@@ -109,176 +103,160 @@ Actors.Map.prototype.defaults = [{
   min: 0,
   max: 9,
   step: 0.1
-}];
+}]
 
-Actors.Map.prototype.update = function(delta) {
-};
+Actors.Map.prototype.update = function (delta) {}
 
-Actors.Map.prototype.paint = function(view) {
-
-  var scale = this.refs.scene.opts.max / 180;
-  view.ctx.save();
+Actors.Map.prototype.paint = function (view) {
+  var scale = this.refs.scene.opts.max / 180
+  view.ctx.save()
   view.ctx.translate(
-    (this.refs.scene.opts.max_x/2) + (this.opts.pos_x * this.opts.zoom),
-    (this.refs.scene.opts.max_y/2) + (this.opts.pos_y * this.opts.zoom)
-  );
-  view.ctx.scale(scale * this.opts.zoom, scale * this.opts.zoom);
-  this.paintMap(view);
-  view.ctx.restore();
-
-};
-
+    (this.refs.scene.opts.max_x / 2) + (this.opts.pos_x * this.opts.zoom),
+    (this.refs.scene.opts.max_y / 2) + (this.opts.pos_y * this.opts.zoom)
+  )
+  view.ctx.scale(scale * this.opts.zoom, scale * this.opts.zoom)
+  this.paintMap(view)
+  view.ctx.restore()
+}
 
 Actors.Map.prototype.toXY = function (point) {
-  return [point[0], -point[1]];
-};
+  return [point[0], -point[1]]
+}
 
 Actors.Map.prototype.paintMap = function (view) {
+  var ctx = view.ctx
+  var move = true
+  ctx.save()
+  ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',' + this.opts.opacity + ')'
 
-  var ctx = view.ctx;
-  var move = true;
-  ctx.save();
-  ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',' + this.opts.opacity + ')';
-
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 0.5
   for (var i = 0, ii = this.outline.length; i < ii; i++) {
     if (this.outline[i].length === 0) {
-      move = true;
-      ctx.stroke();
-      continue;
+      move = true
+      ctx.stroke()
+      continue
     }
-    var point = this.toXY(this.outline[i]);
+    var point = this.toXY(this.outline[i])
     if (move) {
-      ctx.beginPath();
-      ctx.moveTo(point[0], point[1]);
-      move = false;
+      ctx.beginPath()
+      ctx.moveTo(point[0], point[1])
+      move = false
     } else {
-      ctx.lineTo(point[0], point[1]);
+      ctx.lineTo(point[0], point[1])
     }
   }
 
-  ctx.stroke();
-  ctx.restore();
-
-};
+  ctx.stroke()
+  ctx.restore()
+}
 
 Actors.Map.prototype.paintMouse = function (view) {
-  view.ctx.fillStyle = this.attrs.color;
+  view.ctx.fillStyle = this.attrs.color
 
-  var x = (this.env.mouse.x - 180);
-  var y = (this.env.mouse.y - 90);
-  if(x > - 180 && x < 180 && y > - 90 && y < 90){
+  var x = (this.env.mouse.x - 180)
+  var y = (this.env.mouse.y - 90)
+  if (x > -180 && x < 180 && y > -90 && y < 90) {
+    view.ctx.strokeStyle = 'rgba(0,255,255,0.5)'
+    view.ctx.lineWidth = 0.5
 
-    view.ctx.strokeStyle = 'rgba(0,255,255,0.5)';
-    view.ctx.lineWidth = 0.5;
+    view.ctx.beginPath()
+    view.ctx.lineTo(-180, y)
+    view.ctx.lineTo(180, y)
+    view.ctx.stroke()
 
-    view.ctx.beginPath();
-    view.ctx.lineTo(-180, y);
-    view.ctx.lineTo(180, y);
-    view.ctx.stroke();
-
-    view.ctx.beginPath();
-    view.ctx.lineTo(x, -90);
-    view.ctx.lineTo(x, 90);
-    view.ctx.stroke();
-
+    view.ctx.beginPath()
+    view.ctx.lineTo(x, -90)
+    view.ctx.lineTo(x, 90)
+    view.ctx.stroke()
   }
-};
+}
 
 Actors.Map.prototype.paintData = function (view) {
-  view.ctx.fillStyle = this.attrs.color;
-  view.ctx.font = '6px ubuntu mono, monospace';
-    view.ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  view.ctx.textBaseline = 'middle';
-  var x = (this.env.mouse.x - 180);
-  var y = (this.env.mouse.y - 90);
-  if(x > - 180 && x < 180 && y > - 90 && y < 90){
-    view.ctx.textAlign = 'center';
-    view.ctx.fillText(x.toFixed(2), x, -86);
-    view.ctx.fillText(x.toFixed(2), x, 86);
+  view.ctx.fillStyle = this.attrs.color
+  view.ctx.font = '6px ubuntu mono, monospace'
+  view.ctx.fillStyle = 'rgba(255,255,255,0.8)'
+  view.ctx.textBaseline = 'middle'
+  var x = (this.env.mouse.x - 180)
+  var y = (this.env.mouse.y - 90)
+  if (x > -180 && x < 180 && y > -90 && y < 90) {
+    view.ctx.textAlign = 'center'
+    view.ctx.fillText(x.toFixed(2), x, -86)
+    view.ctx.fillText(x.toFixed(2), x, 86)
 
-    view.ctx.textAlign = 'left';
-    view.ctx.fillText(y.toFixed(2), -176, y);
+    view.ctx.textAlign = 'left'
+    view.ctx.fillText(y.toFixed(2), -176, y)
 
-    view.ctx.textAlign = 'right';
-    view.ctx.fillText(y.toFixed(2), 176, y);
+    view.ctx.textAlign = 'right'
+    view.ctx.fillText(y.toFixed(2), 176, y)
 
-    view.ctx.strokeStyle = 'rgba(0,255,255,0.5)';
+    view.ctx.strokeStyle = 'rgba(0,255,255,0.5)'
 
-    view.ctx.lineWidth = 0.5;
+    view.ctx.lineWidth = 0.5
 
-    view.ctx.beginPath();
-    view.ctx.lineTo(-180, y);
-    view.ctx.lineTo(180, y);
-    view.ctx.stroke();
+    view.ctx.beginPath()
+    view.ctx.lineTo(-180, y)
+    view.ctx.lineTo(180, y)
+    view.ctx.stroke()
 
-    view.ctx.beginPath();
-    view.ctx.lineTo(x, -90);
-    view.ctx.lineTo(x, 90);
-    view.ctx.stroke();
-
+    view.ctx.beginPath()
+    view.ctx.lineTo(x, -90)
+    view.ctx.lineTo(x, 90)
+    view.ctx.stroke()
   }
-};
+}
 
 Actors.Map.prototype.paintGrid = function (view) {
+  var ctx = view.ctx
+  view.ctx.save()
 
-  var ctx = view.ctx;
-  var move = true;
-  view.ctx.save();
+  view.ctx.font = '4px ubuntu mono, monospace'
+  view.ctx.textBaseline = 'middle'
+  view.ctx.textAlign = 'center'
 
-  view.ctx.font = '4px ubuntu mono, monospace';
-  view.ctx.textBaseline = 'middle';
-  view.ctx.textAlign = 'center';
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)'
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1
 
-  ctx.lineWidth = 1;
+  ctx.beginPath()
+  ctx.lineTo(-180, 0)
+  ctx.lineTo(180, 0)
+  ctx.stroke()
 
-  ctx.beginPath();
-  ctx.lineTo(-180, 0);
-  ctx.lineTo(180, 0);
-  ctx.stroke();
+  ctx.beginPath()
+  ctx.lineTo(0, -90)
+  ctx.lineTo(0, 90)
+  ctx.stroke()
 
-  ctx.beginPath();
-  ctx.lineTo(0, -90);
-  ctx.lineTo(0, 90);
-  ctx.stroke();
+  ctx.lineWidth = 0.5
 
-  ctx.lineWidth = 0.5;
-
-  var i, ii;
-  var j, jj;
-  var point;
-  for(i=-90; i<=90; i += this.opts.grid_size){
+  var i
+  for (i = -90; i <= 90; i += this.opts.grid_size) {
     // latitude
-    ctx.beginPath();
-    ctx.moveTo(-180, i);
-    ctx.lineTo(180, i);
-    ctx.stroke();
+    ctx.beginPath()
+    ctx.moveTo(-180, i)
+    ctx.lineTo(180, i)
+    ctx.stroke()
 
-    view.ctx.fillText(i.toFixed(0), -180 - 4, i);
-    view.ctx.fillText(i.toFixed(0), 180 + 4, i);
-
+    view.ctx.fillText(i.toFixed(0), -180 - 4, i)
+    view.ctx.fillText(i.toFixed(0), 180 + 4, i)
   }
-  for(i=-180; i<=180; i += this.opts.grid_size){
+  for (i = -180; i <= 180; i += this.opts.grid_size) {
     // longitude
-    ctx.beginPath();
-    ctx.moveTo(i, -90);
-    ctx.lineTo(i, 90);
-    ctx.stroke();
+    ctx.beginPath()
+    ctx.moveTo(i, -90)
+    ctx.lineTo(i, 90)
+    ctx.stroke()
 
-    view.ctx.fillText(i.toFixed(0), i, -90 - 4);
-    view.ctx.fillText(i.toFixed(0), i, 90 + 4);
+    view.ctx.fillText(i.toFixed(0), i, -90 - 4)
+    view.ctx.fillText(i.toFixed(0), i, 90 + 4)
   }
-  ctx.restore();
-};
+  ctx.restore()
+}
 
+Actors.Map.prototype.elevation = function (view) {}
 
-Actors.Map.prototype.elevation = function(view) {
-};
-
-Actors.Map.prototype.maps = [];
+Actors.Map.prototype.maps = []
 
 Actors.Map.prototype.maps[0] = [
   [-6.197884894220991, 53.867565009163364],
@@ -4737,8 +4715,8 @@ Actors.Map.prototype.maps[0] = [
   [-89.36663, 80.85569],
   [-90.2, 81.26],
   [-91.36786, 81.5531],
-  [-91.58702, 81.89429],
-];
+  [-91.58702, 81.89429]
+]
 
 Actors.Map.prototype.maps[1] = [
   // CA
@@ -4766,7 +4744,7 @@ Actors.Map.prototype.maps[1] = [
   [-100, 0],
   [-100, -190],
   [0, -190]
-];
+]
 
 Actors.Map.prototype.maps[2] = [
   // ni
@@ -4806,11 +4784,11 @@ Actors.Map.prototype.maps[2] = [
   [-200, -250], [-150, -250], [-150, -200], [-60, -180], [-50, -250], [70, -60], [20, 100], [-70, 100], [-90, 70], [-150, 50], [-250, 70], [-300, 70], [-320, 0], [-330, -50], [-200, -250], [-200, -250], [-50, 130],
   // tas
   [], [10, 130], [-20, 180], [-50, 130]
-];
+]
 
 Actors.Map.prototype.defaults.push({
   key: 'map',
   value: 0,
   min: 0,
   max: Actors.Map.prototype.maps.length - 1
-});
+})

@@ -1,15 +1,15 @@
-function Scene(){
+function Scene () {
 }
 
-Scene.prototype.title = 'Default Scece';
+Scene.prototype.title = 'Default Scece'
 
-Scene.prototype.init = function(){
-  this.attrs = this.genAttrs();
-};
+Scene.prototype.init = function () {
+  this.attrs = this.genAttrs()
+}
 
-Scene.prototype.getCast = function(){
-  return {};
-};
+Scene.prototype.getCast = function () {
+  return {}
+}
 
 Scene.prototype.defaults = [{
   key: 'max_x',
@@ -29,35 +29,34 @@ Scene.prototype.defaults = [{
   value: 100,
   min: 50,
   max: 500
-}];
+}]
 
-Scene.prototype.genOpts = function(args){
-  var opts = {};
-  this.defaults.forEach(function(param){
-    if(args && args.hasOwnProperty(param.key)){
-      opts[param.key] = Number(args[param.key]);
+Scene.prototype.genOpts = function (args) {
+  var opts = {}
+  this.defaults.forEach(function (param) {
+    if (args && args.hasOwnProperty(param.key)) {
+      opts[param.key] = Number(args[param.key])
     } else {
-      opts[param.key] = param.value;
+      opts[param.key] = param.value
     }
-  }, this);
-  return opts;
-};
+  }, this)
+  return opts
+}
 
-Scene.prototype.genAttrs = function(){
+Scene.prototype.genAttrs = function () {
   return {
-  };
-};
+  }
+}
 
-Scene.prototype.update = function(delta){
-};
+Scene.prototype.update = function (delta) {
+}
 
-Scene.prototype.paint = function(view){
-};
+Scene.prototype.paint = function (view) {
+}
 
-Scene.prototype.elevation = function(view){
-};
+Scene.prototype.elevation = function (view) {
+}
 
-Scene.prototype.getHelp = function(){
-  return '';
-};
-
+Scene.prototype.getHelp = function () {
+  return ''
+}

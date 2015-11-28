@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "standard",
-    "start": "node run.js",
+    "start": "node server",
     "postinstall": "rsync --ignore-existing config/index.sample.js config/index.js"
   },
   "dependencies": {
