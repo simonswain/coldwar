@@ -18,7 +18,8 @@
   },
   "scripts": {
     "test": "grunt test",
-    "start": "node server.js"
+    "setup": "cp config/index.sample.js config/index.js",
+    "start": "node run.js"
   },
   "dependencies": {
     "async": "^0.9.0",
