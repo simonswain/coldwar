@@ -1,41 +1,38 @@
-/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Actors, Actor, Vec3, hex2rgb */
 
-Actors.Abm = function(env, refs, attrs){
-  this.env = env;
-  this.refs = refs;
-  this.opts = this.genOpts();
-  this.attrs = this.genAttrs(attrs);
-  this.init();
-};
+Actors.Abm = function (env, refs, attrs) {
+  this.env = env
+  this.refs = refs
+  this.opts = this.genOpts()
+  this.attrs = this.genAttrs(attrs)
+  this.init()
+}
 
-Actors.Abm.prototype = Object.create(Actor.prototype);
+Actors.Abm.prototype = Object.create(Actor.prototype)
 
-Actors.Abm.prototype.title = 'Abm';
+Actors.Abm.prototype.title = 'Abm'
 
-Actors.Abm.prototype.genAttrs = function(attrs){
+Actors.Abm.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
     y: attrs.y,
     z: attrs.z,
-    ttl: 40 + (20*Math.random()),
-    speed: attrs.speed || this.opts.speed - (this.opts.speed_flux/2) + (Math.random()*this.opts.speed_flux),
+    ttl: 40 + (20 * Math.random()),
+    speed: attrs.speed || this.opts.speed - (this.opts.speed_flux / 2) + (Math.random() * this.opts.speed_flux),
     color: attrs.color || '#f0f',
     sensitivity: attrs.sensitivity || this.opts.sensitivity,
-    dead: false,
-  };
-};
+    dead: false
+  }
+}
 
-Actors.Abm.prototype.init = function(){
+Actors.Abm.prototype.init = function () {
   this.pos = new Vec3(
     this.attrs.x,
     this.attrs.y,
     this.attrs.z
-  );
-  this.velo = new Vec3();
-};
+  )
+  this.velo = new Vec3()
+}
 
 Actors.Abm.prototype.defaults = [{
   key: 'speed',
@@ -61,16 +58,14 @@ Actors.Abm.prototype.defaults = [{
   value: 1500,
   min: 100,
   max: 10000
-}];
+}]
 
+Actors.Abm.prototype.update = function (delta) {
+  this.attrs.ttl--
 
-Actors.Abm.prototype.update = function(delta) {
-
-   this.attrs.ttl --;
-
-  if(this.attrs.ttl < 0){
-    this.refs.base.attrs.abms_launched --;
-    this.attrs.dead = true;
+  if (this.attrs.ttl < 0) {
+    this.refs.base.attrs.abms_launched--
+    this.attrs.dead = true
     this.refs.scene.booms.push(new Actors.Boom(
       this.env, {
         scene: this.refs.scene
@@ -82,53 +77,52 @@ Actors.Abm.prototype.update = function(delta) {
         y: this.pos.y,
         z: this.pos.z,
         color: hex2rgb(this.attrs.color, 8)
-      }));
+      }))
   }
 
-  var accel = this.refs.target.pos.minus(this.pos).normalize().scale(this.attrs.speed);
-  this.velo.add(accel);
+  var accel = this.refs.target.pos.minus(this.pos).normalize().scale(this.attrs.speed)
+  this.velo.add(accel)
 
-  this.pos.add(this.velo);
+  this.pos.add(this.velo)
 
   var rand = new Vec3(
-    0 - (this.attrs.speed*20) + (40*this.attrs.speed * Math.random()),
-    0 - (this.attrs.speed*20) + (40*this.attrs.speed * Math.random()),
-    0 - (this.attrs.speed*20) + (60*this.attrs.speed * Math.random())
-  );
-  this.pos.add(rand);
+    0 - (this.attrs.speed * 20) + (40 * this.attrs.speed * Math.random()),
+    0 - (this.attrs.speed * 20) + (40 * this.attrs.speed * Math.random()),
+    0 - (this.attrs.speed * 20) + (60 * this.attrs.speed * Math.random())
+  )
+  this.pos.add(rand)
 
   // hit target?
-  var range = this.pos.range(this.refs.target.pos);
+  var range = this.pos.range(this.refs.target.pos)
 
-  if(range < this.attrs.sensitivity){
-    this.attrs.dead = true;
-    this.refs.base.attrs.abms_launched --;
-    this.refs.target.destroy();
+  if (range < this.attrs.sensitivity) {
+    this.attrs.dead = true
+    this.refs.base.attrs.abms_launched--
+    this.refs.target.destroy()
   }
-};
+}
 
-Actors.Abm.prototype.paint = function(view) {
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
-  view.ctx.fillStyle = this.attrs.color;
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, 1, 0, 2 * Math.PI);
-  view.ctx.fill();
-  view.ctx.restore();
-};
+Actors.Abm.prototype.paint = function (view) {
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, this.pos.y)
+  view.ctx.fillStyle = this.attrs.color
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, 1, 0, 2 * Math.PI)
+  view.ctx.fill()
+  view.ctx.restore()
+}
 
-Actors.Abm.prototype.elevation = function(view) {
+Actors.Abm.prototype.elevation = function (view) {
   // flight object
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z));
-  view.ctx.rotate(-this.velo.angleXZ());
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z))
+  view.ctx.rotate(-this.velo.angleXZ())
 
-  //view.ctx.fillStyle = '#f0f';
-  view.ctx.fillStyle = this.attrs.color;
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, 1, 0, 2 * Math.PI);
-  view.ctx.fill();
+  // view.ctx.fillStyle = '#f0f'
+  view.ctx.fillStyle = this.attrs.color
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, 1, 0, 2 * Math.PI)
+  view.ctx.fill()
 
-  view.ctx.restore();
-
-};
+  view.ctx.restore()
+}

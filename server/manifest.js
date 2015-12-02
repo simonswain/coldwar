@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 module.exports = {
   pub: {
@@ -15,8 +15,7 @@ module.exports = {
       'public/js/actor.js',
       'public/js/scene.js',
       'public/js/actors',
-      'public/js/scenes',
+      'public/js/scenes'
     ]
   }
-
-};
+}

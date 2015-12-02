@@ -1,79 +1,83 @@
-/*global Scenes:true, Scene:true, Actors:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Scenes, Scene, Actors */
 
-Scenes.rats = function(env, opts){
-  this.env = env;
-  this.opts = this.genOpts(opts);
-  this.attrs = this.genAttrs();
-  this.init();
-};
+Scenes.rats = function (env, opts) {
+  this.env = env
+  this.opts = this.genOpts(opts)
+  this.attrs = this.genAttrs()
+  this.init()
+}
 
-Scenes.rats.prototype = Object.create(Scene.prototype);
+Scenes.rats.prototype = Object.create(Scene.prototype)
 
-Scenes.rats.prototype.title = 'Rats';
-Scenes.rats.prototype.layout = 'scanner';
+Scenes.rats.prototype.title = 'Rats'
+Scenes.rats.prototype.layout = 'scanner'
 
-Scenes.rats.prototype.init = function(){
-
-  this.breeders = [];
-  this.rats= [];
+Scenes.rats.prototype.init = function () {
+  this.breeders = []
+  this.rats = []
 
   this.maze = new Actors.Maze(
     this.env, {
       scene: this
-    },{
-    });
+    }, {
+    })
 
   this.reactor = new Actors.Reactor(
-    this.env, {
+    this.env,
+    {
       scene: this,
-      maze: this.maze,
-    },{
-      cell_x: this.maze.opts.cols-1,
-      cell_y: Math.floor(this.maze.opts.rows/2)
-    });
+      maze: this.maze
+    },
+    {
+      cell_x: this.maze.opts.cols - 1,
+      cell_y: Math.floor(this.maze.opts.rows / 2)
+    }
+  )
 
   this.human = new Actors.Human(
-    this.env, {
+    this.env,
+    {
       scene: this,
       maze: this.maze,
       reactor: this.reactor,
       factories: this.factories,
-      rats: this.rats,
-    },{
+      rats: this.rats
+    },
+    {
       cell_x: 0,
-      cell_y: Math.floor(this.maze.opts.rows/2)
-    });
+      cell_y: Math.floor(this.maze.opts.rows / 2)
+    }
+  )
 
-  for(var i=0, ii=this.opts.breeder_count; i<ii; i++){
+  for (var i = 0, ii = this.opts.breeder_count; i < ii; i++) {
     this.breeders.push(new Actors.Breeder(
-      this.env, {
+      this.env,
+      {
         scene: this,
         maze: this.maze,
         human: this.human,
         reactor: this.reactor,
         factories: this.factories,
-        rats: this.rats,
-      },{
-        cell_x: (this.maze.opts.cols/2) + Math.floor(((this.maze.opts.cols/2) * Math.random()))-2,
+        rats: this.rats
+      },
+      {
+        cell_x: (this.maze.opts.cols / 2) + Math.floor(((this.maze.opts.cols / 2) * Math.random())) - 2,
         cell_y: Math.floor((this.maze.opts.rows * Math.random()))
-      }));
+      }
+    ))
   }
-};
+}
 
-
-Scenes.rats.prototype.getCast = function(){
+Scenes.rats.prototype.getCast = function () {
   return {
     Maze: Actors.Maze,
     Human: Actors.Human,
     Breeder: Actors.Breeder,
     Reactor: Actors.Reactor,
     Rat: Actors.Rat,
-    Boom: Actors.Boom,
-  };
-};
+    Boom: Actors.Boom
+  }
+}
 
 Scenes.rats.prototype.defaults = [{
   key: 'max_x',
@@ -117,59 +121,62 @@ Scenes.rats.prototype.defaults = [{
   value: 10,
   min: 1,
   max: 100
-}];
+}]
 
-Scenes.rats.prototype.genAttrs = function(){
+Scenes.rats.prototype.genAttrs = function () {
   return {
-  };
-};
-
-Scenes.rats.prototype.update = function(delta){
-  for(var i=0, ii=this.breeders.length; i<ii; i++){
-    this.breeders[i].update(delta);
   }
-  for(var i=0, ii=this.rats.length; i<ii; i++){
-    this.rats[i].update(delta);
+}
+
+Scenes.rats.prototype.update = function (delta) {
+  var i, ii
+  for (i = 0, ii = this.breeders.length; i < ii; i++) {
+    this.breeders[i].update(delta)
   }
-};
+  for (i = 0, ii = this.rats.length; i < ii; i++) {
+    this.rats[i].update(delta)
+  }
+}
 
-Scenes.rats.prototype.paint = function(fx, gx, sx){
-  this.paintMap(gx);
-  this.paintElevation(sx);
-};
+Scenes.rats.prototype.paint = function (fx, gx, sx) {
+  this.paintMap(gx)
+  this.paintElevation(sx)
+}
 
-Scenes.rats.prototype.paintMap = function(view){
-  this.maze.paint(view);
-  for(var i=0, ii=this.breeders.length; i<ii; i++){
+Scenes.rats.prototype.paintMap = function (view) {
+  var i, ii
+  this.maze.paint(view)
+  for (i = 0, ii = this.breeders.length; i < ii; i++) {
     this.breeders[i].paint(view)
   }
 
-  this.reactor.paint(view);
+  this.reactor.paint(view)
 
-  for(var i=0, ii=this.rats.length; i<ii; i++){
+  for (i = 0, ii = this.rats.length; i < ii; i++) {
     this.rats[i].paint(view)
   }
 
-  this.human.paint(view);
-};
+  this.human.paint(view)
+}
 
-Scenes.rats.prototype.paintElevation = function(view){
-  view.ctx.save();
-  this.maze.elevation(view);
-  for(var i=0, ii=this.breeders.length; i<ii; i++){
+Scenes.rats.prototype.paintElevation = function (view) {
+  var i, ii
+  view.ctx.save()
+  this.maze.elevation(view)
+  for (i = 0, ii = this.breeders.length; i < ii; i++) {
     this.breeders[i].elevation(view)
   }
 
-  this.reactor.elevation(view);
+  this.reactor.elevation(view)
 
-  for(var i=0, ii=this.rats.length; i<ii; i++){
+  for (i = 0, ii = this.rats.length; i < ii; i++) {
     this.rats[i].elevation(view)
   }
 
-  this.human.elevation(view);
-  view.ctx.restore();
-};
+  this.human.elevation(view)
+  view.ctx.restore()
+}
 
-Scenes.rats.prototype.getHelp = function(){
-  return '';
-};
+Scenes.rats.prototype.getHelp = function () {
+  return ''
+}

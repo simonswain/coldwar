@@ -1,35 +1,31 @@
-/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Actors, Actor, Vec3, VecR, hex2rgb */
 
-Actors.Capital = function(env, refs, attrs){
-  this.env = env;
-  this.refs = refs;
-  this.opts = this.genOpts();
-  this.attrs = this.genAttrs(attrs);
-  this.init();
-};
+Actors.Capital = function (env, refs, attrs) {
+  this.env = env
+  this.refs = refs
+  this.opts = this.genOpts()
+  this.attrs = this.genAttrs(attrs)
+  this.init()
+}
 
-Actors.Capital.prototype = Object.create(Actor.prototype);
+Actors.Capital.prototype = Object.create(Actor.prototype)
 
-Actors.Capital.prototype.title = 'Capital';
+Actors.Capital.prototype.title = 'Capital'
 
-Actors.Capital.prototype.genAttrs = function(attrs){
-
+Actors.Capital.prototype.genAttrs = function (attrs) {
   // rotation assets are positioned at
-  var rot = 0;
+  var rot = 0
 
   if (attrs.x < this.refs.scene.opts.max_x / 2) {
-    rot += Math.PI;
+    rot += Math.PI
   }
 
   if (attrs.y < this.refs.scene.opts.max_y / 2) {
-    rot += Math.PI * 0.25;
+    rot += Math.PI * 0.25
   }
 
   if (attrs.y > this.refs.scene.opts.max_y / 2) {
-    rot -= Math.PI * 1.75;
+    rot -= Math.PI * 1.75
   }
 
   return {
@@ -59,30 +55,28 @@ Actors.Capital.prototype.genAttrs = function(attrs){
     // if assets are pushed in via attrs then these will be used
     // instead of *_max
     assets: attrs.assets || false
-  };
-};
+  }
+}
 
-Actors.Capital.prototype.init = function(){
-
+Actors.Capital.prototype.init = function () {
   this.pos = new Vec3(
     this.attrs.x,
     this.attrs.y,
     this.attrs.z
-  );
+  )
 
   this.assets = {
     cities: [],
     factories: [],
     bases: [],
     sats: []
-  };
+  }
 
   // position assets radially around capital
-  this.addCities();
-  this.addFactories();
-  this.addBases();
-
-};
+  this.addCities()
+  this.addFactories()
+  this.addBases()
+}
 
 Actors.Capital.prototype.defaults = [{
   key: 'strike',
@@ -126,76 +120,71 @@ Actors.Capital.prototype.defaults = [{
   value: 1,
   min: 0,
   max: 10
-}];
+}]
 
-
-Actors.Capital.prototype.update = function(delta) {
-
+Actors.Capital.prototype.update = function (delta) {
   // used to flash defense perimiter initcator
   if (this.attrs.alert > 0) {
-    this.attrs.alert--;
+    this.attrs.alert--
   }
 
   if (this.attrs.defcon < 3 && this.assets.sats.length < this.attrs.sats_max) {
-    this.makeSat();
+    this.makeSat()
   }
 
   // only check once per second
   if (this.env.timer === 0) {
-    this.calcDefcon();
+    this.calcDefcon()
   }
 
   // flash
   if (this.attrs.defcon < 2) {
-    this.attrs.flash = true;
+    this.attrs.flash = true
     if (this.env.timer > 10) {
-      this.attrs.flash = false;
+      this.attrs.flash = false
     }
     if (this.env.timer > 30) {
-      this.attrs.flash = true;
+      this.attrs.flash = true
     }
     if (this.env.timer > 40) {
-      this.attrs.flash = false;
+      this.attrs.flash = false
     }
     if (this.env.timer > 50) {
-      this.attrs.flash = true;
+      this.attrs.flash = true
     }
   } else {
-    this.attrs.flash = true;
+    this.attrs.flash = true
     if (this.env.timer > 10) {
-      this.attrs.flash = false;
+      this.attrs.flash = false
     }
   }
+}
 
-};
+Actors.Capital.prototype.assetDestroyed = function () {
+  this.attrs.defcon = 1
+}
 
-
-Actors.Capital.prototype.assetDestroyed = function() {
-  this.attrs.defcon = 1;
-};
-
-Actors.Capital.prototype.calcDefcon = function(delta) {
-
+Actors.Capital.prototype.calcDefcon = function (delta) {
   if (this.attrs.defcon === 1) {
-    return;
+    return
   }
 
-  var i, ii;
+  var i, ii
 
-  var target, targets;
+  var target
 
   if (this.attrs.defcon === 5) {
     // incoming bomber detection
     for (i = 0, ii = this.refs.scene.bombers.length; i < ii; i++) {
-      target = this.refs.scene.bombers[i];
+      target = this.refs.scene.bombers[i]
       if (target.refs.capital === this) {
-        continue;
+        continue
       }
       // break on first target found inside danger_close radius
       if (this.pos.rangeXY(target.pos) < this.attrs.danger_close) {
-        this.attrs.defcon = 4;
-        this.attrs.alert = 2;
-        break;
+        this.attrs.defcon = 4
+        this.attrs.alert = 2
+        break
       }
     }
   }
@@ -203,15 +192,15 @@ Actors.Capital.prototype.calcDefcon = function(delta) {
   if (this.attrs.defcon === 4) {
     // incoming bomber detection
     for (i = 0, ii = this.refs.scene.bombers.length; i < ii; i++) {
-      target = this.refs.scene.bombers[i];
+      target = this.refs.scene.bombers[i]
       if (target.refs.capital === this) {
-        continue;
+        continue
       }
       // break on first target found inside danger_close radius
       if (this.pos.rangeXY(target.pos) < this.attrs.danger_close / 2) {
-        this.attrs.defcon = 3;
-        this.attrs.alert = 2;
-        break;
+        this.attrs.defcon = 3
+        this.attrs.alert = 2
+        break
       }
     }
   }
@@ -219,15 +208,15 @@ Actors.Capital.prototype.calcDefcon = function(delta) {
   if (this.attrs.defcon === 3) {
     // incoming bomber detection
     for (i = 0, ii = this.refs.scene.bombers.length; i < ii; i++) {
-      target = this.refs.scene.bombers[i];
+      target = this.refs.scene.bombers[i]
       if (target.refs.capital === this) {
-        continue;
+        continue
       }
       // break on first target found inside danger_close radius
       if (this.pos.rangeXY(target.pos) < this.attrs.danger_close / 3) {
-        this.attrs.defcon = 2;
-        this.attrs.alert = 2;
-        break;
+        this.attrs.defcon = 2
+        this.attrs.alert = 2
+        break
       }
     }
   }
@@ -235,29 +224,25 @@ Actors.Capital.prototype.calcDefcon = function(delta) {
   // // if any enemy goes to war, so do we
   // for (i = 0, ii = this.refs.scene.capitals.length; i < ii; i++) {
   //   if (this.refs.scene.capitals[i].defcon === 1) {
-  //     this.attrs.alert = 5;
-  //     this.attrs.defcon = 1;
+  //     this.attrs.alert = 5
+  //     this.attrs.defcon = 1
   //   }
   // }
+}
 
-
-};
-
-
-Actors.Capital.prototype.makeSat = function() {
-
-  var x = (this.refs.scene.opts.max_x / 2);
+Actors.Capital.prototype.makeSat = function () {
+  var x = (this.refs.scene.opts.max_x / 2)
 
   if (this.pos.x < this.refs.scene.opts.max_x / 2) {
-    x = x - (this.refs.scene.opts.max_x / 2) * 0.05;
+    x = x - (this.refs.scene.opts.max_x / 2) * 0.05
   } else {
-    x = x + (this.refs.scene.opts.max_x / 2) * 0.05;
+    x = x + (this.refs.scene.opts.max_x / 2) * 0.05
   }
 
-  var y = this.refs.scene.opts.max_y / 2;
+  var y = this.refs.scene.opts.max_y / 2
 
   var sat = new Actors.Sat(
-    this.env,{
+    this.env, {
       scene: this.refs.scene,
       icbms: this.refs.icbms,
       capital: this
@@ -265,47 +250,44 @@ Actors.Capital.prototype.makeSat = function() {
       x: x,
       y: y,
       z: this.refs.scene.opts.max_z * 0.75,
-      color: this.attrs.color,
-    });
+      color: this.attrs.color
+    })
 
-  this.refs.scene.sats.push(sat);
-  this.assets.sats.push(sat);
+  this.refs.scene.sats.push(sat)
+  this.assets.sats.push(sat)
+}
 
-};
+Actors.Capital.prototype.addCities = function () {
+  var theta, angle, pos
 
-Actors.Capital.prototype.addCities = function() {
+  var positions = []
 
-  var i, ii;
-  var theta, angle, pos;
-
-  var positions = [];
-
-  if(this.attrs.assets && this.attrs.assets.cities.length > 0){
+  if (this.attrs.assets && this.attrs.assets.cities.length > 0) {
     // manual placement
-    this.attrs.assets.cities.forEach(function(asset){
+    this.attrs.assets.cities.forEach(function (asset) {
       positions.push({
         x: this.pos.x + asset[0],
         y: this.pos.y + asset[1],
         z: 0
-      });
-    }, this);
+      })
+    }, this)
   } else {
     // auto placement
 
     // face away from enemy
-    theta = Math.PI / (this.attrs.cities_max + 1);
-    angle = this.attrs.rot - (Math.PI * 0.5);
+    theta = Math.PI / (this.attrs.cities_max + 1)
+    angle = this.attrs.rot - (Math.PI * 0.5)
     while (positions.length < this.attrs.cities_max) {
-      angle += theta;
-      pos = new VecR(angle, this.attrs.city_r).vec3();
+      angle += theta
+      pos = new VecR(angle, this.attrs.city_r).vec3()
       positions.push({
         x: this.pos.x + pos.x,
         y: this.pos.y + pos.y,
         z: 0
-      });
+      })
     }
   }
-  positions.forEach(function(position){
+  positions.forEach(function (position) {
     var city = new Actors.City(
       this.env, {
         capital: this,
@@ -315,49 +297,46 @@ Actors.Capital.prototype.addCities = function() {
         y: position.y,
         z: 0,
         color: this.attrs.color
-      });
-    this.assets.cities.push(city);
-    this.refs.scene.cities.push(city);
-  }, this);
-};
+      })
+    this.assets.cities.push(city)
+    this.refs.scene.cities.push(city)
+  }, this)
+}
 
+Actors.Capital.prototype.addFactories = function () {
+  var theta, angle, pos
 
-Actors.Capital.prototype.addFactories = function() {
+  var positions = []
 
-  var i, ii;
-  var theta, angle, pos;
-
-  var positions = [];
-
-  if(this.attrs.assets && this.attrs.assets.factories.length > 0){
+  if (this.attrs.assets && this.attrs.assets.factories.length > 0) {
     // manual placement
-    this.attrs.assets.factories.forEach(function(asset){
+    this.attrs.assets.factories.forEach(function (asset) {
       positions.push({
         x: this.pos.x + asset[0],
         y: this.pos.y + asset[1],
         z: 0
-      });
-    }, this);
+      })
+    }, this)
   } else {
     // auto placement
 
     // face away from enemy
-    theta = Math.PI / (this.attrs.factories_max + 1);
-    angle = this.attrs.rot - (Math.PI * 0.5);
+    theta = Math.PI / (this.attrs.factories_max + 1)
+    angle = this.attrs.rot - (Math.PI * 0.5)
     while (positions.length < this.attrs.factories_max) {
-      angle += theta;
-      pos = new VecR(angle, this.attrs.factory_r).vec3();
+      angle += theta
+      pos = new VecR(angle, this.attrs.factory_r).vec3()
       positions.push({
         x: this.pos.x + pos.x,
         y: this.pos.y + pos.y,
         z: 0
-      });
+      })
     }
   }
 
-  positions.forEach(function(position){
+  positions.forEach(function (position) {
     var factory = new Actors.Factory(
-      this.env,{
+      this.env, {
         capital: this,
         scene: this.refs.scene
       }, {
@@ -365,48 +344,44 @@ Actors.Capital.prototype.addFactories = function() {
         y: position.y,
         z: 0,
         color: this.attrs.color
-      });
-    this.assets.factories.push(factory);
-    this.refs.scene.factories.push(factory);
-  }, this);
+      })
+    this.assets.factories.push(factory)
+    this.refs.scene.factories.push(factory)
+  }, this)
+}
 
-};
+Actors.Capital.prototype.addBases = function () {
+  var theta, angle, pos
 
-Actors.Capital.prototype.addBases = function() {
+  var positions = []
 
-  var i, ii;
-  var theta, angle, pos;
-
-  var positions = [];
-
-  if(this.attrs.assets && this.attrs.assets.bases.length > 0){
+  if (this.attrs.assets && this.attrs.assets.bases.length > 0) {
     // manual placement
-    this.attrs.assets.bases.forEach(function(asset){
+    this.attrs.assets.bases.forEach(function (asset) {
       positions.push({
         x: this.pos.x + asset[0],
         y: this.pos.y + asset[1],
         z: 0
-      });
-    }, this);
+      })
+    }, this)
   } else {
     // auto placement
 
     // face away from enemy
-    theta = Math.PI / (this.attrs.bases_max + 1);
-    angle = this.attrs.rot + (Math.PI * 0.5);
+    theta = Math.PI / (this.attrs.bases_max + 1)
+    angle = this.attrs.rot + (Math.PI * 0.5)
     while (positions.length < this.attrs.bases_max) {
-      angle += theta;
-      pos = new VecR(angle, this.attrs.base_r).vec3();
+      angle += theta
+      pos = new VecR(angle, this.attrs.base_r).vec3()
       positions.push({
         x: this.pos.x + pos.x,
         y: this.pos.y + pos.y,
         z: 0
-      });
-
+      })
     }
   }
 
-  positions.forEach(function(position){
+  positions.forEach(function (position) {
     var base = new Actors.Base(
       this.env, {
         capital: this,
@@ -416,221 +391,216 @@ Actors.Capital.prototype.addBases = function() {
         y: position.y,
         z: 0,
         color: this.attrs.color
-      });
-    this.assets.bases.push(base);
-    this.refs.scene.bases.push(base);
-  }, this);
+      })
+    this.assets.bases.push(base)
+    this.refs.scene.bases.push(base)
+  }, this)
+}
 
-};
+Actors.Capital.prototype.paint = function (view) {
+  var xf = 12
 
-Actors.Capital.prototype.paint = function(view) {
-
-  var xf = 12;
-
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, this.pos.y)
 
   // show danger close
   if (this.attrs.defcon === 5) {
     if (this.attrs.flash) {
-      view.ctx.strokeStyle = this.attrs.color;
+      view.ctx.strokeStyle = this.attrs.color
     } else {
-      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
     }
-    view.ctx.lineWidth = 0.5;
-    view.ctx.beginPath();
-    view.ctx.arc(0, 0, this.attrs.danger_close, 0, 2 * Math.PI);
-    view.ctx.stroke();
+    view.ctx.lineWidth = 0.5
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, this.attrs.danger_close, 0, 2 * Math.PI)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 4 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.lineWidth = 8;
-    view.ctx.beginPath();
-    view.ctx.arc(0, 0, this.attrs.danger_close, 0, 2 * Math.PI);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.lineWidth = 8
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, this.attrs.danger_close, 0, 2 * Math.PI)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 4) {
     if (this.attrs.flash) {
-      view.ctx.strokeStyle = this.attrs.color;
+      view.ctx.strokeStyle = this.attrs.color
     } else {
-      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
     }
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 0.5;
-    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, 2 * Math.PI);
-    view.ctx.stroke();
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 0.5
+    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, 2 * Math.PI)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 3 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 8;
-    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, 2 * Math.PI);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 8
+    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, 2 * Math.PI)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 2 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 8;
-    view.ctx.arc(0, 0, this.attrs.city_r, 0, 2 * Math.PI);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 8
+    view.ctx.arc(0, 0, this.attrs.city_r, 0, 2 * Math.PI)
+    view.ctx.stroke()
   }
 
   // city limits
-  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
-  view.ctx.lineWidth = 0.5;
+  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)'
+  view.ctx.lineWidth = 0.5
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.city_r, 0, 2 * Math.PI);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.city_r, 0, 2 * Math.PI)
+  view.ctx.stroke()
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.factory_r, 0, 2 * Math.PI);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.factory_r, 0, 2 * Math.PI)
+  view.ctx.stroke()
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.base_r, 0, 2 * Math.PI);
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.base_r, 0, 2 * Math.PI)
   if (this.attrs.alert > 0) {
-    view.ctx.lineWidth = 4;
+    view.ctx.lineWidth = 4
   }
-  view.ctx.stroke();
+  view.ctx.stroke()
 
-  view.ctx.lineWidth = 0.5;
+  view.ctx.lineWidth = 0.5
 
   if (this.attrs.flash) {
-    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.fillStyle = this.attrs.color
   } else {
-    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
   }
 
-  view.ctx.lineWidth = 2;
-  view.ctx.strokeStyle = this.attrs.color;
+  view.ctx.lineWidth = 2
+  view.ctx.strokeStyle = this.attrs.color
 
   // box
-  view.ctx.beginPath();
-  view.ctx.rect(-xf, -xf, xf*2, xf*2);
-  view.ctx.fill();
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.rect(-xf, -xf, xf * 2, xf * 2)
+  view.ctx.fill()
+  view.ctx.stroke()
 
-  if(this.attrs.flash) {
-    view.ctx.fillStyle = '#000';
+  if (this.attrs.flash) {
+    view.ctx.fillStyle = '#000'
   } else {
-    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.fillStyle = this.attrs.color
   }
 
-  view.ctx.font = '12pt monospace';
-  view.ctx.textBaseline = 'middle';
-  view.ctx.textAlign = 'center';
+  view.ctx.font = '12pt monospace'
+  view.ctx.textBaseline = 'middle'
+  view.ctx.textAlign = 'center'
 
-  view.ctx.fillText(this.attrs.defcon, 0, 1);
+  view.ctx.fillText(this.attrs.defcon, 0, 1)
 
-  view.ctx.restore();
+  view.ctx.restore()
+}
 
-};
+Actors.Capital.prototype.elevation = function (view) {
+  var xf = 8
 
-Actors.Capital.prototype.elevation = function(view) {
-
-  var xf = 8;
-
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)));
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, ((this.refs.scene.opts.max_z - this.pos.z)))
 
   // show danger close
   if (this.attrs.defcon === 5) {
     if (this.attrs.flash) {
-      view.ctx.strokeStyle = this.attrs.color;
+      view.ctx.strokeStyle = this.attrs.color
     } else {
-      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
     }
-    view.ctx.lineWidth = 0.5;
-    view.ctx.beginPath();
-    view.ctx.arc(0, 0, this.attrs.danger_close, 0, Math.PI, true);
-    view.ctx.stroke();
+    view.ctx.lineWidth = 0.5
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, this.attrs.danger_close, 0, Math.PI, true)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 4 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.lineWidth = 8;
-    view.ctx.beginPath();
-    view.ctx.arc(0, 0, this.attrs.danger_close, 0, Math.PI, true);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.lineWidth = 8
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, this.attrs.danger_close, 0, Math.PI, true)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 4) {
     if (this.attrs.flash) {
-      view.ctx.strokeStyle = this.attrs.color;
+      view.ctx.strokeStyle = this.attrs.color
     } else {
-      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+      view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
     }
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 0.5;
-    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, Math.PI, true);
-    view.ctx.stroke();
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 0.5
+    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, Math.PI, true)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 3 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 8;
-    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, Math.PI, true);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 8
+    view.ctx.arc(0, 0, this.attrs.danger_close / 2, 0, Math.PI, true)
+    view.ctx.stroke()
   }
 
   if (this.attrs.defcon === 2 && this.attrs.alert > 0) {
-    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 8;
-    view.ctx.arc(0, 0, this.attrs.city_r, 0, Math.PI, true);
-    view.ctx.stroke();
+    view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 8
+    view.ctx.arc(0, 0, this.attrs.city_r, 0, Math.PI, true)
+    view.ctx.stroke()
   }
 
   // city limits
-  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)';
-  view.ctx.lineWidth = 0.5;
+  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',1)'
+  view.ctx.lineWidth = 0.5
 
-  view.ctx.beginPath();
-  view.ctx.moveTo(-this.attrs.city_r, xf/2);
-  view.ctx.lineTo(this.attrs.city_r, xf/2);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.moveTo(-this.attrs.city_r, xf / 2)
+  view.ctx.lineTo(this.attrs.city_r, xf / 2)
+  view.ctx.stroke()
 
-  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)';
-  view.ctx.lineWidth = 0.5;
+  view.ctx.strokeStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.5)'
+  view.ctx.lineWidth = 0.5
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.city_r, 0, Math.PI, true);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.city_r, 0, Math.PI, true)
+  view.ctx.stroke()
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.factory_r, 0, Math.PI, true);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.factory_r, 0, Math.PI, true)
+  view.ctx.stroke()
 
-  view.ctx.beginPath();
-  view.ctx.arc(0, 0, this.attrs.base_r, 0, Math.PI, true);
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.attrs.base_r, 0, Math.PI, true)
   if (this.attrs.alert > 0) {
-    view.ctx.lineWidth = 4;
+    view.ctx.lineWidth = 4
   }
-  view.ctx.stroke();
+  view.ctx.stroke()
 
-  view.ctx.lineWidth = 0.5;
+  view.ctx.lineWidth = 0.5
 
   if (this.attrs.flash) {
-    view.ctx.fillStyle = this.attrs.color;
+    view.ctx.fillStyle = this.attrs.color
   } else {
-    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)';
+    view.ctx.fillStyle = 'rgba(' + hex2rgb(this.attrs.color) + ',0.25)'
   }
 
-  view.ctx.lineWidth = 2;
-  view.ctx.strokeStyle = this.attrs.color;
+  view.ctx.lineWidth = 2
+  view.ctx.strokeStyle = this.attrs.color
 
   // box
-  view.ctx.beginPath();
-  view.ctx.rect(-xf/2, -xf/2, xf, xf);
-  view.ctx.stroke();
-  view.ctx.fill();
+  view.ctx.beginPath()
+  view.ctx.rect(-xf / 2, -xf / 2, xf, xf)
+  view.ctx.stroke()
+  view.ctx.fill()
 
-  view.ctx.restore();
-
-};
+  view.ctx.restore()
+}

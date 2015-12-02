@@ -1,58 +1,52 @@
-/*global Scenes:true, Actors:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Scenes, Scene */
 
-Scenes.rabbits = function(env, opts){
-  this.env = env;
-  this.opts = this.genOpts(opts);
-  this.attrs = this.genAttrs();
-  this.init();
-};
+Scenes.rabbits = function (env, opts) {
+  this.env = env
+  this.opts = this.genOpts(opts)
+  this.attrs = this.genAttrs()
+  this.init()
+}
 
-Scenes.rabbits.prototype = Object.create(Scene.prototype);
+Scenes.rabbits.prototype = Object.create(Scene.prototype)
 
-Scenes.rabbits.prototype.title = 'Rabbits';
+Scenes.rabbits.prototype.title = 'Rabbits'
 
-Scenes.rabbits.prototype.init = function(){
+Scenes.rabbits.prototype.init = function () {
+  this.foxhist = []
+  this.rabbithist = []
 
-  this.foxhist = [];
-  this.rabbithist = [];
-
-  this.numFox = 0;
-  this.numRabbit = 0;
-  var x, y;
-  this.grid = grid = [];
+  this.numFox = 0
+  this.numRabbit = 0
+  var x, y
+  var grid = this.grid = []
 
   for (x = 0; x < this.opts.grid_x; x++) {
-    grid[x] = [];
+    grid[x] = []
     for (y = 0; y < this.opts.grid_y; y++) {
-      grid[x][y] = this.makeCell();
+      grid[x][y] = this.makeCell()
     }
   }
-};
+}
 
-
-Scenes.rabbits.prototype.makeCell = function(){
-  var b = Math.random();
-  var a = 1;
+Scenes.rabbits.prototype.makeCell = function () {
+  var b = Math.random()
+  var a = 1
   if (b < this.opts.fox_num) {
-    a = 2;
+    a = 2
     this.numFox++
   } else {
     if (b < this.opts.fox_num + this.opts.rabbit_num) {
-      a = 3;
+      a = 3
       this.numRabbit++
     }
   }
-  return a;
-};
+  return a
+}
 
-
-Scenes.rabbits.prototype.getCast = function(){
+Scenes.rabbits.prototype.getCast = function () {
   return {
   }
-};
+}
 
 Scenes.rabbits.prototype.defaults = [{
   key: 'max_x',
@@ -115,21 +109,20 @@ Scenes.rabbits.prototype.defaults = [{
   value: 0.07,
   min: 0.01,
   max: 0.09
-}];
+}]
 
-Scenes.rabbits.prototype.genAttrs = function(){
+Scenes.rabbits.prototype.genAttrs = function () {
   return {
     val_max: (this.opts.max_x * this.opts.max_y) / this.opts.max_y
-  };
-};
+  }
+}
 
-Scenes.rabbits.prototype.update = function(delta){
-
+Scenes.rabbits.prototype.update = function (delta) {
   // tick here
 
   for (var l = 0; l < this.opts.grid_x; l++) {
     for (var h = 0; h < this.opts.grid_y; h++) {
-      var n = this.grid[l][h];
+      var n = this.grid[l][h]
       // grass
       if (n === 1) {
         continue
@@ -139,15 +132,16 @@ Scenes.rabbits.prototype.update = function(delta){
         continue
       }
 
-      var e = Math.ceil(Math.random() * 3) - 2;
-      var c;
-      if (e != 0) {
+      var e = Math.ceil(Math.random() * 3) - 2
+      var c
+      if (e !== 0) {
         c = Math.ceil(Math.random() * 3) - 2
       } else {
         c = (Math.random() > 0.5 ? 1 : -1)
       }
 
-      var f = l + e, d = h + c;
+      var f = l + e
+      var d = h + c
 
       if (f < 0) {
         f = this.opts.grid_x - 1
@@ -165,8 +159,8 @@ Scenes.rabbits.prototype.update = function(delta){
         }
       }
 
-      var m = this.grid[f][d];
-      var b = n + m;
+      var m = this.grid[f][d]
+      var b = n + m
       if (n === 2) {
         if (m === 3) {
           if (Math.random() > this.opts.fox_birth) {
@@ -179,7 +173,7 @@ Scenes.rabbits.prototype.update = function(delta){
             this.grid[l][h] = 1
           } else {
             if (m === 1) {
-              this.grid[l][h] = 1;
+              this.grid[l][h] = 1
               this.grid[f][d] = 2
             }
           }
@@ -200,137 +194,131 @@ Scenes.rabbits.prototype.update = function(delta){
           }
         }
       }
-      delta = (this.grid[l][h] + this.grid[f][d]) - b;
+      delta = (this.grid[l][h] + this.grid[f][d]) - b
       if (delta === -1) {
         if (b < 5) {
-          this.numFox--;
+          this.numFox--
         } else {
-          this.numFox++;
-          this.numRabbit--;
+          this.numFox++
+          this.numRabbit--
         }
       } else {
         if (delta === -2) {
-          this.numRabbit--;
+          this.numRabbit--
         } else {
           if (delta === 2) {
-            this.numRabbit++;
+            this.numRabbit++
           }
         }
       }
     }
   }
 
-
-  //
-  this.foxhist.push(this.numFox);
-  while(this.foxhist.length > this.opts.chart_limit){
-    this.foxhist.shift();
+  this.foxhist.push(this.numFox)
+  while (this.foxhist.length > this.opts.chart_limit) {
+    this.foxhist.shift()
   }
 
-  this.rabbithist.push(this.numRabbit);
-  while(this.rabbithist.length > this.opts.chart_limit){
-    this.rabbithist.shift();
+  this.rabbithist.push(this.numRabbit)
+  while (this.rabbithist.length > this.opts.chart_limit) {
+    this.rabbithist.shift()
   }
-
 }
 
-Scenes.rabbits.prototype.paintGrid = function(view){
+Scenes.rabbits.prototype.paintGrid = function (view) {
   // snapshot bottom half for sliding chart
-  //var slideframe = ctx.getImageData(0,this.ch/2,this.cw,this.ch/2);
-  var view = view;
+  // var slideframe = ctx.getImageData(0,this.ch/2,this.cw,this.ch/2)
 
-  var xw = this.opts.max_x / this.opts.grid_x;
-  var xh = this.opts.max_y / this.opts.grid_y;
-  var f = Math.min(xw, xh);
+  var xw = this.opts.max_x / this.opts.grid_x
+  var xh = this.opts.max_y / this.opts.grid_y
+  var f = Math.min(xw, xh)
 
-  var offset_x = (this.opts.max_x * 0.5) - (f * this.opts.grid_x / 2);
-  var offset_y = (this.opts.max_y * 0.5) - (f * this.opts.grid_y / 2);
+  var offset_x = (this.opts.max_x * 0.5) - (f * this.opts.grid_x / 2)
+  var offset_y = (this.opts.max_y * 0.5) - (f * this.opts.grid_y / 2)
 
-  view.ctx.save();
-  view.ctx.translate (offset_x, offset_y);
+  view.ctx.save()
+  view.ctx.translate(offset_x, offset_y)
 
-  view.ctx.strokeStyle='#000';
-  var grid = this.grid;
-  var x, xx, y, yy;
-  for(x = 0, xx = grid.length; x<xx; x ++){
-    for(y = 0, yy = grid[x].length; y<yy; y ++){
-      view.ctx.beginPath();
-      view.ctx.lineWidth = 1;
+  view.ctx.strokeStyle = '#000'
+  var grid = this.grid
+  var x, xx, y, yy
+  for (x = 0, xx = grid.length; x < xx; x++) {
+    for (y = 0, yy = grid[x].length; y < yy; y++) {
+      view.ctx.beginPath()
+      view.ctx.lineWidth = 1
       // grass
-      view.ctx.fillStyle = '#000';
+      view.ctx.fillStyle = '#000'
       // fox
-      if(grid[x][y] === 2){
-        view.ctx.fillStyle = '#f05';
+      if (grid[x][y] === 2) {
+        view.ctx.fillStyle = '#f05'
       }
       // rabbit
-      if(grid[x][y] === 3){
-        view.ctx.fillStyle = '#0aa';
+      if (grid[x][y] === 3) {
+        view.ctx.fillStyle = '#0aa'
       }
-      view.ctx.rect(x * f, y * f, f, f);
-      view.ctx.fill();
-      view.ctx.stroke();
-      view.ctx.closePath();
+      view.ctx.rect(x * f, y * f, f, f)
+      view.ctx.fill()
+      view.ctx.stroke()
+      view.ctx.closePath()
     }
   }
 
-  view.ctx.restore();
-
+  view.ctx.restore()
 }
 
-Scenes.rabbits.prototype.paintChart = function(view){
-
+Scenes.rabbits.prototype.paintChart = function (view) {
   // chart
   var segments = {
     numFox: '#f05',
     numRabbit: '#0ff'
-  };
+  }
 
-  view.ctx.save();
+  view.ctx.save()
 
-  view.ctx.lineWidth = this.opts.chart_fat;
-  view.ctx.strokeStyle = '#f05';
-  var xf = view.w / this.opts.chart_limit;
-  var yf = view.h / this.attrs.val_max;
+  view.ctx.lineWidth = this.opts.chart_fat
+  view.ctx.strokeStyle = segments.numFox
+  var xf = view.w / this.opts.chart_limit
+  var yf = view.h / this.attrs.val_max
 
-  view.ctx.beginPath();
-  view.ctx.moveTo(0, view.h - (yf * this.foxhist[0]));
-  this.foxhist.forEach(function(val, ix){
-    val = yf * val;
-    view.ctx.lineTo(1+ix * xf, view.h - val);
-  }, this);
-  view.ctx.stroke();
-  view.ctx.closePath();
+  view.ctx.beginPath()
+  view.ctx.moveTo(0, view.h - (yf * this.foxhist[0]))
+  this.foxhist.forEach(function (val, ix) {
+    val = yf * val
+    view.ctx.lineTo(1 + ix * xf, view.h - val)
+  }, this)
+  view.ctx.stroke()
+  view.ctx.closePath()
 
-  view.ctx.lineWidth = this.opts.chart_fat;
-  view.ctx.strokeStyle = '#0ff';
+  view.ctx.lineWidth = this.opts.chart_fat
+  view.ctx.strokeStyle = segments.numRabbit
 
-  view.ctx.beginPath();
-  view.ctx.moveTo(0, view.h - ((view.h/this.attrs.val_max) * this.rabbithist[0]));
-  this.rabbithist.forEach(function(val, ix){
-    val = (view.h/this.attrs.val_max) * val;
-    view.ctx.lineTo(1+ix * xf, view.h - val);
-  }, this);
-  view.ctx.stroke();
-  view.ctx.closePath();
+  view.ctx.beginPath()
+  view.ctx.moveTo(0, view.h - ((view.h / this.attrs.val_max) * this.rabbithist[0]))
+  this.rabbithist.forEach(function (val, ix) {
+    val = (view.h / this.attrs.val_max) * val
+    view.ctx.lineTo(1 + ix * xf, view.h - val)
+  }, this)
+  view.ctx.stroke()
+  view.ctx.closePath()
 
-  view.ctx.restore();
-
+  view.ctx.restore()
 }
 
-
-Scenes.rabbits.prototype.paint = function(fx, gx, sx, ex){
+Scenes.rabbits.prototype.paint = function (fx, gx, sx, ex) {
   this.paintGrid(gx)
   this.paintChart(ex)
 }
 
-Scenes.rabbits.prototype.getHelp = function(){
-  return '';
-};
+Scenes.rabbits.prototype.getHelp = function () {
+  return ''
+}
 
-Scenes.rabbits.prototype.captions = [{
-  style: 'xx',
-  text: 'Foxes and Rabbits'
-}, {
-  text: 'Foxes eat Rabbits'
-}];
-
+Scenes.rabbits.prototype.captions = [
+  {
+    style: 'xx',
+    text: 'Foxes and Rabbits'
+  },
+  {
+    text: 'Foxes eat Rabbits'
+  }
+]

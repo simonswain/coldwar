@@ -1,34 +1,30 @@
-/*global Scenes:true, Scene:true, Actors:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Scenes, Scene, Actors */
 
-Scenes.coldwar = function(env, opts){
-  this.env = env;
-  this.opts = this.genOpts(opts);
-  this.attrs = this.genAttrs();
-  this.init();
-};
+Scenes.coldwar = function (env, opts) {
+  this.env = env
+  this.opts = this.genOpts(opts)
+  this.attrs = this.genAttrs()
+  this.init()
+}
 
-Scenes.coldwar.prototype = Object.create(Scene.prototype);
+Scenes.coldwar.prototype = Object.create(Scene.prototype)
 
-Scenes.coldwar.prototype.title = 'Cold War';
-Scenes.coldwar.prototype.layout = 'scanner';
+Scenes.coldwar.prototype.title = 'Cold War'
+Scenes.coldwar.prototype.layout = 'scanner'
 
-Scenes.coldwar.prototype.init = function(){
-
-  this.maps = [];
-  this.booms = [];
-  this.capitals = [];
-  this.cities = [];
-  this.bases = [];
-  this.factories = [];
-  this.supplies = [];
-  this.bombers = [];
-  this.fighters = [];
-  this.icbms = [];
-  this.abms = [];
-  this.sats = [];
+Scenes.coldwar.prototype.init = function () {
+  this.maps = []
+  this.booms = []
+  this.capitals = []
+  this.cities = []
+  this.bases = []
+  this.factories = []
+  this.supplies = []
+  this.bombers = []
+  this.fighters = []
+  this.icbms = []
+  this.abms = []
+  this.sats = []
 
   this.sets = [
     this.maps,
@@ -43,20 +39,21 @@ Scenes.coldwar.prototype.init = function(){
     this.abms,
     this.booms,
     this.sats
-  ];
+  ]
 
-  this.scenarios = [];
-  this.loadScenarios();
-  this.scenarios[this.opts.scenario]();
+  this.scenarios = []
+  this.loadScenarios()
+  this.scenarios[this.opts.scenario]()
 
   this.map = new Actors.Map(
-    this.env, {
+    this.env,
+    {
       scene: this
-    }, {
-    });
-
-};
-
+    },
+    {
+    }
+  )
+}
 
 Scenes.coldwar.prototype.defaults = [{
   key: 'max',
@@ -119,15 +116,15 @@ Scenes.coldwar.prototype.defaults = [{
   min: 0,
   max: 30,
   step: 0.1
-}];
+}]
 
-Scenes.coldwar.prototype.genAttrs = function(){
+Scenes.coldwar.prototype.genAttrs = function () {
   return {
-    defcon: this.opts.defcon,
-  };
-};
+    defcon: this.opts.defcon
+  }
+}
 
-Scenes.coldwar.prototype.getCast = function(){
+Scenes.coldwar.prototype.getCast = function () {
   return {
     Map: Actors.Map,
     Capital: Actors.Capital,
@@ -141,188 +138,172 @@ Scenes.coldwar.prototype.getCast = function(){
     Abm: Actors.Supply,
     Sat: Actors.Sat,
     Boom: Actors.Boom,
-    CapitalMap: Actors.CapitalMap,
+    CapitalMap: Actors.CapitalMap
   }
-};
+}
 
-Scenes.coldwar.prototype.update = function(delta){
+Scenes.coldwar.prototype.update = function (delta) {
+  var n, nn
+  var i, ii
+  var set
 
-  for(n=0, nn=this.sets.length; n<nn; n++){
-    set = this.sets[n];
-    for(i=0, ii=set.length; i<ii; i++){
-      set[i].update(delta);
+  for (n = 0, nn = this.sets.length; n < nn; n++) {
+    set = this.sets[n]
+    for (i = 0, ii = set.length; i < ii; i++) {
+      set[i].update(delta)
     }
   }
 
-  for(n=0, nn=this.sets.length; n<nn; n++){
-    set = this.sets[n];
-    for(i=0, ii=set.length; i<ii; i++){
-      if(set[i].attrs.dead){
-        set.splice(i, 1);
-        i--;
-        ii--;
+  for (n = 0, nn = this.sets.length; n < nn; n++) {
+    set = this.sets[n]
+    for (i = 0, ii = set.length; i < ii; i++) {
+      if (set[i].attrs.dead) {
+        set.splice(i, 1)
+        i--
+        ii--
       }
     }
   }
 
-  if(this.opts.capital_count > 1 && this.capitals.length <= 1 && ! this.env.gameover){
-    this.env.gameover = true;
-    setTimeout(this.env.restart, this.opts.gameover_restart_delay * 1000);
+  if (this.opts.capital_count > 1 && this.capitals.length <= 1 && !this.env.gameover) {
+    this.env.gameover = true
+    setTimeout(this.env.restart, this.opts.gameover_restart_delay * 1000)
+  }
+}
+
+Scenes.coldwar.prototype.paint = function (fx, gx, sx) {
+  if (this.opts.map > 0) {
+    this.map.paint(gx)
   }
 
-};
+  this.paintMap(gx)
+  this.paintElevation(sx)
 
-Scenes.coldwar.prototype.paint = function(fx, gx, sx){
-
-  if(this.opts.map > 0){
-    this.map.paint(gx);
+  if (this.env.gameover && Date.now() / 1000 % 1 > 0.5) {
+    gx.ctx.fillStyle = '#f00'
+    gx.ctx.font = '32pt ubuntu mono, monospace'
+    gx.ctx.textBaseline = 'middle'
+    gx.ctx.textAlign = 'center'
+    gx.ctx.fillText('GAME OVER', this.opts.max_x * 0.5, this.opts.max_y * 0.5)
   }
+}
 
-  this.paintMap(gx);
-  this.paintElevation(sx);
-
-  if(this.env.gameover && Date.now()/1000 % 1 > 0.5){
-    gx.ctx.fillStyle = '#f00';
-    gx.ctx.font = '32pt ubuntu mono, monospace';
-    gx.ctx.textBaseline = 'middle';
-    gx.ctx.textAlign = 'center';
-    gx.ctx.fillText('GAME OVER',  this.opts.max_x * 0.5, this.opts.max_y * 0.5);
-  }
-
-};
-
-Scenes.coldwar.prototype.paintMap = function(view){
-
-  for(var set, n=0, nn=this.sets.length; n<nn; n++){
-    set = this.sets[n];
-    for(i=0, ii=set.length; i<ii; i++){
-      set[i].paint(view);
+Scenes.coldwar.prototype.paintMap = function (view) {
+  for (var n = 0, nn = this.sets.length; n < nn; n++) {
+    var set = this.sets[n]
+    for (var i = 0, ii = set.length; i < ii; i++) {
+      set[i].paint(view)
     }
   }
 
-  if(this.env.gameover && Date.now()/400 % 1 > 0.5){
-
-    if(this.capitals.length === 0){
-      view.ctx.fillStyle = '#fff';
-      view.ctx.font = '24pt ubuntu mono, monospace';
-      view.ctx.textBaseline = 'middle';
-      view.ctx.textAlign = 'center';
-      view.ctx.fillText('MAD', this.opts.max_x/2, this.opts.max_y * 0.1);
+  if (this.env.gameover && Date.now() / 400 % 1 > 0.5) {
+    if (this.capitals.length === 0) {
+      view.ctx.fillStyle = '#fff'
+      view.ctx.font = '24pt ubuntu mono, monospace'
+      view.ctx.textBaseline = 'middle'
+      view.ctx.textAlign = 'center'
+      view.ctx.fillText('MAD', this.opts.max_x / 2, this.opts.max_y * 0.1)
     }
 
-    if(this.capitals.length === 1){
-      view.ctx.fillStyle = '#fff';
-      view.ctx.font = '24pt ubuntu mono, monospace';
-      view.ctx.textBaseline = 'middle';
-      view.ctx.textAlign = 'center';
-      view.ctx.fillText('WIN', this.capitals[0].pos.x, this.opts.max_y * 0.1);
+    if (this.capitals.length === 1) {
+      view.ctx.fillStyle = '#fff'
+      view.ctx.font = '24pt ubuntu mono, monospace'
+      view.ctx.textBaseline = 'middle'
+      view.ctx.textAlign = 'center'
+      view.ctx.fillText('WIN', this.capitals[0].pos.x, this.opts.max_y * 0.1)
     }
-
   }
+}
 
-};
-
-Scenes.coldwar.prototype.paintElevation = function(view){
-
-  for(var set, n=0, nn=this.sets.length; n<nn; n++){
-    set = this.sets[n];
-    for(i=0, ii=set.length; i<ii; i++){
-      set[i].elevation(view);
+Scenes.coldwar.prototype.paintElevation = function (view) {
+  for (var set, n = 0, nn = this.sets.length; n < nn; n++) {
+    set = this.sets[n]
+    for (var i = 0, ii = set.length; i < ii; i++) {
+      set[i].elevation(view)
     }
   }
 
-  if(this.env.gameover && Date.now()/400 % 1 > 0.5){
-
-    if(this.capitals.length === 0){
-      view.ctx.fillStyle = '#fff';
-      view.ctx.font = '24pt ubuntu mono, monospace';
-      view.ctx.textBaseline = 'middle';
-      view.ctx.textAlign = 'center';
-      view.ctx.fillText('MAD', this.opts.max_x/2, this.opts.max_y * 0.3);
+  if (this.env.gameover && Date.now() / 400 % 1 > 0.5) {
+    if (this.capitals.length === 0) {
+      view.ctx.fillStyle = '#fff'
+      view.ctx.font = '24pt ubuntu mono, monospace'
+      view.ctx.textBaseline = 'middle'
+      view.ctx.textAlign = 'center'
+      view.ctx.fillText('MAD', this.opts.max_x / 2, this.opts.max_y * 0.3)
     }
 
-    if(this.capitals.length === 1){
-      view.ctx.fillStyle = '#fff';
-      view.ctx.font = '24 ubuntu mono, monospace';
-      view.ctx.textBaseline = 'middle';
-      view.ctx.textAlign = 'center';
-      view.ctx.fillText('WIN', this.capitals[0].pos.x, this.opts.max_y * 0.3);
+    if (this.capitals.length === 1) {
+      view.ctx.fillStyle = '#fff'
+      view.ctx.font = '24 ubuntu mono, monospace'
+      view.ctx.textBaseline = 'middle'
+      view.ctx.textAlign = 'center'
+      view.ctx.fillText('WIN', this.capitals[0].pos.x, this.opts.max_y * 0.3)
     }
-
   }
+}
 
-};
-
-Scenes.coldwar.prototype.loadScenarios = function(){
-
-  this.scenarios[0] = function(){
-
+Scenes.coldwar.prototype.loadScenarios = function () {
+  this.scenarios[0] = function () {
     // capital and rings
 
-    var capitals = [];
+    var capitals = []
 
-    if(this.opts.capital_count === 4){
-
+    if (this.opts.capital_count === 4) {
       capitals.push({
         x: this.opts.max_x * 0.2,
         y: this.opts.max_y * 0.6,
         z: 0,
         color: '#fc0'
-      });
+      })
 
       capitals.push({
         x: this.opts.max_x * 0.8,
         y: this.opts.max_y * 0.4,
         z: 0,
-        color: '#0ff',
-      });
+        color: '#0ff'
+      })
 
       capitals.push({
         x: this.opts.max_x * 0.4,
         y: this.opts.max_y * 0.2,
         z: 0,
         color: '#f00'
-      });
+      })
 
       capitals.push({
         x: this.opts.max_x * 0.6,
         y: this.opts.max_y * 0.9,
         z: 0,
-        color: '#090',
-      });
-
-    } else if(this.opts.capital_count === 3){
-
+        color: '#090'
+      })
+    } else if (this.opts.capital_count === 3) {
       capitals.push({
         x: this.opts.max_x * 0.35,
         y: this.opts.max_y * 0.8,
         z: 0,
         color: '#fc0'
-      });
+      })
 
       capitals.push({
         x: this.opts.max_x * 0.65,
         y: this.opts.max_y * 0.8,
         z: 0,
-        color: '#0ff',
-      });
+        color: '#0ff'
+      })
 
       capitals.push({
         x: this.opts.max_x * 0.5,
         y: this.opts.max_y * 0.2,
         z: 0,
         color: '#f00'
-      });
-
-    } else if(this.opts.capital_count === 1){
-
+      })
+    } else if (this.opts.capital_count === 1) {
       capitals.push({
         x: this.opts.max_x * 0.5,
         y: this.opts.max_y * 0.5,
         z: 0,
-        color: '#0ff',
-      });
-
+        color: '#0ff'
+      })
     } else {
       capitals = [{
         x: this.opts.max_x * 0.25,
@@ -333,47 +314,45 @@ Scenes.coldwar.prototype.loadScenarios = function(){
         x: this.opts.max_x * 0.75,
         y: this.opts.max_y * 0.5,
         z: 0,
-        color: '#0ff',
-      }];
+        color: '#0ff'
+      }]
     }
 
-    if(this.opts.first_strike){
+    if (this.opts.first_strike) {
       // select one capital to attack first
-      capitals.forEach(function(attrs, xx){
-        attrs.strike = false;
-      });
-      capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      capitals.forEach(function (attrs, xx) {
+        attrs.strike = false
+      })
+      capitals[Math.floor(Math.random() * capitals.length)].strike = true
     } else {
       // all capitals attack
-      capitals.forEach(function(attrs){
-        attrs.strike = true;
-      });
+      capitals.forEach(function (attrs) {
+        attrs.strike = true
+      })
     }
 
-    capitals.forEach(function(attrs){
+    capitals.forEach(function (attrs) {
       this.capitals.push(new Actors.Capital(
-        this.env, {
-          scene: this,
-        }, {
+        this.env,
+        {
+          scene: this
+        },
+        {
           x: attrs.x,
           y: attrs.y,
           z: attrs.z,
           color: attrs.color,
           strike: attrs.strike,
-          defcon: this.opts.defcon,
-        }));
+          defcon: this.opts.defcon
+        }
+      ))
+    }, this)
+  }.bind(this)
 
-    }, this);
-
-
-  }.bind(this);
-
-
-  this.scenarios[1] = function(){
-
+  this.scenarios[1] = function () {
     // au vs nz
 
-    var capitals = [];
+    var capitals = []
 
     // au
     capitals.push({
@@ -388,13 +367,11 @@ Scenes.coldwar.prototype.loadScenarios = function(){
       title: 'AU',
       outline: [[-200, -250, true], [-150, -250], [-150, -200], [-60, -180], [-50, -250], [70, -60], [20, 100], [-70, 100], [-90, 70], [-150, 50], [-250, 70], [-300, 70], [-320, 0], [-330, -50], [-200, -250], [-200, -250], [-50, 130, true], [10, 130], [-20, 180], [-50, 130]],
       assets: {
-        bases: [[30, -120], [30, 50],[-20, 150],[-300, 50]],
-        cities: [[50, -20], [-40, 100],[20, -70]],
+        bases: [[30, -120], [30, 50], [-20, 150], [-300, 50]],
+        cities: [[50, -20], [-40, 100], [20, -70]],
         factories: [[-50, -20]]
       }
-
-
-    });
+    })
 
     // nz
     capitals.push({
@@ -456,37 +433,34 @@ Scenes.coldwar.prototype.loadScenarios = function(){
         [-100, 260, true],
         [-60, 260],
         [-80, 290],
-        [-100, 260],
-
+        [-100, 260]
       ],
 
       assets: {
         bases: [[10, -150], [-40, -80], [-40, 70], [-90, 220]],
         cities: [[30, -120], [-10, 140], [10, 100], [50, -40]],
-        factories: [[-50, 170], [20, -70], ]
+        factories: [[-50, 170], [20, -70]]
       }
+    })
 
-    });
-
-    if(this.opts.first_strike){
+    if (this.opts.first_strike) {
       // select one capital to attack first
-      capitals.forEach(function(attrs, xx){
-        attrs.strike = false;
-      });
-      capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      capitals.forEach(function (attrs, xx) {
+        attrs.strike = false
+      })
+      capitals[Math.floor(Math.random() * capitals.length)].strike = true
     } else {
       // all capitals attack
-      capitals.forEach(function(attrs){
-        attrs.strike = true;
-      }, this);
+      capitals.forEach(function (attrs) {
+        attrs.strike = true
+      }, this)
     }
 
-    capitals.forEach(function(attrs){
-
+    capitals.forEach(function (attrs) {
       this.capitals.push(new Actors.Capital(
         this.env, {
           scene: this
-        }, attrs));
+        }, attrs))
 
       this.maps.push(new Actors.CapitalMap(
         this.env, {
@@ -497,18 +471,15 @@ Scenes.coldwar.prototype.loadScenarios = function(){
           z: attrs.z,
           color: attrs.color,
           title: attrs.title,
-          outline: attrs.outline,
-        }));
+          outline: attrs.outline
+        }))
+    }, this)
+  }.bind(this)
 
-    }, this);
-
-  }.bind(this);
-
-  this.scenarios[2] = function(){
-
+  this.scenarios[2] = function () {
     // ca vs tx
 
-    var capitals = [];
+    var capitals = []
 
     // ca
     capitals.push({
@@ -517,13 +488,13 @@ Scenes.coldwar.prototype.loadScenarios = function(){
       z: 0,
       color: '#fc0',
       title: 'CA',
-      outline: [[20, -180, true], [20, -80], [150, 160], [150, 170], [140, 190], [140, 200], [140, 200], [80, 210], [70, 180], [0, 130], [0, 120], [-100, -100], [-80, -170], [-80, -200], [20, -180] ],
+      outline: [[20, -180, true], [20, -80], [150, 160], [150, 170], [140, 190], [140, 200], [140, 200], [80, 210], [70, 180], [0, 130], [0, 120], [-100, -100], [-80, -170], [-80, -200], [20, -180]],
       assets: {
-        bases: [[-30, -150], [30, 50],[90, 200],[20, -80]],
-        cities: [[45, 160], [-70, -60],[-30, 40], [-10, 90]],
-        factories: [[-50, -20],[60, 100]]
+        bases: [[-30, -150], [30, 50], [90, 200], [20, -80]],
+        cities: [[45, 160], [-70, -60], [-30, 40], [-10, 90]],
+        factories: [[-50, -20], [60, 100]]
       }
-    });
+    })
 
     // tx
     capitals.push({
@@ -538,48 +509,51 @@ Scenes.coldwar.prototype.loadScenarios = function(){
         cities: [[-50, -100], [-50, 40], [-80, 70], [50, -40]],
         factories: [[100, -40], [150, 100]]
       }
-    });
+    })
 
-    if(this.opts.first_strike){
+    if (this.opts.first_strike) {
       // select one capital to attack first
-      capitals.forEach(function(attrs, xx){
-        attrs.strike = false;
-      });
-      capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      capitals.forEach(function (attrs, xx) {
+        attrs.strike = false
+      })
+      capitals[Math.floor(Math.random() * capitals.length)].strike = true
     } else {
       // all capitals attack
-      capitals.forEach(function(attrs){
-        attrs.strike = true;
-      });
+      capitals.forEach(function (attrs) {
+        attrs.strike = true
+      })
     }
 
-    capitals.forEach(function(attrs){
+    capitals.forEach(function (attrs) {
       this.capitals.push(new Actors.Capital(
-        this.env, {
+        this.env,
+        {
           scene: this
-        }, attrs));
+        },
+        attrs
+      ))
 
       this.maps.push(new Actors.CapitalMap(
-        this.env, {
+        this.env,
+        {
           scene: this
-        }, {
+        },
+        {
           x: attrs.x,
           y: attrs.y,
           z: attrs.z,
           color: attrs.color,
           title: attrs.title,
-          outline: attrs.outline,
-        }));
-    }, this);
+          outline: attrs.outline
+        }
+      ))
+    }, this)
+  }.bind(this)
 
-  }.bind(this);
-
-
-  this.scenarios[3] = function(){
-
+  this.scenarios[3] = function () {
     // ca vs tx
 
-    var capitals = [];
+    var capitals = []
 
     // ca
     capitals.push({
@@ -591,11 +565,11 @@ Scenes.coldwar.prototype.loadScenarios = function(){
       outline: [
         [720, -800, true], [700, -480], [640, -450], [640, -200], [760, -100], [780, 180], [700, 160], [650, 200], [520, 140], [400, 150], [380, 200], [340, 280], [0, 200], [10, 100], [-50, 50], [-60, 20], [-60, 20, true], [-300, -220] ],
       assets: {
-        bases: [[650, -70], [50, -10],[90, 200],[20, -70]],
-        cities: [[650, 200], [20, 60],[-10, 40], [300, 200]],
-        factories: [[680, -50],[60, 100]]
+        bases: [[650, -70], [50, -10], [90, 200], [20, -70]],
+        cities: [[650, 200], [20, 60], [-10, 40], [300, 200]],
+        factories: [[680, -50], [60, 100]]
       }
-    });
+    })
 
     // tx
     capitals.push({
@@ -610,53 +584,56 @@ Scenes.coldwar.prototype.loadScenarios = function(){
         cities: [[20, 20], [10, 40], [-20, 20], [20, -10]],
         factories: [[80, -30], [90, 10]]
       }
-    });
+    })
 
-    if(this.opts.first_strike){
+    if (this.opts.first_strike) {
       // select one capital to attack first
-      capitals.forEach(function(attrs, xx){
-        attrs.strike = false;
-      });
-      capitals[Math.floor(Math.random() * capitals.length)].strike = true;
+      capitals.forEach(function (attrs, xx) {
+        attrs.strike = false
+      })
+      capitals[Math.floor(Math.random() * capitals.length)].strike = true
     } else {
       // all capitals attack
-      capitals.forEach(function(attrs){
-        attrs.strike = true;
-      });
+      capitals.forEach(function (attrs) {
+        attrs.strike = true
+      })
     }
 
-    capitals.forEach(function(attrs){
+    capitals.forEach(function (attrs) {
       this.capitals.push(new Actors.Capital(
-        this.env, {
+        this.env,
+        {
           scene: this
-        }, attrs));
+        },
+        attrs
+      ))
 
       this.maps.push(new Actors.CapitalMap(
-        this.env, {
+        this.env,
+        {
           scene: this
-        }, {
+        },
+        {
           x: attrs.x,
           y: attrs.y,
           z: attrs.z,
           color: attrs.color,
           title: attrs.title,
-          outline: attrs.outline,
-        }));
-    }, this);
-
-  }.bind(this);
-
-
-};
+          outline: attrs.outline
+        }
+      ))
+    }, this)
+  }.bind(this)
+}
 
 Scenes.coldwar.prototype.help = [
-  'Growing up as a teenager in the 80s wasn\'t all it\'s cracked up to be. Sure... We had the video game boom, the home computing revolution, and the last decade in which pop music was still truly cool. But we had zero fashion sense. None of the music had any bass. And everything was in 4x3.',
+  "Growing up as a teenager in the 80s wasn't all it's cracked up to be. Sure... We had the video game boom, the home computing revolution, and the last decade in which pop music was still truly cool. But we had zero fashion sense. None of the music had any bass. And everything was in 4x3.",
   'Worst of all, though... We grew up through the peak of the Cold War. Under the perpetual shadow of nuclear oblivion. The stuff of teenage nightmares. For an entire generation. But we made it through. And Generation X emerged with a pretty extreme sense of gallows humor along the way.',
-  'In the \'80s, if you were nerdy enough, and lucky enough to even have a modem, download speeds maxed out at 1200 baud. But this era still gave us some great breakthroughs in technology, many of them driven by the military. In fact, we all owe our jobs to Cold War networking technology.',
+  "In the '80s, if you were nerdy enough, and lucky enough to even have a modem, download speeds maxed out at 1200 baud. But this era still gave us some great breakthroughs in technology, many of them driven by the military. In fact, we all owe our jobs to Cold War networking technology.",
   'This network evolved from the communication links that enabled SAGE, the North American command and control system for air defense.',
   'Operational from the late 1950s, SAGE comprised of factory sized nodes, built of vacuum tubes, distributed across the continental US, with the aggregate computing power of a 386. The first computer to be capable of rendering graphics from data stored in memory.',
-  'In it\'s time, SAGE was impressive, but it seems almost laughable now. One tab of a web browser running on a 21st century mobile phone has more computing resource than billions of dollars of Cold War tech.',
-  'If that\'s the case, maybe in this futuristic age we live in, just for kicks, we could create a simulation of a little bit of the 80s.',
+  "In it's time, SAGE was impressive, but it seems almost laughable now. One tab of a web browser running on a 21st century mobile phone has more computing resource than billions of dollars of Cold War tech.",
+  "If that's the case, maybe in this futuristic age we live in, just for kicks, we could create a simulation of a little bit of the 80s.",
   'There are two views, top view and elevation view. All the actors have an x, y and z position in this world-space.',
   'Each of the circle structures is a nation state.',
   'It has a capital at the center (square, blinking). Defcon is the number in the capital.',
@@ -668,8 +645,8 @@ Scenes.coldwar.prototype.help = [
   'Fighters launch at Defcon 4 and attempt to destroy bombers.',
   'At Defcon 3, Bases launch ICBMs a low probability amount of the time.',
   'Satellites launch at Defcon 2, and can shoot ICBMs out of the sky, but have fire/recharge lasers.',
-  'When one of a nation\'s assets (factory, base, city) is nuked, they go to Defcon 1.',
+  "When one of a nation's assets (factory, base, city) is nuked, they go to Defcon 1.",
   'If your enemy goes to Defcon 1, so do you.',
   'At Defcon 1, all ICBMs will fire.',
-  'When your capital is destroyed, it\'s Game Over.',
-];
+  "When your capital is destroyed, it's Game Over."
+]
