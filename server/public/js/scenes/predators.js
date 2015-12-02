@@ -1,52 +1,53 @@
-/*global Scenes:true, Scene:true, Actors:true, */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Scenes, Scene, Actors, */
 
-Scenes.predators = function(env, opts){
-  this.env = env;
-  this.opts = this.genOpts(opts);
-  this.attrs = this.genAttrs();
-  this.init();
-};
+Scenes.predators = function (env, opts) {
+  this.env = env
+  this.opts = this.genOpts(opts)
+  this.attrs = this.genAttrs()
+  this.init()
+}
 
-Scenes.predators.prototype = Object.create(Scene.prototype);
+Scenes.predators.prototype = Object.create(Scene.prototype)
 
-Scenes.predators.prototype.title = 'Predators';
+Scenes.predators.prototype.title = 'Predators'
 
-Scenes.predators.prototype.init = function(){
+Scenes.predators.prototype.init = function () {
+  this.boids = []
+  this.predators = []
 
-  this.boids = [];
-  this.predators = [];
-
-  while(this.boids.length < this.opts.boids_max){
+  while (this.boids.length < this.opts.boids_max) {
     this.boids.push(new Actors.Boid(
-      this.env, {
+      this.env,
+      {
         scene: this,
         boids: this.boids,
         predators: this.predators
-      }, {
-      }));
+      },
+      {
+      }
+    ))
   }
 
-  while(this.predators.length < this.opts.predators_max){
+  while (this.predators.length < this.opts.predators_max) {
     this.predators.push(new Actors.Predator(
-      this.env, {
+      this.env,
+      {
         scene: this,
         boids: this.boids,
         predators: this.predators
-      }, {
-      }));
+      },
+      {
+      }
+    ))
   }
+}
 
-};
-
-Scenes.predators.prototype.getCast = function(){
+Scenes.predators.prototype.getCast = function () {
   return {
     Boid: Actors.Boid,
     Predator: Actors.Predator
   }
-};
+}
 
 Scenes.predators.prototype.defaults = [{
   key: 'max_x',
@@ -68,46 +69,41 @@ Scenes.predators.prototype.defaults = [{
   value: 2,
   min: 0,
   max: 10
-}];
+}]
 
-Scenes.predators.prototype.genAttrs = function(){
+Scenes.predators.prototype.genAttrs = function () {
   return {
-  };
-};
+  }
+}
 
-Scenes.predators.prototype.update = function(delta){
+Scenes.predators.prototype.update = function (delta) {
+  var i, ii
 
-  var i, ii;
-
-  for(i=0, ii=this.boids.length; i<ii; i++){
-    this.boids[i].update(delta);
+  for (i = 0, ii = this.boids.length; i < ii; i++) {
+    this.boids[i].update(delta)
   }
 
-  for(i=0, ii=this.predators.length; i<ii; i++){
-    this.predators[i].update(delta);
+  for (i = 0, ii = this.predators.length; i < ii; i++) {
+    this.predators[i].update(delta)
+  }
+}
+
+Scenes.predators.prototype.paint = function (fx, gx) {
+  var i, ii
+
+  for (i = 0, ii = this.boids.length; i < ii; i++) {
+    this.boids[i].paint(gx)
   }
 
-};
-
-Scenes.predators.prototype.paint = function(fx, gx){
-
-  var i, ii;
-
-  for(i=0, ii=this.boids.length; i<ii; i++){
-    this.boids[i].paint(gx);
+  for (i = 0, ii = this.predators.length; i < ii; i++) {
+    this.predators[i].paint(gx)
   }
+}
 
-  for(i=0, ii=this.predators.length; i<ii; i++){
-    this.predators[i].paint(gx);
-  }
-
-};
-
-Scenes.predators.prototype.getHelp = function(){
-  return '';
-};
+Scenes.predators.prototype.getHelp = function () {
+  return ''
+}
 
 Scenes.predators.prototype.captions = [{
   text: 'Predators'
-}];
-
+}]

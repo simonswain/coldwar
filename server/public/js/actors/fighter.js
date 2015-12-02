@@ -1,23 +1,19 @@
-/*global Actors:true, Actor:true, Vec3:true, VecR:true, hex2rgb:true, pickONe:true */
-/*jshint browser:true */
-/*jshint strict:false */
-/*jshint latedef:false */
+/* global Actors, Actor, Vec3, hex2rgb */
 
-Actors.Fighter = function(env, refs, attrs){
-  this.env = env;
-  this.refs = refs;
-  this.opts = this.genOpts();
-  this.attrs = this.genAttrs(attrs);
-  this.init();
-};
+Actors.Fighter = function (env, refs, attrs) {
+  this.env = env
+  this.refs = refs
+  this.opts = this.genOpts()
+  this.attrs = this.genAttrs(attrs)
+  this.init()
+}
 
-Actors.Fighter.prototype = Object.create(Actor.prototype);
+Actors.Fighter.prototype = Object.create(Actor.prototype)
 
-Actors.Fighter.prototype.title = 'Fighter';
+Actors.Fighter.prototype.title = 'Fighter'
 
-Actors.Fighter.prototype.genAttrs = function(attrs){
-
-  var hp = this.opts.hp_base + (this.opts.hp_flux * Math.random());
+Actors.Fighter.prototype.genAttrs = function (attrs) {
+  var hp = this.opts.hp_base + (this.opts.hp_flux * Math.random())
 
   return {
     x: attrs.x,
@@ -55,21 +51,21 @@ Actors.Fighter.prototype.genAttrs = function(attrs){
       this.refs.scene.opts.max_x / 2,
       this.refs.base.pos.y,
       Math.floor((this.refs.scene.opts.max_z * 0.3) + ((this.refs.scene.opts.max_z * 0.1) * Math.random())))
-  };
-};
+  }
+}
 
-Actors.Fighter.prototype.init = function(){
+Actors.Fighter.prototype.init = function () {
   this.pos = new Vec3(
     this.attrs.x,
     this.attrs.y,
     0
-  );
+  )
 
   this.velo = new Vec3(
     Math.random() * this.attrs.speed,
     Math.random() * this.attrs.speed, 0
-  );
-};
+  )
+}
 
 Actors.Fighter.prototype.defaults = [{
   key: 'speed_base',
@@ -126,7 +122,7 @@ Actors.Fighter.prototype.defaults = [{
   info: '',
   value: 5,
   min: 1,
-  max: 10,
+  max: 10
 }, {
   key: 'laser_flux',
   info: '',
@@ -166,102 +162,97 @@ Actors.Fighter.prototype.defaults = [{
   value: 600,
   min: 0,
   max: 1000
-}];
+}]
 
-
-Actors.Fighter.prototype.update = function(delta) {
-
-  this.attrs.ttl --;
+Actors.Fighter.prototype.update = function (delta) {
+  this.attrs.ttl--
 
   // out of gas
-  if(this.attrs.ttl < 0){
-    this.refs.base.attrs.fighters_launched --;
-    this.attrs.dead = true;
+  if (this.attrs.ttl < 0) {
+    this.refs.base.attrs.fighters_launched--
+    this.attrs.dead = true
   }
 
   // reset laser
-  this.attrs.laser = null;
+  this.attrs.laser = null
 
   // charge laser
-  if(this.attrs.laser_power < this.attrs.laser_max){
-    this.attrs.laser_power ++;
+  if (this.attrs.laser_power < this.attrs.laser_max) {
+    this.attrs.laser_power++
   }
 
   // reset damage, count down because bombers shoot fighters and the
   // hit needs to stay for an extra update
 
-  if(this.attrs.hit){
-    this.attrs.hit --;
-    if(this.attrs.hit === 0){
-      this.attrs.hit = false;
+  if (this.attrs.hit) {
+    this.attrs.hit--
+    if (this.attrs.hit === 0) {
+      this.attrs.hit = false
     }
   }
 
-  if(this.refs.capital.defcon > 3){
-    this.attrs.mode = 'station';
+  if (this.refs.capital.defcon > 3) {
+    this.attrs.mode = 'station'
   } else {
-    this.attrs.mode = 'attack';
+    this.attrs.mode = 'attack'
   }
 
   // altitude
-  if(this.attrs.mode === 'station'){
+  if (this.attrs.mode === 'station') {
     // if(this.pos.z < this.attrs.max_z){
-    //   this.pos.z += this.attrs.vel_z;
-    //   this.attrs.vel_z += this.attrs.vel_z_speed;
+    //   this.pos.z += this.attrs.vel_z
+    //   this.attrs.vel_z += this.attrs.vel_z_speed
     //   if(this.attrs.vel_z > this.attrs.vel_z_max){
     //     this.attrs.vel_z = this.attrs.vel_z_max
     //   }
     // }
   }
 
-  if(this.attrs.mode === 'attack'){
-    if(this.pos.z < this.attrs.max_z){
-      this.pos.z += this.attrs.vel_z;
-      this.attrs.vel_z += this.attrs.vel_z_speed;
-      if(this.attrs.vel_z > this.attrs.vel_z_max){
-        this.attrs.vel_z = this.attrs.vel_z_max;
+  if (this.attrs.mode === 'attack') {
+    if (this.pos.z < this.attrs.max_z) {
+      this.pos.z += this.attrs.vel_z
+      this.attrs.vel_z += this.attrs.vel_z_speed
+      if (this.attrs.vel_z > this.attrs.vel_z_max) {
+        this.attrs.vel_z = this.attrs.vel_z_max
       }
     }
   }
 
   // if(this.attrs.mode === 'return'){
-  //   this.pos.z += this.attrs.vel_z;
-  //   this.attrs.vel_z -= this.attrs.vel_z_speed;
+  //   this.pos.z += this.attrs.vel_z
+  //   this.attrs.vel_z -= this.attrs.vel_z_speed
   //   if(this.attrs.vel_z < -this.attrs.vel_z_max){
-  //     this.attrs.vel_z = -this.attrs.vel_z_max;
+  //     this.attrs.vel_z = -this.attrs.vel_z_max
   //   }
   // }
 
   // chase closest enemy bomber, or fly to station
-  var goal = this.chase();
+  var goal = this.chase()
 
   // flock away from comrades
-  var separation = this.separation();
+  var separation = this.separation()
   // proportion and average all vectors
 
   // acceleration vector
-  var vector = new Vec3();
-  vector.add(goal.scale(0.5));
-  vector.add(separation);
+  var vector = new Vec3()
+  vector.add(goal.scale(0.5))
+  vector.add(separation)
 
-  vector.scale(this.attrs.speed);
-  this.velo.add(vector);
-  this.velo.limit(this.attrs.speed);
+  vector.scale(this.attrs.speed)
+  this.velo.add(vector)
+  this.velo.limit(this.attrs.speed)
 
-  this.pos.add(this.velo);
-
-};
+  this.pos.add(this.velo)
+}
 
 // find closest enemy aircraft and attack it. If no enemy in range,
 // then fly towards station point
-Actors.Fighter.prototype.chase = function(){
-
-  var i, ii;
-  var target, other;
-  var dist, dist2, distX;
-  var vector;
-  var range = this.attrs.attack_range;
-  var range2 = this.attrs.attack_range;
+Actors.Fighter.prototype.chase = function () {
+  var i, ii
+  var target, other
+  var dist, dist2, distX
+  var range = this.attrs.attack_range
+  var range2 = this.attrs.attack_range
 
   // work through bombers then fighters to find closest enemy
 
@@ -271,187 +262,178 @@ Actors.Fighter.prototype.chase = function(){
 
   // acquire a laser target if one is close enough
 
-  for(i = 0, ii=this.refs.scene.bombers.length; i<ii; i++){
-    other = this.refs.scene.bombers[i];
-    if(other.refs.capital === this.refs.capital){
-      continue;
+  for (i = 0, ii = this.refs.scene.bombers.length; i < ii; i++) {
+    other = this.refs.scene.bombers[i]
+    if (other.refs.capital === this.refs.capital) {
+      continue
     }
-    distX = this.pos.rangeX(other.pos);
-    if(distX > this.attrs.attack_range){
-      continue;
+    distX = this.pos.rangeX(other.pos)
+    if (distX > this.attrs.attack_range) {
+      continue
     }
-    dist = this.pos.range(other.pos);
-    if(dist < range){
-      target = other;
-      range = dist;
+    dist = this.pos.range(other.pos)
+    if (dist < range) {
+      target = other
+      range = dist
     }
   }
-
 
   // if no bombers to target, then go for a fighter
 
   // if no laser target, use this loop to find any fighter close
   // enough and shoot at it
 
-  if(!target){
-    for(i = 0, ii=this.refs.scene.fighters.length; i<ii; i++){
-      other = this.refs.scene.fighters[i];
-      if(other.refs.capital === this.refs.capital){
-        continue;
+  if (!target) {
+    for (i = 0, ii = this.refs.scene.fighters.length; i < ii; i++) {
+      other = this.refs.scene.fighters[i]
+      if (other.refs.capital === this.refs.capital) {
+        continue
       }
-      if(this.pos.rangeX(other.pos) > this.attrs.attack_range){
-        continue;
+      if (this.pos.rangeX(other.pos) > this.attrs.attack_range) {
+        continue
       }
-      dist2 = this.pos.range(other.pos);
-      if(dist2 < range2){
-        target = other;
-        range2 = dist2;
+      dist2 = this.pos.range(other.pos)
+      if (dist2 < range2) {
+        target = other
+        range2 = dist2
       }
     }
   }
 
-  if(!target){
-    return this.attrs.station.minus(this.pos).normalize();
+  if (!target) {
+    return this.attrs.station.minus(this.pos).normalize()
   }
 
-
-  if(this.pos.range(target.pos) < this.attrs.laser_range){
-    this.shoot(target);
+  if (this.pos.range(target.pos) < this.attrs.laser_range) {
+    this.shoot(target)
   }
 
   // just used to separation doesn't try to move away from target
-  this.refs.target = target;
+  this.refs.target = target
 
-  return target.pos.minus(this.pos).normalize();
+  return target.pos.minus(this.pos).normalize()
+}
 
-};
+Actors.Fighter.prototype.separation = function () {
+  var i, ii
+  var separation = new Vec3()
+  var dist, distX
+  var other
+  var count = 0
 
-Actors.Fighter.prototype.separation = function(){
+  for (i = 0, ii = this.refs.scene.fighters.length; i < ii; i++) {
+    other = this.refs.scene.fighters[i]
 
-  var i, ii;
-  var separation = new Vec3();
-  var dist, distX;
-  var other;
-  var count = 0;
-
-  for(i=0, ii=this.refs.scene.fighters.length; i<ii; i++){
-    other = this.refs.scene.fighters[i];
-
-    if(other === this){
-      continue;
+    if (other === this) {
+      continue
     }
 
-    if(other === this.refs.target){
-      continue;
+    if (other === this.refs.target) {
+      continue
     }
 
-    distX = this.pos.rangeX(other.pos);
-    if(distX > this.attrs.separation_enemy){
-      continue;
+    distX = this.pos.rangeX(other.pos)
+    if (distX > this.attrs.separation_enemy) {
+      continue
     }
 
-    dist = this.pos.rangeXY(other.pos);
-    if(dist === 0){
-      continue;
+    dist = this.pos.rangeXY(other.pos)
+    if (dist === 0) {
+      continue
     }
 
-    if(other.refs.capital === this.refs.capital){
-      if (dist > this.attrs.separation_friend){
-        continue;
+    if (other.refs.capital === this.refs.capital) {
+      if (dist > this.attrs.separation_friend) {
+        continue
       }
-      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_friend/dist).scale(0.25));
+      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_friend / dist).scale(0.25))
     } else {
-      if (dist > this.attrs.separation_enemy){
-        continue;
+      if (dist > this.attrs.separation_enemy) {
+        continue
       }
-      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_enemy/dist).scale(0.25));
+      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_enemy / dist).scale(0.25))
     }
-    count ++;
+    count++
   }
 
-  for(i=0, ii=this.refs.scene.bombers.length; i<ii; i++){
-    other = this.refs.scene.bombers[i];
-    if(other === this){
-      continue;
+  for (i = 0, ii = this.refs.scene.bombers.length; i < ii; i++) {
+    other = this.refs.scene.bombers[i]
+    if (other === this) {
+      continue
     }
 
-    distX = this.pos.rangeX(other.pos);
-    if(distX > this.attrs.separation_enemy){
-      continue;
+    distX = this.pos.rangeX(other.pos)
+    if (distX > this.attrs.separation_enemy) {
+      continue
     }
 
-    dist = this.pos.rangeXY(other.pos);
+    dist = this.pos.rangeXY(other.pos)
 
-    if(dist === 0){
-      continue;
+    if (dist === 0) {
+      continue
     }
 
-    if(other.refs.capital === this.refs.capital){
-      if (dist > this.attrs.separation_friend){
-        continue;
+    if (other.refs.capital === this.refs.capital) {
+      if (dist > this.attrs.separation_friend) {
+        continue
       }
-      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_friend/dist).scale(0.25));
+      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_friend / dist).scale(0.25))
     } else {
-      if (dist > this.attrs.separation_enemy){
-        continue;
+      if (dist > this.attrs.separation_enemy) {
+        continue
       }
-      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_enemy/dist).scale(0.25));
+      separation.add(this.pos.minusXY(other.pos).normalize().scale(this.attrs.separation_enemy / dist).scale(0.25))
     }
-    count ++;
+    count++
   }
 
   // if no target, maintain separation from station
-  if(!this.refs.target){
-    dist = this.pos.rangeXY(this.attrs.station);
-    if (dist < this.attrs.separation_friend){
-      separation.add(this.pos.minusXY(this.attrs.station).normalize().scale(this.attrs.separation_friend/dist).scale(0.25));
+  if (!this.refs.target) {
+    dist = this.pos.rangeXY(this.attrs.station)
+    if (dist < this.attrs.separation_friend) {
+      separation.add(this.pos.minusXY(this.attrs.station).normalize().scale(this.attrs.separation_friend / dist).scale(0.25))
     }
-    count ++;
+    count++
   }
 
-
-  if(count === 0){
-    return new Vec3();
+  if (count === 0) {
+    return new Vec3()
   }
-  return separation.div(count);
-  //return separation.normalize();
+  return separation.div(count)
+  // return separation.normalize()
+}
 
-};
-
-Actors.Fighter.prototype.shoot = function(target){
-
-  if(this.attrs.laser_power <= 0){
-    return;
+Actors.Fighter.prototype.shoot = function (target) {
+  if (this.attrs.laser_power <= 0) {
+    return
   }
 
-  this.attrs.laser_power -= 2;
+  this.attrs.laser_power -= 2
 
-  this.attrs.laser = new Vec3().copy(target.pos);
-  if(target && typeof target.damage === 'function'){
-    target.damage();
+  this.attrs.laser = new Vec3().copy(target.pos)
+  if (target && typeof target.damage === 'function') {
+    target.damage()
+  }
+}
+
+Actors.Fighter.prototype.damage = function (hp) {
+  if (!hp) {
+    hp = 1
   }
 
-};
+  this.attrs.hp -= hp
+  this.attrs.hit = 2
 
-Actors.Fighter.prototype.damage = function(hp){
-
-  if(!hp){
-    hp = 1;
+  if (this.attrs.hp > 0) {
+    return
   }
 
-  this.attrs.hp -= hp;
-  this.attrs.hit = 2;
-
-  if(this.attrs.hp > 0){
-    return;
+  if (this.attrs.dead) {
+    return
   }
 
-  if(this.attrs.dead){
-    return;
-  }
-
-  this.refs.base.attrs.fighters_launched --;
-  this.attrs.dead = true;
+  this.refs.base.attrs.fighters_launched--
+  this.attrs.dead = true
   this.refs.scene.booms.push(new Actors.Boom(
     this.env, {
       scene: this.refs.scene
@@ -463,90 +445,85 @@ Actors.Fighter.prototype.damage = function(hp){
       y: this.pos.y,
       z: this.pos.z,
       color: hex2rgb(this.attrs.color)
-    }));
+    }))
+}
 
-};
-
-Actors.Fighter.prototype.paint = function(view) {
-
+Actors.Fighter.prototype.paint = function (view) {
   // show vector to target
-  if(this.opts.show_vectors){
-    if(this.refs.target){
-      view.ctx.beginPath();
-      view.ctx.strokeStyle= 'rgba(255,255,255,0.25)';
-      view.ctx.moveTo(this.pos.x, this.pos.y);
-      view.ctx.lineTo(this.refs.target.pos.x, this.refs.target.pos.y);
-      view.ctx.stroke();
+  if (this.opts.show_vectors) {
+    if (this.refs.target) {
+      view.ctx.beginPath()
+      view.ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+      view.ctx.moveTo(this.pos.x, this.pos.y)
+      view.ctx.lineTo(this.refs.target.pos.x, this.refs.target.pos.y)
+      view.ctx.stroke()
     }
   }
 
-  if(this.attrs.laser){
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 1;
-    view.ctx.strokeStyle=this.attrs.color;
-    view.ctx.moveTo(this.pos.x, this.pos.y);
-    view.ctx.lineTo(this.attrs.laser.x, this.attrs.laser.y);
-    view.ctx.stroke();
+  if (this.attrs.laser) {
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 1
+    view.ctx.strokeStyle = this.attrs.color
+    view.ctx.moveTo(this.pos.x, this.pos.y)
+    view.ctx.lineTo(this.attrs.laser.x, this.attrs.laser.y)
+    view.ctx.stroke()
   }
 
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, this.pos.y);
-  view.ctx.rotate(this.velo.angleXY());
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, this.pos.y)
+  view.ctx.rotate(this.velo.angleXY())
 
-  if(this.attrs.hit){
-    view.ctx.strokeStyle = '#f00';
+  if (this.attrs.hit) {
+    view.ctx.strokeStyle = '#f00'
   } else {
-    view.ctx.strokeStyle = this.attrs.color;
+    view.ctx.strokeStyle = this.attrs.color
   }
 
-  var z = 2 + 8 * (this.pos.z / this.refs.scene.opts.max_z);
+  var z = 2 + 8 * (this.pos.z / this.refs.scene.opts.max_z)
 
-  view.ctx.lineWidth = 2;
+  view.ctx.lineWidth = 2
 
-  view.ctx.beginPath();
-  view.ctx.moveTo(-z, -z);
-  view.ctx.lineTo(0, 0);
-  view.ctx.lineTo(-z, z);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.moveTo(-z, -z)
+  view.ctx.lineTo(0, 0)
+  view.ctx.lineTo(-z, z)
+  view.ctx.stroke()
 
-  view.ctx.beginPath();
-  view.ctx.lineTo(0, 0);
-  view.ctx.lineTo(z, 0);
-  view.ctx.stroke();
+  view.ctx.beginPath()
+  view.ctx.lineTo(0, 0)
+  view.ctx.lineTo(z, 0)
+  view.ctx.stroke()
 
-  view.ctx.restore();
+  view.ctx.restore()
+}
 
-};
-
-Actors.Fighter.prototype.elevation = function(view) {
-
+Actors.Fighter.prototype.elevation = function (view) {
   // show vector to target
-  if(this.opts.show_vectors){
-    if(this.refs.target){
-      view.ctx.beginPath();
-      view.ctx.strokeStyle= 'rgba(255,255,255,0.25)';
-      view.ctx.moveTo(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z) );
-      view.ctx.lineTo(this.refs.target.pos.x, (this.refs.scene.opts.max_z - this.refs.target.pos.z));
-      view.ctx.stroke();
+  if (this.opts.show_vectors) {
+    if (this.refs.target) {
+      view.ctx.beginPath()
+      view.ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+      view.ctx.moveTo(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z))
+      view.ctx.lineTo(this.refs.target.pos.x, (this.refs.scene.opts.max_z - this.refs.target.pos.z))
+      view.ctx.stroke()
     }
   }
 
-  view.ctx.save();
-  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z));
+  view.ctx.save()
+  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z))
 
-  view.ctx.fillStyle = this.attrs.color;
-  view.ctx.beginPath();
-  view.ctx.fillRect(-1, -1, 2, 2);
+  view.ctx.fillStyle = this.attrs.color
+  view.ctx.beginPath()
+  view.ctx.fillRect(-1, -1, 2, 2)
 
-  view.ctx.restore();
+  view.ctx.restore()
 
-  if(this.attrs.laser){
-    view.ctx.beginPath();
-    view.ctx.lineWidth = 1;
-    view.ctx.strokeStyle=this.attrs.color;
-    view.ctx.moveTo(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z));
-    view.ctx.lineTo(this.attrs.laser.x, (this.refs.scene.opts.max_z - this.attrs.laser.z));
-    view.ctx.stroke();
+  if (this.attrs.laser) {
+    view.ctx.beginPath()
+    view.ctx.lineWidth = 1
+    view.ctx.strokeStyle = this.attrs.color
+    view.ctx.moveTo(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z))
+    view.ctx.lineTo(this.attrs.laser.x, (this.refs.scene.opts.max_z - this.attrs.laser.z))
+    view.ctx.stroke()
   }
-
-};
+}

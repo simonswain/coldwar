@@ -1,10 +1,9 @@
-module.exports = function(env){
-
-  if(!env){
-    env = 'development';
+module.exports = function (env) {
+  if (!env) {
+    env = 'development'
   }
 
-  var nickname = 'coldwar';
+  var nickname = 'coldwar'
 
   var server = {
     host: '0.0.0.0',
@@ -18,6 +17,5 @@ module.exports = function(env){
     ga_id: '',
     server: server,
     docroot: ''
-  };
-
+  }
 }
