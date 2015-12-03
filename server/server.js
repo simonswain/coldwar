@@ -1,8 +1,11 @@
 import async from 'async'
 import hapi from 'hapi'
 import path from 'path'
+import handlebars from 'handlebars'
+import hapiLess from 'hapi-less'
+import manifest from './manifest'
 
-import AssetManager from './assets'
+import * as AssetManager from './assets'
 
 export default function (config) {
   config = config || {}
@@ -31,13 +34,11 @@ export default function (config) {
 
   server.views({
     engines: {
-      html: require('handlebars')
+      html: handlebars
     },
     path: path.join(__dirname, 'views'),
-    isCached: (config.env !== 'development')
+    isCached: config.env !== 'development'
   })
-
-  const manifest = require(__dirname + '/manifest')
 
   if (config.docroot) {
     manifest.pub.opts.outUrl = '/' + config.docroot + '/assets'
@@ -107,7 +108,7 @@ export default function (config) {
   })
 
   server.register({
-    register: require('hapi-less'),
+    register: hapiLess,
     options: {
       home: __dirname + '/public/less',
       route: '/public/css/{filename*}',
@@ -120,7 +121,7 @@ export default function (config) {
   })
 
   server.register({
-    register: require('hapi-less'),
+    register: hapiLess,
     options: {
       home: __dirname + '/public/less',
       route: '/public/less/{filename*}',

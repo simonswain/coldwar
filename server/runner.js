@@ -8,8 +8,8 @@ const app = server(config)
 app.start(() => {
   logger.log(
     'info',
-    config.nickname + ' server ' + config.env + ' ' +
-    config.server.host + ':' + config.server.port
+    `${ config.nickname } server ${ config.env } ` +
+    `${ config.server.host }:${ config.server.port }`
   )
 })
 

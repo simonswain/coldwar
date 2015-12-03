@@ -43,7 +43,11 @@
     "winston": "^0.9.0"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.6",
     "standard": "^5.4.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "standard": {
+    "parser": "babel-eslint"
+  }
 }
