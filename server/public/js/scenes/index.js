@@ -34,44 +34,6 @@ Scenes.index.prototype.defaults = [{
   min: 200,
   max: 1000
 }, {
-  key: 'horizap',
-  value: 0.1,
-  min: 0,
-  max: 1,
-  step: 0.1
-}, {
-  key: 'ttl_base',
-  value: 10,
-  min: 0,
-  max: 100
-}, {
-  key: 'star_radius',
-  value: 1,
-  min: 1,
-  max: 5
-}, {
-  key: 'ttl_flux',
-  value: 20,
-  min: 0,
-  max: 100
-}, {
-  key: 'yv_base',
-  value: 0,
-  min: 0,
-  max: 5,
-  step: 0.1
-}, {
-  key: 'yv_flux',
-  value: 2,
-  min: 0,
-  max: 5,
-  step: 0.1
-}, {
-  key: 'slide_px',
-  value: -1,
-  min: -5,
-  max: 5,
-  step: 0.1
 }]
 
 Scenes.index.prototype.getCast = function () {
@@ -96,74 +58,12 @@ Scenes.index.prototype.update = function (delta) {
     this.attrs.color_crawl = 0
   }
 
-  document.getElementsByClassName('color-cycle-fast')[0].style.color = 'hsla(' + this.attrs.color_fast + ', 100%, 50%, 0.9)'
-  document.getElementsByClassName('color-cycle-slow')[0].style.color = 'hsla(' + this.attrs.color_slow + ', 100%, 50%, 0.9)'
-
-  var over = document.getElementsByClassName('color-cycle-over')
-  if (over.length > 0) {
-    over[0].style.backgroundColor = 'hsla(' + this.attrs.color_crawl + ', 100%, 50%, 0.9)'
-    over[0].style.color = 'hsla(' + ((this.attrs.color_crawl + 180) % 360) + ', 100%, 50%, 1)'
-  }
-
-  for (i = 0, ii = this.indexItems.length; i < ii; i++) {
-    this.indexItems[i].style.borderColor = 'hsla(' + this.attrs.color_crawl + ', 100%, 50%, 0.5)'
-  }
-
-  for (i = 0, ii = this.stars.length; i < ii; i++) {
-    this.stars[i].ttl--
-    this.stars[i].y += this.stars[i].yv
-    if (this.stars[i].ttl <= 0) {
-      this.stars.splice(i, 1)
-      i--
-      ii--
-    }
-  }
-
-  while (this.stars.length < 100) {
-    this.stars.push({
-      x: this.opts.max_x * Math.random(),
-      y: this.opts.max_y * Math.random(),
-      yv: this.opts.yv_base + (Math.random() * this.opts.yv_flux),
-      ttl: this.opts.ttl_base + (Math.random() * this.opts.ttl_flux),
-      color: this.attrs.color_fast
-    })
-  }
 }
 
 Scenes.index.prototype.paint = function (fx, gx, sx) {
-  var slideframe = fx.ctx.getImageData(0, 0, this.opts.max_x, this.opts.max_y)
-  fx.ctx.putImageData(slideframe, 0, this.opts.slide_px)
-
-  var star
-  for (var i = 0, ii = this.stars.length; i < ii; i++) {
-    star = this.stars[i]
-    gx.ctx.beginPath()
-    gx.ctx.fillStyle = 'hsla(' + star.color + ', 100%, 50%, 1)' // '#fff'
-    gx.ctx.arc(star.x, star.y, this.opts.star_radius, 0, 2 * Math.PI, true)
-    gx.ctx.fill()
-
-    fx.ctx.beginPath()
-    fx.ctx.fillStyle = 'hsla(' + star.color + ', 100%, 85%, 0.9)' // '#fff'
-    fx.ctx.arc(star.x, star.y, this.opts.star_radius, 0, 2 * Math.PI, true)
-    fx.ctx.fill()
-  }
 }
 
 Scenes.index.prototype.flash = function (fx, gx) {
-  this.flashHorizap(fx, gx)
-}
-
-Scenes.index.prototype.flashHorizap = function (fx, gx) {
-  fx.ctx.strokeStyle = 'hsla(' + this.attrs.color_slow + ', 100%, 85%, 0.9)' // '#fff'
-  // fx.ctx.strokeStyle = '#fff'
-  fx.ctx.lineWidth = 0.5
-  var yy = Math.random() * fx.h
-  if (Math.random() < 0.1) {
-    fx.ctx.beginPath()
-    fx.ctx.moveTo(0, yy)
-    fx.ctx.lineTo(fx.w, yy)
-    fx.ctx.stroke()
-  }
 }
 
 Scenes.index.prototype.tick = function () {
@@ -172,62 +72,61 @@ Scenes.index.prototype.tick = function () {
 }
 
 Scenes.index.prototype.init = function () {
-  this.stars = []
 
   this.scenes = [{
-    title: 'Cold War',
-    slug: 'coldwar'
+    title: 'Loading',
+    slug: 'loading'
   }, {
-    title: 'Deep Space',
-    slug: 'deepspace'
+    title: 'Title',
+    slug: 'title'
   }, {
-    title: 'Interception',
-    slug: 'interception'
+    title: 'Story',
+    slug: 'story'
   }, {
-    title: 'Attract',
-    slug: 'attract'
+    title: 'Maze',
+    slug: 'maze'
   }, {
-    title: 'System',
-    slug: 'system'
+    title: 'Mazegen',
+    slug: 'mazegen'
   }, {
-    title: 'CRT',
-    slug: 'crt'
+    title: 'Cell',
+    slug: 'cell'
   }, {
-    title: 'Rabbits',
-    slug: 'rabbits'
+    title: 'Goal',
+    slug: 'goal'
   }, {
-    title: 'Planet',
-    slug: 'planet'
+    title: 'A*',
+    slug: 'astar'
   }, {
-    title: 'Predators',
-    slug: 'predators'
+    title: 'Rats',
+    slug: 'rats'
   }, {
-    title: 'Life',
-    slug: 'life'
-  // }, {
-  //   title: 'Frequency',
-  //   slug: 'frequency'
+    title: 'Swarm', //  of Rats seeking you in the maze
+    slug: 'swarm'
   }, {
-    title: 'Raster',
-    slug: 'raster'
+    title: 'Factory',
+    slug: 'factory'
   }, {
-    title: 'Booms',
-    slug: 'booms'
-  // }, {
-  //   title: 'World',
-  //   slug: 'world'
-  // }, {
-  //   title: 'Rats',
-  //   slug: 'rats'
-  // }, {
-  //   title: 'Meltdown',
-  //   slug: 'meltdown'
-  // }, {
-  //   title: 'Convection',
-  //   slug: 'convection'
-  // }, {
-  //   title: 'Actors',
-  //   slug: 'actors'
+    title: 'Weapons',
+    slug: 'weapons'
+  }, {
+    title: 'Reactor',
+    slug: 'reactor'
+  }, {
+    title: 'King Rat',
+    slug: 'king_rat'
+  }, {
+    title: 'Robots',
+    slug: 'robots'
+  }, {
+    title: 'Machines',
+    slug: 'machines'
+  }, {
+    title: 'Sonics',
+    slug: 'sonics'
+  }, {
+    title: 'R.o.t.M',
+    slug: 'rats_of_the_maze'
   }]
 }
 
@@ -235,7 +134,7 @@ Scenes.index.prototype.render = function () {
   var html
   html = ''
   html += '<div class="index">'
-  html += '<h1><a href="/" class="color-cycle-fast">coldwar</a></h1>'
+  html += '<h1><a href="/" class="color-cycle-fast">rats of the maze</a></h1>'
   html += '<ul>'
   this.scenes.forEach(function (scene) {
     html += '<li><a href="/' + scene.slug + '" class="color-cycle-crawl">' + scene.title + '</a></li>'
@@ -282,13 +181,3 @@ Scenes.index.prototype.restart = function () {
   this.stop()
   setTimeout(this.start.bind(this), 100)
 }
-
-Scenes.index.prototype.help = [
-  "Coldwar is a simulation platform. You can explore it's built in scenes, or use it as a starting point for writing your own.",
-  'The platform builds on concepts presented at JSConf.US 2015, Web Directions Code (<a href="https://vimeo.com/132786140" target="_new">video</a>), TX.js (<a href="https://www.youtube.com/watch?v=hXW7kkyhtqo" target="_new">video</a>) and JSConf.Asia 2014 (<a href="https://www.youtube.com/watch?v=0HJPilemNns" target="_new">video</a>).',
-  'Source is at <a href="https://github.com/simonswain/coldwar">github.com/simonswain/coldwar</a>',
-  'TAB toggles scene options<br />ENTER restarts scene<br />\\ toggles diagnostics<br />? toggles help<br />Mousewheel and Drag to zoom and pan<br />+/- to zoom<br />0 to reset zoom<br />ESC to get back to Index',
-
-  'Follow <a href="https://twitter.com/simon_swain">@simon_swain</a> on Twitter for updates',
-  'Use #coldwar to tag'
-]

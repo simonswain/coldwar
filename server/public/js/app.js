@@ -66,11 +66,17 @@ Coldwar.prototype.start = function (scene, opts) {
   // start animated scene
   this.render()
 
+  if(this.scene.paintOnce){
+    this.paintScene();
+    return;
+  }
+
   if (this.raf) {
     window.cancelAnimationFrame(this.raf)
   }
 
   this.raf = window.requestAnimationFrame(this.tick.bind(this))
+
 }
 
 Coldwar.prototype.setOpts = function (key, params, opts) {
@@ -104,7 +110,8 @@ Coldwar.prototype.setOpts = function (key, params, opts) {
 Coldwar.prototype.tick = function () {
   this.update()
   var timer = Date.now()
-  this.paintScene()
+
+  this.paintScene();
   this.paintCaptions()
   this.env.timers.paint = Date.now() - timer
   this.env.timers.total = this.env.timers.update + this.env.timers.paint
@@ -120,6 +127,7 @@ Coldwar.prototype.stop = function () {
 
 Coldwar.prototype.update = function () {
   var at = Date.now()
+  this.env.diff = at - this.env.last;
   var delta = this.env.delta = (at - this.env.last) / 16.77
   var fps = (1000 / (at - this.env.last)).toFixed(0)
 
@@ -179,6 +187,7 @@ Coldwar.prototype.hide_help = function () {
 }
 
 Coldwar.prototype.paintScene = function () {
+
   var ex = this.env.views.ex
   var fx = this.env.views.fx
   var gx = this.env.views.gx
@@ -186,7 +195,7 @@ Coldwar.prototype.paintScene = function () {
 
   ex.ctx.clearRect(0, 0, ex.w, ex.h)
 
-  fx.ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'
+  fx.ctx.fillStyle = 'rgba(0, 0, 0, ' + this.env.fx_alpha + ')'
   fx.ctx.fillRect(0, 0, fx.w, fx.h)
 
   gx.ctx.clearRect(0, 0, gx.w, gx.h)
@@ -263,6 +272,7 @@ Coldwar.prototype.paintMeta = function () {
   view.ctx.fillText((this.env.delta).toFixed(1) + ' d', view.w - 32, view.h - 80)
   view.ctx.fillText((this.env.timer).toFixed(1) + ' t', view.w - 32, view.h - 104)
   view.ctx.fillText((this.env.clock).toFixed(1) + ' c', view.w - 32, view.h - 128)
+  view.ctx.fillText((this.env.diff).toFixed(1) + ' m', view.w - 32, view.h - 152)
 
   text_x = 160
 
@@ -422,6 +432,7 @@ Coldwar.prototype.paintOpts = function () {
 }
 
 Coldwar.prototype.genEnv = function () {
+
   if (localStorage.getItem('show_opts') === null) {
     localStorage.setItem('show_opts', true)
   }
@@ -448,6 +459,7 @@ Coldwar.prototype.genEnv = function () {
       gx: null,
       sx: null
     },
+    fx_alpha: 0.15,
     last: Date.now(),
     at: 0,
     fps: 0,
