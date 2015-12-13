@@ -138,8 +138,9 @@ Actors.Boom.prototype.update = function (delta) {
 }
 
 Actors.Boom.prototype.paint = function (view) {
+
   view.ctx.save()
-  view.ctx.translate(this.pos.x, this.pos.y)
+  //view.ctx.translate(this.pos.x, this.pos.y)
 
   var i
   // var div = 2
@@ -276,110 +277,3 @@ Actors.Boom.prototype.paint = function (view) {
   view.ctx.restore()
 }
 
-Actors.Boom.prototype.elevation = function (view) {
-  view.ctx.save()
-  view.ctx.translate(this.pos.x, (this.refs.scene.opts.max_z - this.pos.z))
-
-  var xx
-  var i, ii
-
-  var div = 2
-  var f = this.attrs.ttl / this.attrs.initial_ttl
-  var radius = this.attrs.radius * (this.attrs.ttl / this.attrs.initial_ttl)
-
-  view.ctx.lineWidth = this.opts.fatness
-
-  if (this.attrs.crater) {
-    for (i = 0, ii = 10 * Math.random(); i < ii; i++) {
-      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + ((Math.random() * 0.5)) + ')'
-      view.ctx.beginPath()
-
-      xx = this.attrs.radius * Math.random()
-      view.ctx.moveTo(xx, 2)
-      view.ctx.lineTo(xx, -2)
-      view.ctx.stroke()
-    }
-  }
-
-  switch (this.attrs.style) {
-    case 1:
-    case 'splat':
-      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
-      view.ctx.beginPath()
-      view.ctx.arc(0, 0, radius / div, 0, 2 * Math.PI)
-      view.ctx.stroke()
-      break
-
-    case 2:
-    case 'zoom':
-      // for (i = 0; i < 10; i++) {
-      //   view.ctx.strokeStyle= 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
-      //   view.ctx.beginPath()
-      //   view.ctx.lineWidth = this.attrs.fatness * (i / 10)
-      //   view.ctx.arc(0, 0, (this.attrs.radius - radius) * i / (10 * div), 0, 2 * Math.PI)
-      //   view.ctx.stroke()
-      // }
-      for (i = 0; i < 10; i++) {
-        view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
-        view.ctx.beginPath()
-        view.ctx.lineWidth = this.fatness * (i / 10)
-        view.ctx.arc(0, 0, (radius / 10) * i, 0, 2 * Math.PI)
-        view.ctx.stroke()
-      }
-      break
-
-    case 3:
-    case 'zoom-lite':
-      for (i = 0; i < 5; i++) {
-        view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',1)'
-        view.ctx.beginPath()
-        view.ctx.lineWidth = this.opts.fatness
-        view.ctx.arc(0, 0, (radius) * i / 5, 0, 2 * Math.PI)
-        view.ctx.stroke()
-      }
-      break
-
-    case 4:
-    case 'spinner':
-      view.ctx.beginPath()
-      view.ctx.arc(0, 0, radius, 0, 2 * Math.PI * this.attrs.clock)
-      view.ctx.stroke()
-      break
-
-    case 5:
-    case 'expand':
-      radius = this.attrs.initial_radius - (this.attrs.radius * (this.attrs.ttl / this.attrs.initial_ttl))
-
-      view.ctx.fillStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
-      view.ctx.beginPath()
-      view.ctx.arc(0, 0, radius / div, 0, 2 * Math.PI)
-      view.ctx.fill()
-      break
-
-    case 6:
-    case 'laser':
-      break
-
-    case 7:
-    case 'colonize':
-      view.ctx.lineWidth = this.opts.fatness
-      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
-      view.ctx.beginPath()
-      view.ctx.rect(-radius / 2, -radius / 2, radius, radius)
-      view.ctx.stroke()
-      break
-
-    case 'crater':
-      // nop
-      break
-
-    default:
-      view.ctx.fillStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
-      view.ctx.beginPath()
-      view.ctx.arc(0, 0, radius / div, 0, 2 * Math.PI)
-      view.ctx.fill()
-      break
-  }
-
-  view.ctx.restore()
-}

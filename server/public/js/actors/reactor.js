@@ -5,7 +5,7 @@ Actors.Reactor = function (env, refs, attrs) {
   this.refs = refs
   this.opts = this.genOpts()
   this.attrs = this.genAttrs(attrs)
-  this.init()
+  this.init(attrs)
 }
 
 Actors.Reactor.prototype = Object.create(Actor.prototype)
@@ -14,60 +14,42 @@ Actors.Reactor.prototype.title = 'Reactor'
 
 Actors.Reactor.prototype.genAttrs = function (attrs) {
   return {
-    cell_x: attrs.cell_x,
-    cell_y: attrs.cell_y,
-    tripped: false,
-    ttl: this.opts.ttl
+    x: attrs.x,
+    y: attrs.y,
+    dead: false
   }
 }
 
-Actors.Reactor.prototype.init = function () {}
+Actors.Reactor.prototype.init = function (attrs) {
 
-Actors.Reactor.prototype.defaults = [{
-  key: 'ttl',
-  info: '',
-  value: 1000,
-  min: 100,
-  max: 10000
-}]
+  this.pos = new Vec3(attrs.x, attrs.y)
 
-Actors.Reactor.prototype.update = function (delta) {}
-
-Actors.Reactor.prototype.paint = function (view) {
-  var xf = this.refs.scene.opts.max_x / this.refs.maze.opts.cols
-  var yf = this.refs.scene.opts.max_y / this.refs.maze.opts.rows
-  var f = Math.min(xf, yf)
-
-  view.ctx.save()
-  view.ctx.translate(
-    (this.refs.scene.opts.max_x / 2) - (f * this.refs.maze.opts.cols / 2),
-    (this.refs.scene.opts.max_y / 2) - (f * this.refs.maze.opts.rows / 2)
-  )
-
-  view.ctx.beginPath()
-  view.ctx.fillStyle = '#f0f'
-  view.ctx.arc((this.attrs.cell_x * f) + (f / 2), (this.attrs.cell_y * f) + (f / 2), f / 4, 0, 2 * Math.PI)
-
-  // view.ctx.fillRect(this.attrs.cell_x * f, this.attrs.cell_y * f, f, f)
-  view.ctx.fill()
-  view.ctx.restore()
 }
 
-Actors.Reactor.prototype.elevation = function (view) {
-  var xf = this.refs.scene.opts.max_x / this.refs.maze.opts.cols
-  var yf = this.refs.scene.opts.max_z / this.refs.maze.opts.rows
-  var f = Math.min(xf, yf)
+Actors.Reactor.prototype.defaults = [{
+  key: 'z',
+  value: 16,
+  min: 1,
+  max: 1600
+}, {
+  key: 'max_y',
+  info: 'Max Y',
+  value: 16,
+  min: 100,
+  max: 1000
+}]
 
-  view.ctx.save()
-  view.ctx.translate(
-    (this.refs.scene.opts.max_x / 2) - (f * this.refs.maze.opts.cols / 2),
-    (f * this.refs.maze.opts.rows / 2)
-  )
+Actors.Reactor.prototype.update = function (delta) {
 
+}
+
+Actors.Reactor.prototype.paint = function (view) {
+  var z = this.opts.z;
   view.ctx.beginPath()
-  view.ctx.fillStyle = '#f0f'
-  view.ctx.arc((this.attrs.cell_x * f) + (f / 2), (this.attrs.cell_y * f) + (f / 2), f / 2, 0, 2 * Math.PI)
+  view.ctx.fillStyle = '#fff'
+  view.ctx.arc(0, 0, z / 4, 0, 2 * Math.PI)
 
+  view.ctx.fillRect(-z/2, -z/2, z, z)
   view.ctx.fill()
-  view.ctx.restore()
+
 }
