@@ -8,16 +8,18 @@
     "email": "simon@simonswain.com",
     "url": "https://simonswain.com"
   },
-  "contributors": [{
-    "name": "Sebastiaan Deckers",
-    "email": "seb@ninja.sg",
-    "url": "https://ninja.sg"
-  }],
+  "contributors": [
+    {
+      "name": "Sebastiaan Deckers",
+      "email": "seb@ninja.sg",
+      "url": "https://ninja.sg"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/simonswain/coldwar"
   },
-  "main": "lib/index.js",
+  "main": "server/index.js",
   "engines": {
     "node": ">= 4.2.0"
   },
@@ -28,6 +30,10 @@
   },
   "dependencies": {
     "async": "^0.9.0",
+    "babel-polyfill": "^6.2.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-stage-0": "^6.1.18",
+    "babel-register": "^6.2.0",
     "handlebars": "^3.0.1",
     "hapi": "^8.4.0",
     "hapi-less": "^0.1.1",
@@ -37,7 +43,11 @@
     "winston": "^0.9.0"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.6",
     "standard": "^5.4.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "standard": {
+    "parser": "babel-eslint"
+  }
 }
