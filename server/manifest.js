@@ -1,6 +1,4 @@
-'use strict'
-
-module.exports = {
+export default {
   pub: {
     opts: {
       key: 'pub',

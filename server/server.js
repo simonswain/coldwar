@@ -1,12 +1,13 @@
-'use strict'
+import async from 'async'
+import hapi from 'hapi'
+import path from 'path'
+import handlebars from 'handlebars'
+import hapiLess from 'hapi-less'
+import manifest from './manifest'
 
-var async = require('async')
-var hapi = require('hapi')
-var Path = require('path')
+import * as AssetManager from './assets'
 
-var AssetManager = require('./assets')
-
-module.exports = function (config) {
+export default function (config) {
   config = config || {}
 
   if (!config.hasOwnProperty('server')) {
@@ -24,7 +25,7 @@ module.exports = function (config) {
     config.server.port = 3002
   }
 
-  var server = new hapi.Server()
+  const server = new hapi.Server()
 
   server.connection({
     host: config.server.host,
@@ -33,22 +34,20 @@ module.exports = function (config) {
 
   server.views({
     engines: {
-      html: require('handlebars')
+      html: handlebars
     },
-    path: Path.join(__dirname, 'views'),
-    isCached: (config.env !== 'development')
+    path: path.join(__dirname, 'views'),
+    isCached: config.env !== 'development'
   })
-
-  var manifest = require(__dirname + '/manifest')
 
   if (config.docroot) {
     manifest.pub.opts.outUrl = '/' + config.docroot + '/assets'
     manifest.pub.opts.url = '/' + config.docroot
   }
 
-  var assets = AssetManager.load(manifest)
+  const assets = AssetManager.load(manifest)
 
-  var appHandler = function (request, reply) {
+  const appHandler = function (request, reply) {
     reply.view('app', {
       js: assets.keys.pub.js(),
       css: assets.keys.pub.css(),
@@ -67,7 +66,7 @@ module.exports = function (config) {
     method: 'GET',
     path: '/favicon.ico',
     handler: {
-      file: Path.join(__dirname, 'public/images/favicon.ico')
+      file: path.join(__dirname, 'public/images/favicon.ico')
     }
   })
 
@@ -77,7 +76,7 @@ module.exports = function (config) {
     path: '/assets/{path*}',
     handler: {
       directory: {
-        path: Path.join(__dirname, 'public/assets'),
+        path: path.join(__dirname, 'public/assets'),
         listing: false,
         index: false
       }
@@ -89,7 +88,7 @@ module.exports = function (config) {
     path: '/public/js/{path*}',
     handler: {
       directory: {
-        path: Path.join(__dirname, 'public/js'),
+        path: path.join(__dirname, 'public/js'),
         listing: false,
         index: false
       }
@@ -101,7 +100,7 @@ module.exports = function (config) {
     path: '/css/{path*}',
     handler: {
       directory: {
-        path: Path.join(__dirname, 'public/css'),
+        path: path.join(__dirname, 'public/css'),
         listing: false,
         index: false
       }
@@ -109,7 +108,7 @@ module.exports = function (config) {
   })
 
   server.register({
-    register: require('hapi-less'),
+    register: hapiLess,
     options: {
       home: __dirname + '/public/less',
       route: '/public/css/{filename*}',
@@ -122,7 +121,7 @@ module.exports = function (config) {
   })
 
   server.register({
-    register: require('hapi-less'),
+    register: hapiLess,
     options: {
       home: __dirname + '/public/less',
       route: '/public/less/{filename*}',
@@ -177,7 +176,7 @@ module.exports = function (config) {
   }
 
   return {
-    start: start,
-    stop: stop
+    start,
+    stop
   }
 }
