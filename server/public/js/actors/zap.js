@@ -38,14 +38,14 @@ Actors.Zap.prototype.defaults = [{
 }, {
   key: 'sensitivity',
   info: '',
-  value: 8,
+  value: 32,
   min: 0,
   max: 255
 }, {
   key: 'speed',
   info: '',
-  value: 2,
-  min: 0,
+  value: 30,
+  min: 1,
   max: 255
 }]
 
@@ -147,11 +147,26 @@ Actors.Zap.prototype.update = function (delta) {
 }
 
 Actors.Zap.prototype.paint = function (view) {
+
+  var a = this.pos.angleXY(this.target);
   view.ctx.save()
-  view.ctx.fillStyle = '#fff'
+  
+  view.ctx.fillStyle = '#f0f'
+  view.ctx.lineWidth = 4
   view.ctx.beginPath()
-  view.ctx.arc(0, 0, 1, 0, 2 * Math.PI)
+  view.ctx.arc(0, 0, 12, 0, 2 * Math.PI)
   view.ctx.fill()
+
+  view.ctx.lineWidth = 4
+  view.ctx.strokeStyle = '#0f0'
+  view.ctx.beginPath()
+  view.ctx.moveTo(-12, 0)
+  view.ctx.lineTo(12, 0)
+  view.ctx.moveTo(0, -12)
+  view.ctx.lineTo(0, 12)
+  view.ctx.stroke()
+  
+
   view.ctx.restore()
 }
 

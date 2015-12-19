@@ -57,6 +57,8 @@ Coldwar.prototype.start = function (scene, opts) {
   this.env.gameover = false
   this.env.at = 0
   this.env.timer = 0
+  this.env.ms = 0
+  this.env.diff = 0
 
   this.scene = new this.Scene(
     this.env,
@@ -128,6 +130,8 @@ Coldwar.prototype.stop = function () {
 Coldwar.prototype.update = function () {
   var at = Date.now()
   this.env.diff = at - this.env.last;
+  this.env.ms += this.env.diff;
+  this.env.ms = this.env.ms % 1000;
   var delta = this.env.delta = (at - this.env.last) / 16.77
   var fps = (1000 / (at - this.env.last)).toFixed(0)
 

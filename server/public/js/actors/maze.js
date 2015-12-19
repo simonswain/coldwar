@@ -13,33 +13,16 @@ Actors.Maze.prototype = Object.create(Actor.prototype)
 Actors.Maze.prototype.title = 'Maze'
 
 Actors.Maze.prototype.genAttrs = function (attrs) {
-
-  var xf = this.refs.scene.opts.max_x / this.opts.cols
-  var yf = this.refs.scene.opts.max_y / this.opts.rows
-
   return {
-    max: Math.max(this.opts.max_x, this.opts.max_y),
-    f: Math.min(xf, yf),
-    s: Math.min(this.opts.rows, this.opts.cols),
+    max: Math.min(this.opts.max_x, this.opts.max_y),
   }
 }
 
 Actors.Maze.prototype.init = function () {
-
-  var x, y, i, ii
-
-  this.makeGridBlank();
-  this.makeGridmates();
-
-  this.randomJoins(20);
-
-  this.randomBreeders(4);
-  this.randomReactors(1);
-  this.randomHumans(1);
-  
+  this.makeGrid();
 };
 
-Actors.Maze.prototype.makeGridBlank = function () {
+Actors.Maze.prototype.makeGrid = function () {
 
   // init blank grid
   this.cells = new Array(this.opts.rows * this.opts.cols);
@@ -48,7 +31,7 @@ Actors.Maze.prototype.makeGridBlank = function () {
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     this.cells[i] = new Actors.Cell(
       this.env, {
-        scene: this,
+        maze: this,
         cells: this.cells
       }, {
         // position on grid
@@ -62,9 +45,20 @@ Actors.Maze.prototype.makeGridBlank = function () {
       y ++;
     }
   }
+
+  this.makeGridmates();
+
+  this.generatePerfectMaze();
+
+  this.randomBreeders(this.opts.breeders);
+  // this.maze.randomJoins(20);
+  //this.maze.randomReactors(1);
+  //this.maze.randomHumans(1);
+  this.attrs.reactor_cell = this.cells.length-1;
+  this.addReactor(this.attrs.reactor_cell);
+  this.addHuman(0);
   
 }
-
 
 Actors.Maze.prototype.makeGridmates = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
@@ -97,6 +91,53 @@ Actors.Maze.prototype.randomJoins = function (max) {
 
 }
 
+Actors.Maze.prototype.generatePerfectMaze = function (max) {
+
+  var stack = [];
+  var cells = this.cells
+  var total = cells.length
+  var cell
+  var visited = 1;
+  var n; // neighbours
+  var i, j, k, c;
+  var pick, other, dir;
+  var flip = [2,3,0,1];
+
+  var cell = pickOne(cells)
+  while(visited < total){
+    n = [];
+    // find all neighbors of Cell with all walls intact 
+    for(i=0; i<4; i ++){
+      if(cell.gridmates[i]){
+        c = 0;
+        other = cell.gridmates[i]
+        for(j=0; j<4; j++){
+          if(!other.exits[j]){
+            c++;
+          }
+        }
+        if(c === 4){
+          n.push([i, other])
+        }
+      }
+    }
+    if(n.length > 0){
+      pick = pickOne(n)
+      dir = pick[0]
+      other = pick[1]
+      cell.exits[dir] = other
+      other.exits[flip[dir]] = cell
+      stack.push(cell)
+      cell = other
+      visited ++
+    } else {
+      cell = stack.pop()
+    }
+  }
+
+}
+
+
 Actors.Maze.prototype.randomJoin = function () {
 
   var cell, dir, other;
@@ -117,45 +158,86 @@ Actors.Maze.prototype.randomJoin = function () {
 
 }
 
-Actors.Maze.prototype.randomBreeders = function (max) {
+
+Actors.Maze.prototype.randomSplit = function (max) {
 
   if(!max){
     max = 1
   }
   
+  for(var i=0; i<max; i++){
+    this.randomSplit();
+  }
+
+}
+
+Actors.Maze.prototype.randomSplit = function () {
+
+  var cell, dir, other;
+
+  cell = pickOne(this.cells);
+
+  while(!other){
+    dir = random.from0to(3);
+    if(!cell.gridmates[dir]){
+      continue;
+    }
+    other = cell.gridmates[dir];
+  }
+
+  cell.exits[dir] = null;
+  var flip = [2,3,0,1];
+  other.exits[flip[dir]] = null;
+
+}
+
+Actors.Maze.prototype.randomBreeders = function (max) {
+  if(!max){
+    max = 1
+  }
   for(var i=0; i<max; i++){
     this.randomBreeder();
   }
-
 }
 
-Actors.Maze.prototype.randomReactors = function (max) {
-
-  if(!max){
-    max = 1
-  }
-  
-  for(var i=0; i<max; i++){
-    this.randomReactor();
-  }
-
+Actors.Maze.prototype.addBreeder = function (ix) {
+  this.cells[ix].addBreeder();
 }
 
-Actors.Maze.prototype.randomHumans = function (max) {
+Actors.Maze.prototype.addHuman = function (ix) {
+  this.cells[ix].addHuman();
+}
 
-  if(!max){
-    max = 1
-  }
-  
-  for(var i=0; i<max; i++){
-    this.randomHuman();
-  }
-
+Actors.Maze.prototype.addReactor = function (ix) {
+  this.cells[ix].addReactor();
 }
 
 Actors.Maze.prototype.randomBreeder = function (max) {
-  var ix = random.from0upto(this.cells.length)
-  this.cells[ix].addBreeder();
+  var x = 5; // attempts
+  var ix;
+  while (x>0){
+    ix = random.from0upto(this.cells.length)
+    if(this.cells[ix].breeders.length > 0){
+      x --;
+      continue;
+    }
+    if(this.cells[ix].reactors.length > 0){
+      x --;
+      continue;
+    }
+    this.cells[ix].addBreeder();
+    break;
+  }
+}
+
+
+Actors.Maze.prototype.randomReactors = function (max) {
+  if(!max){
+    max = 1
+  }
+  for(var i=0; i<max; i++){
+    this.randomReactor();
+  }
 }
 
 
@@ -164,17 +246,153 @@ Actors.Maze.prototype.randomReactor = function (max) {
   this.cells[ix].addReactor();
 }
 
+Actors.Maze.prototype.randomHumans = function (max) {
+  if(!max){
+    max = 1
+  }
+  for(var i=0; i<max; i++){
+    this.randomHuman();
+  }
+}
+
 Actors.Maze.prototype.randomHuman = function (max) {
   var ix = random.from0upto(this.cells.length)
   this.cells[ix].addHuman();
 }
 
-Actors.Maze.prototype.joinCells = function (cell, other) {
-
-  cell.exits
-  
-  console.log('join', cell, other);
+Actors.Maze.prototype.addHuman = function (ix) {
+  this.cells[ix].addHuman();
 }
+
+
+Actors.Maze.prototype.route = function (cell, other) {
+
+  function distanceFunction(pos0, pos1){
+    var d1 = Math.abs(pos1.attrs.x - pos0.attrs.x);
+    var d2 = Math.abs(pos1.attrs.y - pos0.attrs.y);
+    return d1 + d2;
+  }
+
+  var worldSize = this.opts.rows * this.opts.cols
+
+  var nodes = [];
+  for(i=0; i<worldSize; i++){
+    nodes[i] = {
+      i: i,
+      f:0,
+      g:0,
+      h:0,
+      visited: false,
+      closed: false,
+      parent: null,
+      cell: this.cells[i]
+    }
+  }
+
+  // Path function, executes AStar algorithm operations
+
+  // create an array that will contain all world cells
+  var astar = new Array(worldSize);
+  // list of currently open Nodes
+  var open = [cell.attrs.i];
+  // list of closed Nodes
+  var closed = [];
+  // list of the final output array
+  var result = [];
+  // reference to a Node (that is nearby)
+  var myNeighbours;
+  // reference to a Node (that we are considering now)
+  var node;
+  // reference to a Node (that starts a path in question)
+  var path;
+  // temp integer variables used in the calculations
+  var length, max, min, i, j;
+  var exits;
+
+  // iterate through the open list until none are left
+  while(length = open.length) {
+
+    max = worldSize;
+    min = -1;
+
+    for(i = 0; i < length; i++) {
+      if(nodes[i].f) {
+	max = nodes[i].f;
+	min = i;
+      }
+    }
+
+    // grab the next node and remove it from open array
+    node = open.splice(min, 1)[0];
+
+    // is it the destination node?
+    if(node === other.attrs.i) {
+      open.push(other.attrs.i);
+      nodes[cell.attrs.i].parent = null;
+      do {
+        result.push(path.i);
+      } while (path = path.parent);
+      // // we want to return start to finish
+      result.reverse();
+      //console.log('RESULT', result);
+      break;
+    } else {
+
+      // not the destination
+
+      // find which nearby nodes are walkable
+      exits = this.cells[node].exits;
+
+      // test each one that hasn't been tried already
+      for(i = 0, j = exits.length; i < j; i++) {
+        // no other cell in that direction
+        if(!exits[i]){
+          continue;
+        }
+
+        var gScore = this.cells[node].g + 1; // 1 is the distance from a node to it's neighbor
+	var gScoreIsBest = false;
+        
+        //console.log('node ', node, ' -> ', exits[i].attrs.i);
+	path = nodes[exits[i].attrs.i];
+	if (!astar[path.i]) {
+	  gScoreIsBest = true;
+	  // estimated cost of this particular route so far
+	  nodes[path.i].h = distanceFunction(exits[i], this.cells[node]);
+	  //nodes[path.i].g = nodes[node].g + distanceFunction(exits[i], this.cells[node]);
+          //console.log('path', path.i, 'g =', nodes[path.i].g);
+	  // estimated cost of entire guessed route to the destination
+	  //nodes[path.i].f = nodes[node].g + distanceFunction(exits[i], other);
+
+	  // remember this new path for testing above
+	  // mark this node in the world graph as visited
+	  open.push(path.i);
+	  astar[path.i] = true;
+	} else if(gScore < nodes[path.i].g) {
+          gScoreIsBest = true;
+        }
+
+        if(gScoreIsBest) {
+	  // Found an optimal (so far) path to this node.	 Store info on how we got here and
+	  //	just how good it really is...
+	  //console.log('Parent', path.i, node);
+	  nodes[path.i].parent = nodes[node];
+	  nodes[path.i].g = gScore;
+	  nodes[path.i].f = nodes[path.i].g + nodes[path.i].h;
+
+	}        
+      }
+      
+      // remember this route as having no more untested options
+      closed.push(node);
+      //console.log('open', open, 'closed', closed);
+      
+    }
+  } // keep iterating until until the open list is empty
+  return result;
+  
+};
+
 
 Actors.Maze.prototype.defaults = [{
   key: 'max_x',
@@ -196,14 +414,28 @@ Actors.Maze.prototype.defaults = [{
   value: 4,
   min: 8,
   max: 32
+}, {
+  key: 'cell_w',
+  value: 480,
+  min: 100,
+  max: 1600
+}, {
+  key: 'fit',
+  value: 1,
+  min: 0,
+  max: 1
+}, {
+  key: 'breeders',
+  value: 3,
+  min: 0,
+  max: 16
 }]
 
 Actors.Maze.prototype.update = function (delta) {
   var i, ii;
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     this.cells[i].update(delta);
-  }
-
+  }  
 }
 
 Actors.Maze.prototype.paint = function (view) {
@@ -211,24 +443,40 @@ Actors.Maze.prototype.paint = function (view) {
   var x, y, i, ii;
   var cell;
   
-  // view.ctx.lineWidth = 4;
   // view.ctx.strokeStyle = '#f00'
   // view.ctx.beginPath()
   // view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
   // view.ctx.stroke()
 
   view.ctx.save()
-  view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
-  view.ctx.scale(0.9, 0.9);
+
+  // if(this.opts.fit){
+  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
+  //   view.ctx.scale(0.9, 0.9);
+  // }
+  
+
+  var max = Math.max(this.opts.max_x, this.opts.max_y);
+  var min = Math.min(this.opts.max_x, this.opts.max_y);
+  var rc = Math.max(this.opts.rows, this.opts.cols);
+
+  var w = (max/rc);
+  var f = (w/this.opts.cell_w);
+
+  view.ctx.translate(
+    (this.opts.max_x - (this.opts.cols * w))/2,
+    (this.opts.max_y - (this.opts.rows * w))/2
+  );
+
   
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     x = i % this.opts.cols;
     y = Math.floor(i/this.opts.rows); 
+    
     cell = this.cells[i]
-    //console.log(x, y);
     view.ctx.save()
-    view.ctx.translate(cell.attrs.x * this.attrs.f, cell.attrs.y * this.attrs.f);
-    view.ctx.scale(this.attrs.s/this.opts.cols, this.attrs.s/this.opts.rows);
+    view.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
+    view.ctx.scale(f, f);
 
     cell.paint(view);
     view.ctx.restore()

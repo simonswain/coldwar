@@ -27,16 +27,10 @@ Actors.Reactor.prototype.init = function (attrs) {
 }
 
 Actors.Reactor.prototype.defaults = [{
-  key: 'z',
-  value: 16,
+  key: 'r',
+  value: 96,
   min: 1,
-  max: 1600
-}, {
-  key: 'max_y',
-  info: 'Max Y',
-  value: 16,
-  min: 100,
-  max: 1000
+  max: 128
 }]
 
 Actors.Reactor.prototype.update = function (delta) {
@@ -44,12 +38,51 @@ Actors.Reactor.prototype.update = function (delta) {
 }
 
 Actors.Reactor.prototype.paint = function (view) {
-  var z = this.opts.z;
-  view.ctx.beginPath()
-  view.ctx.fillStyle = '#fff'
-  view.ctx.arc(0, 0, z / 4, 0, 2 * Math.PI)
+  var arc = Math.PI/3;
+  
+  view.ctx.fillStyle = 'rgba(255, 0, 255, 0.9)'
+  view.ctx.fillStyle = 'rgba(255, 0, 255, 0.3)'
+  var p = (this.env.ms / 2000) + 0.5;
 
-  view.ctx.fillRect(-z/2, -z/2, z, z)
+
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
   view.ctx.fill()
+
+  view.ctx.strokeStyle = 'rgba(51, 0, 51, 1)'
+  view.ctx.lineWidth = 24
+  view.ctx.beginPath()
+  view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)
+  view.ctx.stroke()
+
+  
+  view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + p + ')'
+  view.ctx.lineWidth = 48
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.opts.r/2, 0, arc)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.opts.r/2, 2*arc, 3*arc)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.arc(0, 0, this.opts.r/2, 4*arc, 5*arc)
+  view.ctx.stroke()
+
+
+
+
+  
+  // // var z = this.opts.z;
+  // // view.ctx.beginPath()
+  // // view.ctx.strokeStyle = '#f0f'
+
+  // // if(this.env.ms < 500){
+  // //   view.ctx.arc(0, 0, z / 4, 0, 2 * Math.PI)
+  // // }
+
+  // // view.ctx.rect(-z/2, -z/2, z, z)
+  // view.ctx.stroke()
 
 }
