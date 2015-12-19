@@ -83,14 +83,14 @@ Scenes.index.prototype.init = function () {
     title: 'Story',
     slug: 'story'
   }, {
+    title: 'Cell',
+    slug: 'cell'
+  }, {
     title: 'Maze',
     slug: 'maze'
   }, {
     title: 'Mazegen',
     slug: 'mazegen'
-  }, {
-    title: 'Cell',
-    slug: 'cell'
   }, {
     title: 'Goal',
     slug: 'goal'
@@ -124,6 +124,9 @@ Scenes.index.prototype.init = function () {
   }, {
     title: 'Sonics',
     slug: 'sonics'
+  }, {
+    title: 'Tone',
+    slug: 'tone'
   }, {
     title: 'R.o.t.M',
     slug: 'rats_of_the_maze'

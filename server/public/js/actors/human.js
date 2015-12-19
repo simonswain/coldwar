@@ -29,12 +29,12 @@ Actors.Human.prototype.init = function (attrs) {
 
 Actors.Human.prototype.defaults = [{
   key: 'speed_base',
-  value: 0.5,
+  value: 5,
   min: 1,
   max: 100
 }, {
   key: 'speed_flux',
-  value: 0.25,
+  value: 5,
   min: 0,
   max: 50
 }, {
@@ -43,6 +43,11 @@ Actors.Human.prototype.defaults = [{
   min: 0.1,
   max: 1,
   step: 0.1
+}, {
+  key: 'intent_scale',
+  value: 35,
+  min: 0,
+  max: 100,
 }, {
   key: 'separation_range',
   value: 50,
@@ -78,14 +83,14 @@ Actors.Human.prototype.defaults = [{
   step: 0.05
 }, {
   key: 'predator_range',
-  value: 10,
+  value: 130,
   min: 10,
   max: 500
 }, {
   key: 'predator_force',
-  value: 10,
+  value: 30,
   min: 0,
-  max: 10
+  max: 100
 }, {
   key: 'reflect_force',
   value: 10,
@@ -98,22 +103,22 @@ Actors.Human.prototype.defaults = [{
   max: 1
 }, {
   key: 'laser_probability',
-  value: 0.25,
+  value: 0.5,
   min: 0,
   max: 1
 }, {
   key: 'laser_range_base',
-  value: 50,
+  value: 240,
   min: 1,
   max: 500
 }, {
   key: 'laser_range_flux',
-  value: 10,
+  value: 32,
   min: 1,
   max: 100
 }, {
   key: 'laser_power_base',
-  value: 85,
+  value: 160,
   min: 1,
   max: 500
 }, {
@@ -121,6 +126,17 @@ Actors.Human.prototype.defaults = [{
   value: 10,
   min: 1,
   max: 100
+}, {
+  key: 'flashbang_rats',
+  value: 6,
+  min: 1,
+  max: 100
+}, {
+  key: 'flashbang_probability',
+  value: 0.1,
+  min: 0,
+  max: 1,
+  step:0.1
 }]
 
 Actors.Human.prototype.genAttrs = function (attrs) {
@@ -128,6 +144,8 @@ Actors.Human.prototype.genAttrs = function (attrs) {
   var energy = 10 + random0to(10)
 
   return {
+    face_enemy: false,
+    face_angle: 0,
     speed: this.opts.speed_base + (Math.random() * this.opts.speed_flux),
     color: attrs.color || '#fff',
     dead: false,
@@ -144,10 +162,52 @@ Actors.Human.prototype.update = function (delta) {
 
   this.recharge()
   this.shoot()
-  
+
+  this.flashbang()
+
+  if(this.refs.cell.attrs.i !== this.refs.maze.attrs.reactor_cell){
+    
+    //console.log(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
+    var route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
+
+    var intent;;
+    var intents = [[0,-1],[1,0],[0,1],[-1,0]];
+    
+    for(var i=0; i<4; i++){
+      if(this.refs.cell.exits[i] && this.refs.cell.exits[i].attrs.i === route[1]){
+        intent = i;
+        //console.log(this.refs.cell.exits[i].attrs.i);
+        break;
+      }
+    }
+
+    if(intent){
+      vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(this.opts.intent_scale))
+      if(intent === 1 || intent === 3){
+        if(this.pos.y < this.refs.cell.opts.max_y * 0.4){
+          vec.add(new Vec3(0, 1).scale(this.opts.intent_scale))
+        }
+        if(this.pos.y > this.refs.cell.opts.max_y * 0.6){
+          vec.add(new Vec3(0, -1).scale(this.opts.intent_scale))
+        }
+      } else if(intent === 0 || intent === 2){
+        if(this.pos.x < this.refs.cell.opts.max_x * 0.4){
+          vec.add(new Vec3(1, 0).scale(this.opts.intent_scale))
+        }
+        if(this.pos.x > this.refs.cell.opts.max_x * 0.6){
+          vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
+        }
+      }
+      
+      //console.log(vec);
+    }
+  }
+
+  //console.log(this.refs.cell.i, this.refs.maze.attrs.reactor_cell);
   //vec.add(this.separation().scale(this.opts.separation_force))
   //vec.add(this.alignment().scale(this.opts.alignment_force))
   //vec.add(this.cohesion().scale(this.opts.cohesion_force))
+
   vec.add(this.flee().scale(this.opts.predator_force))
   vec.add(this.reflect().scale(this.opts.reflect_force))
 
@@ -228,6 +288,8 @@ Actors.Human.prototype.shoot = function () {
   var enemy
   var closest = Infinity
   
+  this.attrs.face_enemy = false;
+
   if(this.refs.cell.rats.length === 0){
     return;
   };
@@ -247,6 +309,11 @@ Actors.Human.prototype.shoot = function () {
     }
   }, this)
 
+  if(enemy){
+    this.attrs.face_angle = enemy.pos.angleXYto(this.pos)
+    this.attrs.face_enemy = true;
+  }
+  
   if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
     this.attrs.energy = this.attrs.energy - 1
     this.refs.cell.addZap(
@@ -259,6 +326,33 @@ Actors.Human.prototype.shoot = function () {
 
 }
 
+
+Actors.Human.prototype.flashbang = function () {
+
+  if(this.refs.cell.rats.length > this.opts.flashbang_rats){
+    if(Math.random() < this.opts.flashbang_probability){
+      this.refs.cell.attrs.flash = 4;
+      this.refs.cell.rats.forEach(function (other) {
+        if(!other){
+          return;
+        }
+        other.attrs.dead = true;
+        this.refs.cell.booms.push(new Actors.Boom(
+          this.env, {
+          }, {
+            radius: 4,
+            x: other.x,
+            y: other.y,
+            color: '152,0,0'
+          }
+        ))
+        
+      }, this);
+    }
+  };
+  
+
+}
 
 Actors.Human.prototype.reflect = function () {
 
@@ -487,22 +581,31 @@ Actors.Human.prototype.steer = function () {
 Actors.Human.prototype.paint = function (view) {
 
   view.ctx.save()
-  view.ctx.rotate(this.velo.angleXY())
+  if(this.attrs.face_enemy){
+    view.ctx.rotate(this.attrs.face_angle)
+  } else {
+    view.ctx.rotate(this.velo.angleXY())
+  }
   
-  view.ctx.fillStyle = '#f0f'
-  view.ctx.strokeStyle = '#f0f'
+  view.ctx.fillStyle = '#022'
+  view.ctx.strokeStyle = '#0ff'
   view.ctx.lineWidth = 1
 
-  var z = 8
-  view.ctx.lineWidth = 1
+  var z = 32
+  view.ctx.lineWidth = 8
+
+  view.ctx.beginPath()
+  view.ctx.rect(-z ,-z-z, z, z+z+z+z)
+  view.ctx.stroke()
+
   view.ctx.beginPath()
   view.ctx.moveTo(z, 0)
   view.ctx.lineTo(-z, z)
-  view.ctx.lineTo(-z * 0.5, 0)
   view.ctx.lineTo(-z, -z)
   view.ctx.lineTo(z, 0)
   view.ctx.closePath()
   view.ctx.fill()
-
+  view.ctx.stroke()
+  
   view.ctx.restore()
 }

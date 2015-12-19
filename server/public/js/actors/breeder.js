@@ -30,18 +30,18 @@ Actors.Breeder.prototype.init = function (attrs) {
 Actors.Breeder.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 16,
+  value: 128,
   min: 100,
   max: 1600
 }, {
   key: 'max_y',
   info: 'Max Y',
-  value: 16,
+  value: 64,
   min: 100,
   max: 1000
 }, {
   key: 'rats_max',
-  value: 16,
+  value: 12,
   min: 0,
   max: 255
 }, {
@@ -125,21 +125,17 @@ Actors.Breeder.prototype.addRats = function () {
 
 Actors.Breeder.prototype.paint = function (view) {
 
-  var xf = this.refs.scene.opts.max_x / this.refs.maze.opts.cols
-  var yf = this.refs.scene.opts.max_y / this.refs.maze.opts.rows
-  var f = Math.min(xf, yf)
+  view.ctx.strokeStyle = '#fff'
 
-  view.ctx.save()
-  view.ctx.translate(
-    (this.refs.scene.opts.max_x / 2) - (f * this.refs.maze.opts.cols / 2),
-    (this.refs.scene.opts.max_y / 2) - (f * this.refs.maze.opts.rows / 2)
-  )
-
+  view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
+  view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
   view.ctx.beginPath()
-  view.ctx.fillStyle = '#ff0'
-  view.ctx.arc((this.attrs.cell_x * f) + (f / 2), (this.attrs.cell_y * f) + (f / 2), f / 4, 0, 2 * Math.PI)
+  view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
 
-  // view.ctx.fillRect(this.attrs.cell_x * f, this.attrs.cell_y * f, f, f)
-  view.ctx.fill()
-  view.ctx.restore()
+  if(this.env.ms % 20 < 10){
+    view.ctx.fill()
+  }
+
+  view.ctx.stroke()
+
 }

@@ -17,6 +17,7 @@ Actors.Cell.prototype.genAttrs = function (attrs) {
     i: attrs.i,
     x: attrs.x,
     y: attrs.y,
+    flash: 0,
     rats: 0,
     rats_max: this.opts.rats_max || 0,
     rats_per_tick: this.opts.rats_per_tick || 1,
@@ -48,15 +49,20 @@ Actors.Cell.prototype.init = function () {
 Actors.Cell.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 120,
+  value: 480,
   min: 100,
   max: 1600
 }, {
   key: 'max_y',
   info: 'Max Y',
-  value: 120,
+  value: 480,
   min: 100,
   max: 1000
+}, {
+  key: 'reduce',
+  value: 0,
+  min: 0,
+  max: 1
 }]
 
 Actors.Cell.prototype.colors = [
@@ -88,21 +94,25 @@ Actors.Cell.prototype.addBreeder = function () {
 }
 
 Actors.Cell.prototype.addReactor = function () {
-  this.reactors.push(new Actors.Reactor(
+  var reactor = new Actors.Reactor(
     this.env, {
       cell: this,
     }, {
-      x: this.opts.max_x * 0.75,
-      y: this.opts.max_y * 0.25
-    }));
+      x: this.opts.max_x * 0.5,
+      y: this.opts.max_y * 0.5
+    })
+  this.reactors.push(reactor)
+  return reactor
 }
 
 
 Actors.Cell.prototype.addHuman = function () {
 
   var human
+
   human = new Actors.Human(
     this.env, {
+      maze: this.refs.maze,
       cell: this,
     }, {
       x: this.opts.max_x * 0.75,
@@ -176,10 +186,21 @@ Actors.Cell.prototype.update = function (delta) {
 }
 
 Actors.Cell.prototype.paint = function (view) {
+  
+  if (this.attrs.flash>0) {
+    view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
+    view.ctx.fillStyle = '#ffffff'
+    view.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
+    this.attrs.flash --
+  }
 
+  // view.ctx.fillStyle = '#ffffff'
+  // view.ctx.font = '28pt arial'
+  // view.ctx.fillText(this.attrs.i, this.opts.max_x/2, this.opts.max_y/2)
+  
   var i, ii
 
-  view.ctx.lineWidth = 2
+  view.ctx.lineWidth = 16
 
   if(this.attrs.active){
     view.ctx.strokeStyle = '#0ff'
@@ -199,7 +220,11 @@ Actors.Cell.prototype.paint = function (view) {
   }
 
   view.ctx.save()
-  //view.ctx.scale(0.9, 0.9)
+
+  if(this.opts.reduce){
+    view.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05) 
+    view.ctx.scale(0.9, 0.9)
+  }
   
   //trbl
   // expect cell.exits to br array of 4 cells or nulls
@@ -239,11 +264,6 @@ Actors.Cell.prototype.paint = function (view) {
 
     this.reactors[i].paint(view)
 
-    view.ctx.fillStyle = 'rgba(255, 0, 255, 0.9)'
-    view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'
-    view.ctx.beginPath()
-    view.ctx.rect(0, 0, reactor.opts.max_x, reactor.opts.max_y)
-    view.ctx.fill()
     view.ctx.restore()
   }
   
@@ -254,11 +274,7 @@ Actors.Cell.prototype.paint = function (view) {
     view.ctx.save()
     view.ctx.translate(breeder.pos.x - (breeder.opts.max_x/2), breeder.pos.y - (breeder.opts.max_y/2));
 
-    view.ctx.fillStyle = 'rgba(0, 0, 255, 0.8)'
-    view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
-    view.ctx.beginPath()
-    view.ctx.rect(0, 0, breeder.opts.max_x, breeder.opts.max_y)
-    view.ctx.fill()
+    breeder.paint(view)
     view.ctx.restore()
   }
 
@@ -270,7 +286,6 @@ Actors.Cell.prototype.paint = function (view) {
     }
     view.ctx.save()
     view.ctx.translate(rat.pos.x, rat.pos.y);
-    view.ctx.scale(0.2, 0.2);
     this.rats[i].paint(view)
     view.ctx.restore()
   }
@@ -283,7 +298,6 @@ Actors.Cell.prototype.paint = function (view) {
     }      
     view.ctx.save()
     view.ctx.translate(human.pos.x, human.pos.y);
-    view.ctx.scale(0.4, 0.4);
     this.humans[i].paint(view)
     view.ctx.restore()
   }
@@ -296,7 +310,6 @@ Actors.Cell.prototype.paint = function (view) {
     }      
     view.ctx.save()
     view.ctx.translate(zap.pos.x, zap.pos.y);
-    view.ctx.scale(0.4, 0.4);
     this.zaps[i].paint(view)
     view.ctx.restore()
   }
@@ -309,7 +322,6 @@ Actors.Cell.prototype.paint = function (view) {
     }      
     view.ctx.save()
     view.ctx.translate(boom.pos.x, boom.pos.y);
-    view.ctx.scale(0.4, 0.4);
     this.booms[i].paint(view)
     view.ctx.restore()
   }

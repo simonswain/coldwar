@@ -30,19 +30,19 @@ Actors.Rat.prototype.init = function (attrs) {
 Actors.Rat.prototype.defaults = [{
   key: 'speed_base',
   info: '',
-  value: 0.5,
+  value: 4,
   min: 1,
   max: 100
 }, {
   key: 'speed_flux',
   info: '',
-  value: 0.25,
+  value: 2,
   min: 0,
   max: 50
 }, {
   key: 'velo_scale',
   info: '',
-  value: 0.1,
+  value: 1,
   min: 0.1,
   max: 1,
   step: 0.1
@@ -142,6 +142,7 @@ Actors.Rat.prototype.update = function (delta) {
   vec.scale(this.opts.velo_scale)
 
   this.velo.add(vec)
+  this.velo.scale(0.8 + (Math.random()*0.5))
   this.velo.limit(this.attrs.speed)
   this.pos.add(this.velo)
 
@@ -164,9 +165,7 @@ Actors.Rat.prototype.update = function (delta) {
       this.velo = new Vec3(-this.velo.x, this.velo.y, 0);
       this.pos.x = this.refs.cell.opts.max_x
     }
-  }
-
-  if (this.pos.y < 0) {
+  } else if (this.pos.y < 0) {
     other = this.refs.cell.exits[0];
     if(other){
       this.pos.y += this.refs.cell.opts.max_y
@@ -489,19 +488,33 @@ Actors.Rat.prototype.paint = function (view) {
   view.ctx.rotate(this.velo.angleXY())
   
   view.ctx.fillStyle = '#fff'
-  view.ctx.strokeStyle = '#666'
   view.ctx.lineWidth = 1
 
   var z = 8
+  // body
+  view.ctx.fillStyle = '#eee'
   view.ctx.lineWidth = 1
   view.ctx.beginPath()
-  view.ctx.moveTo(z, 0)
-  view.ctx.lineTo(-z, z)
-  view.ctx.lineTo(-z * 0.5, 0)
-  view.ctx.lineTo(-z, -z)
-  view.ctx.lineTo(z, 0)
+  view.ctx.arc(0, 0, 2*z, 0, 2*Math.PI);
   view.ctx.closePath()
   view.ctx.fill()
 
+  // head
+  view.ctx.fillStyle = '#fff'
+  view.ctx.beginPath()
+  view.ctx.arc(z*2, 0, z, 0, 2*Math.PI);
+  view.ctx.closePath()
+  view.ctx.fill()
+
+  // tail
+  view.ctx.fillStyle = '#ccc'
+  view.ctx.beginPath()
+  view.ctx.moveTo(-z-z-z-z, 0)
+  view.ctx.lineTo(0, z)
+  view.ctx.lineTo(0, -z)
+  view.ctx.lineTo(-z-z-z-z, 0)
+  view.ctx.closePath()
+  view.ctx.fill()
+  
   view.ctx.restore()
 }

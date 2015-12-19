@@ -23,7 +23,14 @@ Scenes.maze.prototype.init = function () {
 
 Scenes.maze.prototype.getCast = function () {
   return {
-    Maze: Actors.Maze
+    Maze: Actors.Maze,
+    Cell: Actors.Cell,
+    Human: Actors.Human,
+    Zap: Actors.Zap,
+    Breeder: Actors.Breeder,
+    Rat: Actors.Rat,
+    Boom: Actors.Boom,
+    Reactor: Actors.Reactor,
   }
 }
 
@@ -47,12 +54,23 @@ Scenes.maze.prototype.genAttrs = function () {
 }
 
 Scenes.maze.prototype.update = function (delta) {
+
   this.maze.update(delta);
+
+  // if(Math.random() < 0.1){
+  //   this.maze.randomJoins(2);
+  // }
+
+  // if(Math.random() < 0.3){
+  //   this.maze.randomSplit(2);
+  // }
+
 }
 
 //Scenes.maze.prototype.paintOnce = true;
 
 Scenes.maze.prototype.paint = function (fx, gx, sx) {
+
   this.maze.paint(gx)
 }
 
