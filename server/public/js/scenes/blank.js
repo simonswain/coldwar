@@ -3,27 +3,25 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.blank = function(env, opts){
-  this.env = env;
-  this.opts = this.genOpts(opts);
-  this.attrs = this.genAttrs();
-  this.init();
-};
-
-Scenes.blank.prototype = Object.create(Scene.prototype);
-
-Scenes.blank.prototype.title = 'Blank';
-
-Scenes.blank.prototype.layout = '';
-
-Scenes.blank.prototype.init = function(){
+Scenes.blank = function (env, opts) {
+  this.env = env
+  this.opts = this.genOpts(opts)
+  this.attrs = this.genAttrs()
+  this.init()
 }
 
+Scenes.blank.prototype = Object.create(Scene.prototype)
 
-Scenes.blank.prototype.getCast = function(){
+Scenes.blank.prototype.title = 'Blank'
+
+Scenes.blank.prototype.layout = ''
+
+Scenes.blank.prototype.init = function () {}
+
+Scenes.blank.prototype.getCast = function () {
   return {
   }
-};
+}
 
 Scenes.blank.prototype.defaults = [{
   key: 'max_x',
@@ -40,15 +38,13 @@ Scenes.blank.prototype.defaults = [{
   value: 1,
   min: 1,
   max: 1
-}];
+}]
 
-Scenes.blank.prototype.genAttrs = function(){
+Scenes.blank.prototype.genAttrs = function () {
   return {
-  };
-};
-
-Scenes.blank.prototype.update = function(delta){
+  }
 }
 
-Scenes.blank.prototype.paint = function(fx, gx, sx){
-}
+Scenes.blank.prototype.update = function (delta) {}
+
+Scenes.blank.prototype.paint = function (fx, gx, sx) {}

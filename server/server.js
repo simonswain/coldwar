@@ -1,7 +1,6 @@
 import async from 'async'
-import hapi from 'hapi'
-import path from 'path'
-import handlebars from 'handlebars'
+import Hapi from 'hapi'
+import Path from 'path'
 import hapiLess from 'hapi-less'
 import manifest from './manifest'
 
@@ -25,19 +24,30 @@ export default function (config) {
     config.server.port = 3002
   }
 
-  const server = new hapi.Server()
+  const server = new Hapi.Server()
 
   server.connection({
     host: config.server.host,
     port: config.server.port
   })
 
-  server.views({
-    engines: {
-      html: handlebars
-    },
-    path: path.join(__dirname, 'views'),
-    isCached: config.env !== 'development'
+  server.register(require('vision'), (err) => {
+    if (err) {
+      console.log('Failed to load vision.')
+    }
+    server.views({
+      engines: {
+        html: require('handlebars')
+      },
+      path: Path.join(__dirname, 'views'),
+      isCached: (config.env !== 'development')
+    })
+  })
+
+  server.register(require('inert'), (err) => {
+    if (err) {
+      console.log('Failed to load inert.')
+    }
   })
 
   if (config.docroot) {
@@ -66,7 +76,7 @@ export default function (config) {
     method: 'GET',
     path: '/favicon.ico',
     handler: {
-      file: path.join(__dirname, 'public/images/favicon.ico')
+      file: Path.join(__dirname, 'public/images/favicon.ico')
     }
   })
 
@@ -76,7 +86,7 @@ export default function (config) {
     path: '/assets/{path*}',
     handler: {
       directory: {
-        path: path.join(__dirname, 'public/assets'),
+        path: Path.join(__dirname, 'public/assets'),
         listing: false,
         index: false
       }
@@ -88,7 +98,7 @@ export default function (config) {
     path: '/public/js/{path*}',
     handler: {
       directory: {
-        path: path.join(__dirname, 'public/js'),
+        path: Path.join(__dirname, 'public/js'),
         listing: false,
         index: false
       }
@@ -100,7 +110,7 @@ export default function (config) {
     path: '/css/{path*}',
     handler: {
       directory: {
-        path: path.join(__dirname, 'public/css'),
+        path: Path.join(__dirname, 'public/css'),
         listing: false,
         index: false
       }
@@ -110,7 +120,7 @@ export default function (config) {
   server.register({
     register: hapiLess,
     options: {
-      home: __dirname + '/public/less',
+      home: Path.join(__dirname, 'public/less'),
       route: '/public/css/{filename*}',
       less: {
         compress: true
@@ -123,7 +133,7 @@ export default function (config) {
   server.register({
     register: hapiLess,
     options: {
-      home: __dirname + '/public/less',
+      home: Path.join(__dirname, 'public/less'),
       route: '/public/less/{filename*}',
       less: {
         compress: true
@@ -132,10 +142,6 @@ export default function (config) {
   }, function (err) {
     if (err) console.error(err)
   })
-
-  // api routes
-
-  // ...
 
   // catchall route
   server.route({

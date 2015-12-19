@@ -5,13 +5,13 @@ import UglifyJS from 'uglify-js'
 import less from 'less'
 
 export function create (opts) {
-  opts = Object.assign(opts, {
+  opts = Object.assign({
     key: false,
     base: '',
     url: '/',
     out: __dirname + '/public/assets',
     outUrl: '/assets'
-  })
+  }, opts)
 
   const assets = {
     css: [],
@@ -140,9 +140,7 @@ export function create (opts) {
     if (f.substr(0, 1) === '/') {
       f = f.substr(1)
     }
-
     const src = opts.base + '/' + f
-
     if (fs.lstatSync(src).isDirectory()) {
       for (const file of fs.readdirSync(src)) {
         if (file.substr(0, 1) === '.') return
