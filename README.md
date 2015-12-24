@@ -67,7 +67,7 @@ open http://localhost:4002
 * [The Power of Decision](https://www.youtube.com/watch?v=q2v0YuDatpc)
 * [NASA A year in the life of Earth's CO2](https://www.youtube.com/watch?v=x1SgmFa0r04)
 * [Energy2D-JS](http://concord-consortium.github.io/energy2d-js/model2d-demo.html)
-* [Major Havoc](https://www.youtube.com/watch?v=rbq1LE9MJc0)
+* [Major Havoc](https://www.youtube.com/watch?v=9n6I1KPxOfE)
 * [Rats of The Maze](http://bitsavers.informatik.uni-stuttgart.de/pdf/convergent/ngen/screenshots/Rats_2.JPG)
 * [Microsimulation model of a national economy](http://dankozub.com/simulation/)
 * [SAC Atomic Weapons Requirements Study for 1959](http://nsarchive.gwu.edu/nukevault/ebb538-Cold-War-Nuclear-Target-List-Declassified-First-Ever)
