@@ -70,6 +70,7 @@ open http://localhost:4002
 * [Major Havoc](https://www.youtube.com/watch?v=rbq1LE9MJc0)
 * [Rats of The Maze](http://bitsavers.informatik.uni-stuttgart.de/pdf/convergent/ngen/screenshots/Rats_2.JPG)
 * [Microsimulation model of a national economy](http://dankozub.com/simulation/)
+* [SAC Atomic Weapons Requirements Study for 1959](http://nsarchive.gwu.edu/nukevault/ebb538-Cold-War-Nuclear-Target-List-Declassified-First-Ever)
 
 ## History
 
