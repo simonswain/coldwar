@@ -21,6 +21,7 @@ Talks have been given on Coldwar at:
 * SydJS, July 2015 (Sydney, Australia)
 * [TX JS, July 2015](https://www.youtube.com/watch?v=hXW7kkyhtqo) (Austin, Texas, US)
 * [Talk.js, November 2015](https://www.youtube.com/watch?v=4lmJJX2KoKY) (Singapore)
+* [JSConf Asia November 2015](https://www.youtube.com/watch?v=zeKNXaM2fsA) (Singapore)
 * [JSConf Asia November 2014](https://www.youtube.com/watch?v=0HJPilemNns) (Singapore)
 
 ## Stickers
