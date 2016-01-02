@@ -1,5 +1,7 @@
 # Cold War
 
+[![Join the chat at https://gitter.im/simonswain/coldwar](https://badges.gitter.im/simonswain/coldwar.svg)](https://gitter.im/simonswain/coldwar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [coldwar.io](https://coldwar.io)
 
 ## Simulation Platform
