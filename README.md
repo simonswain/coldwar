@@ -6,6 +6,12 @@
 
 Cold War is a simulation platform. Cold War comes with a set of scenes for you to watch and tweak. If you want to write your own it gives you code patterns to follow and a runtime environment to play them in.
 
+## Community
+
+Discuss in the Gitter [Cold War Room](https://gitter.im/simonswain/coldwar)
+
+Tag tweets and everything else with #coldwar
+
 ## Hacking
 
 Start by looking in `server/public/js/scenes` and `server/public/js/actors`. These are the only two places you'll need to mess with to write your own sims. Create a Scene and fill it with Actors. Start simple and build it up. Interception is a good scene to use as a base. Edit `scenes/index.js` to add it to the list of scenes on the homepage.
