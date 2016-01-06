@@ -262,7 +262,7 @@ Actors.Capital.prototype.addCities = function () {
 
   var positions = []
 
-  if (this.attrs.assets && this.attrs.assets.cities.length > 0) {
+  if (this.attrs.assets && this.attrs.assets.cities) {
     // manual placement
     this.attrs.assets.cities.forEach(function (asset) {
       positions.push({
@@ -308,7 +308,7 @@ Actors.Capital.prototype.addFactories = function () {
 
   var positions = []
 
-  if (this.attrs.assets && this.attrs.assets.factories.length > 0) {
+  if (this.attrs.assets && this.attrs.assets.factories) {
     // manual placement
     this.attrs.assets.factories.forEach(function (asset) {
       positions.push({
@@ -355,7 +355,7 @@ Actors.Capital.prototype.addBases = function () {
 
   var positions = []
 
-  if (this.attrs.assets && this.attrs.assets.bases.length > 0) {
+  if (this.attrs.assets && this.attrs.assets.bases) {
     // manual placement
     this.attrs.assets.bases.forEach(function (asset) {
       positions.push({

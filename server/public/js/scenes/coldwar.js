@@ -84,7 +84,7 @@ Scenes.coldwar.prototype.defaults = [{
   info: 'Scenario',
   value: 0,
   min: 0,
-  max: 3
+  max: 4
 }, {
   key: 'map',
   info: 'Map',
@@ -624,6 +624,93 @@ Scenes.coldwar.prototype.loadScenarios = function () {
       ))
     }, this)
   }.bind(this)
+
+  this.scenarios[4] = function () {
+    // dprk vs usa
+
+    var capitals = []
+
+    // dprk
+    capitals.push({
+      x: this.opts.max_x * 0.2,
+      y: this.opts.max_y * 0.6,
+      z: 0,
+      color: '#f00',
+      title: 'DPRK',
+      strike: true,
+      sats_max: 0,
+      outline: [
+        [-25, 0, true], [-25, -25], [25, -85], [50, -65], [50, -90], [100, - 120], [110, -100], [100, -50], [50, -35], [40, 0], [40, 75], [0, 60], [-20, 50], [-30, 60], [-40, 25], [-25, 0]
+      ],
+      assets: {
+        bases: [[100, -100]],
+        cities: [],
+        factories: []
+      }
+    })
+
+    // usa
+    capitals.push({
+      x: this.opts.max_x * 0.8,
+      y: this.opts.max_y * 0.5,
+      z: 0,
+      color: '#0cc',
+      title: 'USA',
+      sats_max: 0,
+      outline: [[-20, 25, true], [50, -25], [25, -50], [-40, -40], [-75,-60], [-200, -60], [-200, 20], [-175, 50], [-125, 50], [-100, 75], [-75,50], [-50, 45], [-35, 66], [-20, 50], [-20, 25]],
+      assets: {
+        bases: [[-170, -40], [-100, -30], [-100, 30], [-175, 0]],
+        cities: [],
+        factories: []
+      }
+    })
+
+    this.opts.first_strike = true;
+    this.opts.defcon = 1;
+    this.opts.first_strike = true;
+
+    capitals.forEach(function (attrs) {
+      this.capitals.push(new Actors.Capital(
+        this.env,
+        {
+          scene: this
+        },
+        attrs
+      ))
+
+      this.maps.push(new Actors.CapitalMap(
+        this.env,
+        {
+          scene: this
+        }, {
+          x: attrs.x,
+          y: attrs.y,
+          z: attrs.z,
+          color: attrs.color,
+          title: attrs.title,
+          outline: attrs.outline
+        }
+      ))
+    }, this)
+
+    this.bases[0].attrs.stock.icbms = 1; 
+
+    this.bases[1].attrs.stock.abms = 50;
+    this.bases[1].attrs.stock.icbms = 50;
+    this.bases[1].attrs.icbm_launch_max = 25;
+    this.bases[2].attrs.stock.abms = 50;
+    this.bases[2].attrs.stock.icbms = 50;
+    this.bases[2].attrs.icbm_launch_max = 25;
+    this.bases[3].attrs.stock.abms = 50;
+    this.bases[3].attrs.stock.icbms = 50;
+    this.bases[3].attrs.icbm_launch_max = 25;
+    this.bases[4].attrs.stock.abms = 50;
+    this.bases[4].attrs.stock.icbms = 50;
+    this.bases[4].attrs.icbm_launch_max = 25;
+   
+  }.bind(this)
+
+
 }
 
 Scenes.coldwar.prototype.help = [
