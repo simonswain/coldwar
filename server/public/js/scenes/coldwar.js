@@ -638,6 +638,7 @@ Scenes.coldwar.prototype.loadScenarios = function () {
       color: '#f00',
       title: 'DPRK',
       strike: true,
+      defcon: 1,
       sats_max: 0,
       outline: [
         [-25, 0, true], [-25, -25], [25, -85], [50, -65], [50, -90], [100, - 120], [110, -100], [100, -50], [50, -35], [40, 0], [40, 75], [0, 60], [-20, 50], [-30, 60], [-40, 25], [-25, 0]
@@ -656,6 +657,7 @@ Scenes.coldwar.prototype.loadScenarios = function () {
       z: 0,
       color: '#0cc',
       title: 'USA',
+      defcon: 1,
       sats_max: 0,
       outline: [[-20, 25, true], [50, -25], [25, -50], [-40, -40], [-75,-60], [-200, -60], [-200, 20], [-175, 50], [-125, 50], [-100, 75], [-75,50], [-50, 45], [-35, 66], [-20, 50], [-20, 25]],
       assets: {
@@ -707,7 +709,7 @@ Scenes.coldwar.prototype.loadScenarios = function () {
     this.bases[4].attrs.stock.abms = 50;
     this.bases[4].attrs.stock.icbms = 50;
     this.bases[4].attrs.icbm_launch_max = 25;
-   
+    console.log(this.bases);
   }.bind(this)
 
 
