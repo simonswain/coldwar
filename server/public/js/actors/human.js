@@ -158,30 +158,46 @@ Actors.Human.prototype.genAttrs = function (attrs) {
 }
 
 Actors.Human.prototype.update = function (delta) {
+
   var vec = new Vec3()
+  var route 
 
   this.recharge()
   this.shoot()
 
   this.flashbang()
+  //console.log(this.refs.cell.attrs.i, this.refs.maze.attrs.entry_cell, this.refs.maze.attrs.reactor_cell);
+  if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.maze.attrs.escape ){
+    //console.log('AT REACTOR');
+    this.refs.maze.attrs.escape = true;
+  } if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
+    //console.log('BACK TO START');
+    this.env.restart()
+  } else{
 
-  if(this.refs.cell.attrs.i !== this.refs.maze.attrs.reactor_cell){
-    
-    //console.log(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
-    var route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
+    if(this.refs.maze.attrs.escape){
+      // escaping from countdown
+      route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.entry_cell]);
+    } else {
+      // seeking reactor
+      route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
+      route.push(this.refs.maze.attrs.reactor_cell)
+     }
 
-    var intent;;
+    if(route[0] === this.refs.cell.attrs.i){
+      route.shift();
+    }
+
+    var intent = null;
     var intents = [[0,-1],[1,0],[0,1],[-1,0]];
-    
+    var qq=[];
     for(var i=0; i<4; i++){
-      if(this.refs.cell.exits[i] && this.refs.cell.exits[i].attrs.i === route[1]){
+      if(this.refs.cell.exits[i] && this.refs.cell.exits[i].attrs.i == route[0]){
         intent = i;
-        //console.log(this.refs.cell.exits[i].attrs.i);
         break;
       }
     }
-
-    if(intent){
+    if(intent !== null){
       vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(this.opts.intent_scale))
       if(intent === 1 || intent === 3){
         if(this.pos.y < this.refs.cell.opts.max_y * 0.4){
@@ -190,7 +206,9 @@ Actors.Human.prototype.update = function (delta) {
         if(this.pos.y > this.refs.cell.opts.max_y * 0.6){
           vec.add(new Vec3(0, -1).scale(this.opts.intent_scale))
         }
-      } else if(intent === 0 || intent === 2){
+      }
+
+      if(intent === 0 || intent === 2){
         if(this.pos.x < this.refs.cell.opts.max_x * 0.4){
           vec.add(new Vec3(1, 0).scale(this.opts.intent_scale))
         }
@@ -199,9 +217,11 @@ Actors.Human.prototype.update = function (delta) {
         }
       }
       
-      //console.log(vec);
     }
   }
+
+  this.attrs.intent = intent
+  this.attrs.route = route;
 
   //console.log(this.refs.cell.i, this.refs.maze.attrs.reactor_cell);
   //vec.add(this.separation().scale(this.opts.separation_force))
@@ -265,6 +285,7 @@ Actors.Human.prototype.update = function (delta) {
       }
     }
     this.refs.cell = other;
+    //console.log(this.refs.cell.attrs.i);
     other.humans.push(this);    
   }
 
@@ -326,7 +347,6 @@ Actors.Human.prototype.shoot = function () {
 
 }
 
-
 Actors.Human.prototype.flashbang = function () {
 
   if(this.refs.cell.rats.length > this.opts.flashbang_rats){
@@ -360,19 +380,20 @@ Actors.Human.prototype.reflect = function () {
 
   var max = Math.min(this.refs.cell.opts.max_x, this.refs.cell.opts.max_y)
 
-  if (!this.refs.cell.exits[3] && this.pos.x < this.refs.cell.opts.max_x * 0.1) {
+  if (!this.refs.cell.exits[3] && this.pos.x < this.refs.cell.opts.max_x * 0.01) {
     reflect.x = ((this.refs.cell.opts.max_x * 0.1) - this.pos.x ) / (this.refs.cell.opts.max_x * 0.1);
   }
 
-  if (!this.refs.cell.exits[0] && this.pos.y < this.refs.cell.opts.max_y * 0.1) {
+  if (!this.refs.cell.exits[0] && this.pos.y < this.refs.cell.opts.max_y * 0.01) {
     reflect.y = ((this.refs.cell.opts.max_y * 0.1) - this.pos.y ) / (this.refs.cell.opts.max_y * 0.1);
   }
 
-  if (!this.refs.cell.exits[1] && this.pos.x > this.refs.cell.opts.max_x * 0.9) {
+  if (!this.refs.cell.exits[1] && this.pos.x > this.refs.cell.opts.max_x * 0.99) {
     reflect.x = - (this.pos.x - (this.refs.cell.opts.max_x * 0.9) ) / (this.refs.cell.opts.max_x * 0.1);
   }
 
-  if (!this.refs.cell.exits[2] && this.pos.y > this.refs.cell.opts.max_y * 0.9) {
+  if (!this.refs.cell.exits[2] && this.pos.y > this.refs.cell.opts.max_y * 0.99
+     ) {
     reflect.y = - (this.pos.y - (this.refs.cell.opts.max_y * 0.9) ) / (this.refs.cell.opts.max_y * 0.1);
   }
 
@@ -606,6 +627,39 @@ Actors.Human.prototype.paint = function (view) {
   view.ctx.closePath()
   view.ctx.fill()
   view.ctx.stroke()
-  
+
   view.ctx.restore()
+  
+  if(this.attrs.intent === 0){
+    view.ctx.strokeStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.moveTo(0, 0)
+    view.ctx.lineTo(0, -2*z)
+    view.ctx.stroke()
+  }
+
+  if(this.attrs.intent === 1){
+    view.ctx.strokeStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.moveTo(0, 0)
+    view.ctx.lineTo(2*z, 0)
+    view.ctx.stroke()
+  }
+
+  if(this.attrs.intent === 2){
+    view.ctx.strokeStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.moveTo(0, 0)
+    view.ctx.lineTo(0, 2*z)
+    view.ctx.stroke()
+  }
+
+  if(this.attrs.intent === 3){
+    view.ctx.strokeStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.moveTo(0, 0)
+    view.ctx.lineTo(-2*z, 0)
+    view.ctx.stroke()
+  }
+  
 }

@@ -16,6 +16,7 @@ Actors.Reactor.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
     y: attrs.y,
+    primed: false,
     dead: false
   }
 }

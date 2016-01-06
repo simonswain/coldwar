@@ -15,6 +15,7 @@ Actors.Maze.prototype.title = 'Maze'
 Actors.Maze.prototype.genAttrs = function (attrs) {
   return {
     max: Math.min(this.opts.max_x, this.opts.max_y),
+    escape: false
   }
 }
 
@@ -54,10 +55,10 @@ Actors.Maze.prototype.makeGrid = function () {
   // this.maze.randomJoins(20);
   //this.maze.randomReactors(1);
   //this.maze.randomHumans(1);
+  this.attrs.entry_cell = 0;
   this.attrs.reactor_cell = this.cells.length-1;
   this.addReactor(this.attrs.reactor_cell);
-  this.addHuman(0);
-  
+  this.human = this.addHuman(this.attrs.entry_cell);
 }
 
 Actors.Maze.prototype.makeGridmates = function () {
@@ -193,7 +194,7 @@ Actors.Maze.prototype.randomSplit = function () {
 
 Actors.Maze.prototype.randomBreeders = function (max) {
   if(!max){
-    max = 1
+    max = 0
   }
   for(var i=0; i<max; i++){
     this.randomBreeder();
@@ -202,10 +203,6 @@ Actors.Maze.prototype.randomBreeders = function (max) {
 
 Actors.Maze.prototype.addBreeder = function (ix) {
   this.cells[ix].addBreeder();
-}
-
-Actors.Maze.prototype.addHuman = function (ix) {
-  this.cells[ix].addHuman();
 }
 
 Actors.Maze.prototype.addReactor = function (ix) {
@@ -246,6 +243,16 @@ Actors.Maze.prototype.randomReactor = function (max) {
   this.cells[ix].addReactor();
 }
 
+Actors.Maze.prototype.addHuman = function (ix) {
+  var human = this.cells[ix].addHuman();
+  return human
+}
+
+Actors.Maze.prototype.randomHuman = function (max) {
+  var ix = random.from0upto(this.cells.length)
+  this.cells[ix].addHuman();
+}
+
 Actors.Maze.prototype.randomHumans = function (max) {
   if(!max){
     max = 1
@@ -254,16 +261,6 @@ Actors.Maze.prototype.randomHumans = function (max) {
     this.randomHuman();
   }
 }
-
-Actors.Maze.prototype.randomHuman = function (max) {
-  var ix = random.from0upto(this.cells.length)
-  this.cells[ix].addHuman();
-}
-
-Actors.Maze.prototype.addHuman = function (ix) {
-  this.cells[ix].addHuman();
-}
-
 
 Actors.Maze.prototype.route = function (cell, other) {
 
@@ -326,9 +323,13 @@ Actors.Maze.prototype.route = function (cell, other) {
     node = open.splice(min, 1)[0];
 
     // is it the destination node?
+    nodes[cell.attrs.i].parent = null;
     if(node === other.attrs.i) {
-      open.push(other.attrs.i);
-      nodes[cell.attrs.i].parent = null;
+      
+      // open.push(other.attrs.i);
+      //open.push(path.i)
+      //
+      //console.log(path);
       do {
         result.push(path.i);
       } while (path = path.parent);
@@ -336,58 +337,53 @@ Actors.Maze.prototype.route = function (cell, other) {
       result.reverse();
       //console.log('RESULT', result);
       break;
-    } else {
-
-      // not the destination
-
-      // find which nearby nodes are walkable
-      exits = this.cells[node].exits;
-
-      // test each one that hasn't been tried already
-      for(i = 0, j = exits.length; i < j; i++) {
-        // no other cell in that direction
-        if(!exits[i]){
-          continue;
-        }
-
-        var gScore = this.cells[node].g + 1; // 1 is the distance from a node to it's neighbor
-	var gScoreIsBest = false;
-        
-        //console.log('node ', node, ' -> ', exits[i].attrs.i);
-	path = nodes[exits[i].attrs.i];
-	if (!astar[path.i]) {
-	  gScoreIsBest = true;
-	  // estimated cost of this particular route so far
-	  nodes[path.i].h = distanceFunction(exits[i], this.cells[node]);
-	  //nodes[path.i].g = nodes[node].g + distanceFunction(exits[i], this.cells[node]);
-          //console.log('path', path.i, 'g =', nodes[path.i].g);
-	  // estimated cost of entire guessed route to the destination
-	  //nodes[path.i].f = nodes[node].g + distanceFunction(exits[i], other);
-
-	  // remember this new path for testing above
-	  // mark this node in the world graph as visited
-	  open.push(path.i);
-	  astar[path.i] = true;
-	} else if(gScore < nodes[path.i].g) {
-          gScoreIsBest = true;
-        }
-
-        if(gScoreIsBest) {
-	  // Found an optimal (so far) path to this node.	 Store info on how we got here and
-	  //	just how good it really is...
-	  //console.log('Parent', path.i, node);
-	  nodes[path.i].parent = nodes[node];
-	  nodes[path.i].g = gScore;
-	  nodes[path.i].f = nodes[path.i].g + nodes[path.i].h;
-
-	}        
-      }
-      
-      // remember this route as having no more untested options
-      closed.push(node);
-      //console.log('open', open, 'closed', closed);
-      
     }
+
+    // find which nearby nodes are walkable
+    exits = this.cells[node].exits;
+
+    // test each one that hasn't been tried already
+    for(i = 0, j = exits.length; i < j; i++) {
+      // no other cell in that direction
+      if(!exits[i]){
+        continue;
+      }
+      var gScore = nodes[node].g + 1; // 1 is the distance from a node to it's neighbor
+      var gScoreIsBest = false;
+      //console.log('node ', node, ' -> ', exits[i].attrs.i);
+      path = nodes[exits[i].attrs.i];
+      if (!astar[path.i]) {
+	gScoreIsBest = true;
+	// estimated cost of this particular route so far
+	nodes[path.i].h = distanceFunction(exits[i], nodes[node].cell);
+	nodes[path.i].g = nodes[node].g + distanceFunction(exits[i], nodes[node].cell);
+        //console.log('path', path.i, 'h =', nodes[path.i].h, 'g =', nodes[path.i].g);
+	// estimated cost of entire guessed route to the destination
+	nodes[path.i].f = nodes[node].g + distanceFunction(exits[i], other);
+
+	// remember this new path for testing above
+	// mark this node in the world graph as visited
+	open.push(path.i);
+	astar[path.i] = true;
+      } else if(gScore < nodes[path.i].g) {
+        gScoreIsBest = true;
+      }
+
+      if(gScoreIsBest) {
+	// Found an optimal (so far) path to this node.	 Store info on how we got here and
+	//	just how good it really is...
+	//console.log('Parent', path.i, node);
+	nodes[path.i].parent = nodes[node];
+	nodes[path.i].g = gScore;
+	nodes[path.i].f = nodes[path.i].g + nodes[path.i].h;
+
+      }        
+    }
+    
+    // remember this route as having no more untested options
+    closed.push(node);
+    //console.log('open', open, 'closed', closed);
+    
   } // keep iterating until until the open list is empty
   return result;
   
@@ -426,7 +422,7 @@ Actors.Maze.prototype.defaults = [{
   max: 1
 }, {
   key: 'breeders',
-  value: 3,
+  value: 0,
   min: 0,
   max: 16
 }]
@@ -482,6 +478,32 @@ Actors.Maze.prototype.paint = function (view) {
     view.ctx.restore()
   }
 
+  if(this.human && this.human.attrs.route){
+    for(i = 0, ii=this.human.attrs.route.length; i<ii; i++){
+
+      // view.ctx.fillStyle = '#fff'
+      // view.ctx.font = '14pt ubuntu mono, monospace'
+      // view.ctx.textAlign='center';
+      // view.ctx.textBaseline='middle';
+      // view.ctx.fillText(this.human.attrs.route[i], (w/2) + (i * w/4), w/8);
+
+      x = this.human.attrs.route[i] % this.opts.cols
+      y = Math.floor(this.human.attrs.route[i] / this.opts.rows)
+      
+      view.ctx.fillStyle = '#222'
+      view.ctx.font = '14pt ubuntu mono, monospace'
+      view.ctx.textAlign='center';
+      view.ctx.textBaseline='middle';
+      view.ctx.beginPath()
+      view.ctx.arc((x * w) + (w/2), (y * w) + (w/2), w/12, 0, 2*Math.PI);
+      view.ctx.fill()
+      view.ctx.fillStyle = '#fff'
+      view.ctx.fillText(this.human.attrs.route[i], (x * w) + (w/2), (y * w) + (w/2));
+
+    }
+  }
+
+  
   view.ctx.restore()
   
 }

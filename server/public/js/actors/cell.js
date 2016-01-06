@@ -120,7 +120,8 @@ Actors.Cell.prototype.addHuman = function () {
     })
 
   this.humans.push(human)
-
+  return human;
+  
 }
 
 Actors.Cell.prototype.update = function (delta) {
@@ -187,6 +188,27 @@ Actors.Cell.prototype.update = function (delta) {
 
 Actors.Cell.prototype.paint = function (view) {
   
+  view.ctx.strokeStyle = '#666'
+  view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
+  view.ctx.stroke()
+
+  var intents = [[0,-1],[1,0],[0,1],[-1,0]];
+  
+  for(var i=0; i<4; i++){
+    if(this.exits[i]){
+      view.ctx.font = '32pt ubuntu mono, monospace'
+      view.ctx.textAlign='center';
+      view.ctx.textBaseline='middle';
+      view.ctx.beginPath()
+      view.ctx.fillStyle = '#600'
+      view.ctx.fillText(
+        i,
+        (this.opts.max_x / 2) + (intents[i][0] * this.opts.max_x * 0.35),
+        (this.opts.max_y / 2) + (intents[i][1] * this.opts.max_y * 0.35)
+      );
+    }
+  }
+  
   if (this.attrs.flash>0) {
     view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
     view.ctx.fillStyle = '#ffffff'
@@ -235,6 +257,11 @@ Actors.Cell.prototype.paint = function (view) {
     [0, 1, 0, 0]
   ];
 
+  var rgb = '0, 153, 0';
+  if(this.refs.maze && this.refs.maze.attrs.escape){
+    rgb = '153, 0, 0';
+  }
+  
   for(var exit = 0; exit < 4; exit ++){
 
     if(this.exits[exit]){
@@ -242,9 +269,9 @@ Actors.Cell.prototype.paint = function (view) {
 
     if(!this.exits[exit]){
 
-      view.ctx.strokeStyle = 'rgba(0, 153, 0, ' + (0.25 + (Math.random() * 0.25))+  ')'
+      view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
       if(!this.gridmates[exit]){
-        view.ctx.strokeStyle = 'rgba(0, 153, 0, ' + (0.5 + (Math.random() * 0.25))+  ')'
+        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
       }
    
       view.ctx.beginPath()
@@ -325,7 +352,6 @@ Actors.Cell.prototype.paint = function (view) {
     this.booms[i].paint(view)
     view.ctx.restore()
   }
-
-  
+ 
   
 }
