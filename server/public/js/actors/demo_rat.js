@@ -1,6 +1,6 @@
 /* global Actors, Actor, Vec3, VecR */
 
-Actors.Rat = function (env, refs, attrs) {
+Actors.Demorat = function (env, refs, attrs) {
   this.env = env
   this.refs = refs
   this.opts = this.genOpts()
@@ -8,34 +8,20 @@ Actors.Rat = function (env, refs, attrs) {
   this.init(attrs)
 }
 
-Actors.Rat.prototype = Object.create(Actor.prototype)
+Actors.Demorat.prototype = Object.create(Actor.prototype)
 
-Actors.Rat.prototype.title = 'Rat'
+Actors.Demorat.prototype.title = 'Demorat'
 
-Actors.Rat.prototype.init = function (attrs) {
+Actors.Demorat.prototype.genAttrs = function (attrs) {
 
-  this.pos = new Vec3(
-    attrs.x,
-    attrs.y,
-    0
-  );
-
-  this.velo = new VecR(
-    Math.PI * 2 * Math.random(),
-    this.attrs.speed
-  ).vec3()
-  
-}
-
-Actors.Rat.prototype.genAttrs = function (attrs) {
   var hp = this.opts.hp_base + (this.opts.hp_flux * Math.random())
+
   var type = Math.floor(Math.random() * 3);
   //type = 1;
   
   if(attrs.type){
     type = attrs.type;
   }
-
 
   var speed = this.opts.speed_base + (Math.random() * this.opts.speed_flux)
 
@@ -57,10 +43,10 @@ Actors.Rat.prototype.genAttrs = function (attrs) {
     hp: hp,
     hp_max: hp,
   }
+  
 }
 
-
-Actors.Rat.prototype.init = function (attrs) {
+Actors.Demorat.prototype.init = function (attrs) {
 
   this.pos = new Vec3(
     attrs.x,
@@ -74,7 +60,19 @@ Actors.Rat.prototype.init = function (attrs) {
   ).vec3()
 }
 
-Actors.Rat.prototype.defaults = [{
+Actors.Demorat.prototype.defaults = [{
+  key: 'type',
+  info: '',
+  value: 0,
+  min: 0, // rat, mommy, baby, king
+  max: 3
+}, {
+  key: 'babies_max',
+  info: '',
+  value: 3,
+  min: 0,
+  max: 10
+}, {
   key: 'speed_base',
   info: '',
   value: 4,
@@ -114,7 +112,7 @@ Actors.Rat.prototype.defaults = [{
 }, {
   key: 'separation_force',
   info: '',
-  value: 100,
+  value: 0.7,
   min: 0.1,
   max: 1.0,
   step: 0.05
@@ -157,11 +155,6 @@ Actors.Rat.prototype.defaults = [{
   min: 0.1,
   max: 1.0
 }, {
-  key: 'intent_scale',
-  value: 35,
-  min: 0,
-  max: 100,
-}, {
   key: 'show_params',
   info: '',
   value: 0,
@@ -169,39 +162,14 @@ Actors.Rat.prototype.defaults = [{
   max: 1
 }]
 
-Actors.Rat.prototype.update = function (delta, intent) {
+Actors.Demorat.prototype.update = function (delta) {
   var vec = new Vec3()
 
   vec.add(this.separation().scale(this.opts.separation_force))
   vec.add(this.alignment().scale(this.opts.alignment_force))
   vec.add(this.cohesion().scale(this.opts.cohesion_force))
   vec.add(this.chase().scale(this.opts.chase_force))
-  vec.add(this.reflect().scale(this.opts.reflect_force))
 
-  var intents = [[0,-1],[1,0],[0,1],[-1,0]];
-
-  if(typeof intent!== 'undefined' && intent !== null){
-    vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(this.opts.intent_scale))
-    if(intent === 1 || intent === 3){
-      if(this.pos.y < this.refs.cell.opts.max_y * 0.4){
-        vec.add(new Vec3(0, 1).scale(this.opts.intent_scale))
-      }
-      if(this.pos.y > this.refs.cell.opts.max_y * 0.6){
-        vec.add(new Vec3(0, -1).scale(this.opts.intent_scale))
-      }
-    }
-
-    if(intent === 0 || intent === 2){
-      if(this.pos.x < this.refs.cell.opts.max_x * 0.4){
-        vec.add(new Vec3(1, 0).scale(this.opts.intent_scale))
-      }
-      if(this.pos.x > this.refs.cell.opts.max_x * 0.6){
-        vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
-      }
-    }    
-  }
-
-  
   vec.scale(this.opts.velo_scale)
 
   this.velo.add(vec)
@@ -209,99 +177,24 @@ Actors.Rat.prototype.update = function (delta, intent) {
   this.velo.limit(this.attrs.speed)
   this.pos.add(this.velo)
 
-  // exit
-  var other, cell;
-
-  if (this.pos.x < 0) {
-    other = this.refs.cell.exits[3];
-    if(other){
-      this.pos.x += this.refs.cell.opts.max_x
-    } else {
-      this.velo = new Vec3(-this.velo.x, this.velo.y, 0);
-      this.pos.x = 0
-    }
-  } else if (this.pos.x > this.refs.cell.opts.max_x) {
-    other = this.refs.cell.exits[1]; 
-    if(other){
-      this.pos.x = this.pos.x - this.refs.cell.opts.max_x
-    } else {
-      this.velo = new Vec3(-this.velo.x, this.velo.y, 0);
-      this.pos.x = this.refs.cell.opts.max_x
-    }
-  } else if (this.pos.y < 0) {
-    other = this.refs.cell.exits[0];
-    if(other){
-      this.pos.y += this.refs.cell.opts.max_y
-    } else {
-      this.velo = new Vec3(this.velo.x, - this.velo.y, 0);
-      this.pos.y = 0
-    }
-  } else if (this.pos.y > this.refs.cell.opts.max_y) {
-    other = this.refs.cell.exits[2]; 
-    if(other){
-      this.pos.y = this.pos.y - this.refs.cell.opts.max_y
-    } else {
-      this.velo = new Vec3(this.velo.x, -this.velo.y, 0);
-      this.pos.y = this.refs.cell.opts.max_y
-    }
-  }
-
-  cell = this.refs.cell;
-
-  if(other){
-    for (var i = 0, ii = cell.rats.length; i < ii; i++) {
-      if (cell.rats[i] === this) {
-        cell.rats[i] = null;
-        break
-      }
-    }
-    this.refs.cell = other;
-    other.rats.push(this);    
-  }
-  
 }
 
-Actors.Rat.prototype.reflect = function () {
 
-  var reflect = new Vec3()
-
-  var max = Math.min(this.refs.cell.opts.max_x, this.refs.cell.opts.max_y)
-
-  if (!this.refs.cell.exits[3] && this.pos.x < this.refs.cell.opts.max_x * 0.1) {
-    reflect.x = ((this.refs.cell.opts.max_x * 0.1) - this.pos.x ) / (this.refs.cell.opts.max_x * 0.1);
-  }
-
-  if (!this.refs.cell.exits[0] && this.pos.y < this.refs.cell.opts.max_y * 0.1) {
-    reflect.y = ((this.refs.cell.opts.max_y * 0.1) - this.pos.y ) / (this.refs.cell.opts.max_y * 0.1);
-  }
-
-  if (!this.refs.cell.exits[1] && this.pos.x > this.refs.cell.opts.max_x * 0.9) {
-    reflect.x = - (this.pos.x - (this.refs.cell.opts.max_x * 0.9) ) / (this.refs.cell.opts.max_x * 0.1);
-  }
-
-  if (!this.refs.cell.exits[2] && this.pos.y > this.refs.cell.opts.max_y * 0.9) {
-    reflect.y = - (this.pos.y - (this.refs.cell.opts.max_y * 0.9) ) / (this.refs.cell.opts.max_y * 0.1);
-  }
-
-  return reflect
-
-}
-
-Actors.Rat.prototype.chase = function () {
+Actors.Demorat.prototype.chase = function () {
   // determine center position of all boids
   var xx = 0
   var yy = 0
   var c = 0
 
 
-  if(this.refs.cell.humans.length === 0){
+  if(this.refs.demo.humans.length === 0){
     return new Vec3();
   }
 
   var human;
   
-  for (var i = 0, ii = this.refs.cell.humans.length; i < ii; i++) {
-    human = this.refs.cell.humans[i];
+  for (var i = 0, ii = this.refs.demo.humans.length; i < ii; i++) {
+    human = this.refs.demo.humans[i];
     if(!human){
       continue;
     }
@@ -314,15 +207,15 @@ Actors.Rat.prototype.chase = function () {
   return target.minus(this.pos).normalize()
 }
 
-Actors.Rat.prototype.separation = function () {
+Actors.Demorat.prototype.separation = function () {
   var i, ii
   var other
   var range
 
   var vec = new Vec3()
 
-  for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
-    other = this.refs.cell.rats[i]
+  for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
+    other = this.refs.demo.rats[i]
     if(!other){
       continue;
     }
@@ -347,15 +240,15 @@ Actors.Rat.prototype.separation = function () {
   return vec.normalize()
 }
 
-Actors.Rat.prototype.alignment = function () {
+Actors.Demorat.prototype.alignment = function () {
   var i, ii
   var other
   var range
 
   var vec = new Vec3()
 
-  for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
-    other = this.refs.cell.rats[i]
+  for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
+    other = this.refs.demo.rats[i]
 
     if (!other) {
       continue
@@ -381,7 +274,7 @@ Actors.Rat.prototype.alignment = function () {
   return vec.normalize()
 }
 
-Actors.Rat.prototype.cohesion = function () {
+Actors.Demorat.prototype.cohesion = function () {
 
   var i, ii
   var other
@@ -390,9 +283,9 @@ Actors.Rat.prototype.cohesion = function () {
   var y = 0
   var c = 0
 
-  for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
+  for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
 
-    other = this.refs.cell.rats[i]
+    other = this.refs.demo.rats[i]
 
     if (!other) {
       continue
@@ -418,7 +311,7 @@ Actors.Rat.prototype.cohesion = function () {
   // return center.minus(this.pos).normalize()
 }
 
-Actors.Rat.prototype.flee = function () {
+Actors.Demorat.prototype.flee = function () {
   var i, ii
   var other
   var range
@@ -444,7 +337,7 @@ Actors.Rat.prototype.flee = function () {
   return vec.normalize()
 }
 
-Actors.Rat.prototype.steer = function () {
+Actors.Demorat.prototype.steer = function () {
   var i, ii
 
   var dist
@@ -456,8 +349,8 @@ Actors.Rat.prototype.steer = function () {
   var cohesion = new Vec3()
   var separation = new Vec3()
 
-  for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
-    other = this.refs.cell.rats[i]
+  for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
+    other = this.refs.demo.rats[i]
 
     if (other === this) {
       continue
@@ -507,7 +400,8 @@ Actors.Rat.prototype.steer = function () {
   return vector
 }
 
-Actors.Rat.prototype.damage = function (hp) {
+Actors.Demorat.prototype.damage = function (hp) {
+
   if (!hp) {
     hp = 1
   }
@@ -518,16 +412,13 @@ Actors.Rat.prototype.damage = function (hp) {
   if (this.attrs.hp > 0) {
     return
   }
-
+  
   if (this.attrs.dead) {
     return
   }
 
-  if (this.refs.base) {
-    this.refs.base.attrs.bombers_launched--
-  }
-
   this.kill();
+  
 }
 
 Actors.Demorat.prototype.kill = function () {
@@ -583,7 +474,8 @@ Actors.Demorat.prototype.kill = function () {
   
 }
 
-Actors.Rat.prototype.paint = function (view) {
+
+Actors.Demorat.prototype.paint = function (view) {
 
   view.ctx.save()
   view.ctx.rotate(this.velo.angleXY())
@@ -710,6 +602,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.fill()
     break;
   }
-  
+
+
   view.ctx.restore()
 }

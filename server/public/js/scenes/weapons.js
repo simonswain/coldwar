@@ -109,15 +109,11 @@ Scenes.weapons.prototype.paint = function(fx, gx, sx){
   if(ix >= frame.text.length){
     ix = frame.text.length;
   }
-  
-  gx.ctx.fillStyle = '#0f0';
-  //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
-  gx.ctx.font = '28pt ubuntu mono';
 
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.027);
+  var xx = (this.opts.max_x * 0.1);
+  var dx = (this.opts.max_x * 0.05);
   var y = 0;
   var x = 0;
   for (var i = 0; i < ix; i++) {
@@ -128,6 +124,9 @@ Scenes.weapons.prototype.paint = function(fx, gx, sx){
     }
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
+    var h = ((Date.now()%255) + i*12) % 255;
+    gx.ctx.fillStyle = 'hsl(' + h + ',100%,50%)';
+    gx.ctx.font = '28pt robotron';
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;

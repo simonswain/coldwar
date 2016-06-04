@@ -52,8 +52,8 @@ Scenes.title.prototype.defaults = [{
   min: 1,
   max: 6000
 }, {
-  key: 'font-size',
-  value: 24,
+  key: 'font_size',
+  value: 18,
   min: 8,
   max: 64
 }, {
@@ -65,7 +65,7 @@ Scenes.title.prototype.defaults = [{
 
 Scenes.title.prototype.genAttrs = function(){
   return {
-    frame_index: 0,
+    frame_index: -1,
     step_index: 0,
     time: 0,
     hold: 0,
@@ -87,49 +87,121 @@ Scenes.title.prototype.update = function(delta){
       this.attrs.frame_index = 0;
     }
   }
-  
+
+  if(Math.random() < 0.02){
+    this.env.flash = true
+  }
+
 }
 
 Scenes.title.prototype.paint = function(fx, gx, sx){
-
-
   this.paintTitle(gx);
-  
   fx.ctx.save();
   fx.ctx.translate(this.opts.wiggle_size*(Math.random() - 0.5), this.opts.wiggle_size*(Math.random() - 0.5));
   this.paintTitle(fx);
   fx.ctx.restore();
-  
 }
 
 Scenes.title.prototype.paintTitle = function(view){
-  
-  var frame = Scenes.title.prototype.frames[this.attrs.frame_index];
 
+  var frame = Scenes.title.prototype.frames[this.attrs.frame_index];
+  
   view.ctx.fillStyle = '#fb0';
-  view.ctx.font = this.opts.font_size + 'pt ubuntu mono';
- 
+  //view.ctx.font = this.opts.font_size + 'pt ubuntu mono';
+  view.ctx.font = '24pt robotron';
+  var text = frame.text
+var chars;
+  // chars = ['R','A','T','S',' ',' ',' ', 'O','F',' ',' ',' ', 'T','H','E',' ',' ',' ', 'M','A','Z','E',' ',' ',' ', 'O','F',' ',' ',' ', 'T','H','E',' ',' ',' '];
+  chars = ['R', '#', 'A','#','T','#','S',' ',' ', 'O','#','F',' ',' ', 'T','#','H','#','E',' ',' ',' ', 'M','#','A','#','Z','#','E',' ',' '];
+  if(!this.ch || this.ch >= chars.length){
+    this.ch = 0;
+  }
+  var char = chars[Math.floor(this.ch)];
+  this.ch+= 0.07
+  var fills = ['X','O','+','*'];
+  var fill = chars[Math.floor(Math.random()*chars.length)];
+  char = char.replace(/#/g, fill);
+  var text = text.replace(/x/g, char);
+
   var yy = (this.opts.max_y * 0.1);
-  var dy = (this.opts.max_y * 0.025);
+  var dy = (this.opts.max_y * 0.05);
   var xx = (this.opts.max_x * 0.1);
-  var dx = (this.opts.max_x * 0.015);
+  var dx = (this.opts.max_x * 0.03);
   var y = 0;
   var x = 0;
   var ii = Scenes.title.prototype.frames[this.attrs.frame_index].text.length
   //var ii = this.attrs.step_index;
+  var rowShift = false;
+
+    view.ctx.save();
+    view.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.3);
   for (var i = 0; i < ii; i++) {
+
     if(frame.text[i] === "\n"){
       y ++;
       x = 0;
+      if(rowShift){ 
+        view.ctx.restore();
+      }
+      rowShift = false;
+
+      if(x === 0 && Math.random() < 0.05){
+        view.ctx.save();
+        view.ctx.translate((Math.random() * 300)-150, 0);
+        rowShift = true;
+      }
       continue;
     }
+    
     view.ctx.save();
-    view.ctx.translate(this.opts.max_x * 0.2, this.opts.max_y * 0.3);
-    view.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
-    view.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
+    view.ctx.translate(Math.random() * 5, Math.random() * 5);
+    if(text[i] !== ' '){
+      view.ctx.fillStyle = 'rgba(255, 192, 0, ' + (0.25 + (Math.random()*0.25)) + ')';
+      view.ctx.fillStyle = 'rgba(255, 204, 0, 0.25)';
+
+      var h = (Date.now()%360 * 0.25) - 10;
+      view.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+      
+      if(Math.random() < 0.025){
+        view.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+        view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+      }
+
+      if(Math.random() < 0.025){
+        view.ctx.fillStyle = 'rgba(255,255,255,1)';
+        view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+      }
+
+      view.ctx.fillRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+
+    }
+    view.ctx.fillStyle = '#fb0';
+    if(rowShift){
+      view.ctx.fillStyle = 'rgba(255,255,255,' + (0.25 + (Math.random()*0.25)) + ')';
+    }
+    if(Math.random() < 0.05){
+      view.ctx.fillStyle = '#f00';
+    }
+    if(Math.random() < 0.05){
+      view.ctx.fillStyle = '#222';
+    }
+
+ 
+    view.ctx.fillText(text[i], xx + (x * dx), yy + (y * dy));
+
+    if(text[i] !== ' '){
+      view.ctx.strokeStyle = '#0ff' 
+      view.ctx.lineWidth = 2;
+      view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    }
+
     view.ctx.restore();
     x ++;
   }
+  if(rowShift){ 
+    view.ctx.restore();
+  }
+  view.ctx.restore();
 
   
 }
@@ -144,7 +216,7 @@ Scenes.title.prototype.frames[0] = {
     'xxx   xxxx   xx   xxxx',
     'x  x  x  x   xx     xx',
     'x  x  x  x   xx   xxxx',
-  ].join("\n").replace(/x/g, 'O')
+  ].join("\n")
 };
 
 Scenes.title.prototype.frames[1] = {
@@ -155,7 +227,7 @@ Scenes.title.prototype.frames[1] = {
     '    x  xx  xx      ',
     '    x  xx  xx      ',
     '     xxx   x       ',
-  ].join("\n").replace(/x/g, 'O')
+  ].join("\n")
 };
 
 Scenes.title.prototype.frames[2] = {
@@ -166,18 +238,40 @@ Scenes.title.prototype.frames[2] = {
     '   xx   xxxxx  xxx   ',
     '   xx   xxxxx  xx    ',
     '   xx   x   x  xxxx  ',
-  ].join("\n").replace(/x/g, 'O')
+  ].join("\n")
 };
 
 Scenes.title.prototype.frames[3] = {
   text:[
-    ' x x    xx   zzzz  xxxx',
-    'xxxxx  xxxx    zz  x   ',
-    'x x x  x  x   zz   xx  ',
-    'x   x  xxxx  zz    xx  ',
-    'x   x  x  x  zz    x   ',
-    'x   x  x  x  zzzz  xxxx'
-  ].join("\n").replace(/x/g, 'O')
+    ' x x    xx   xxxx  xxxx',
+    'xxxxx  xxxx    xx  x   ',
+    'x x x  x  x   xx   xx  ',
+    'x   x  xxxx  xx    xx  ',
+    'x   x  x  x  xx    x   ',
+    'x   x  x  x  xxxx  xxxx'
+  ].join("\n")
+};
+
+Scenes.title.prototype.frames[4] = {
+  text:[
+    '     xxx   xxxx    ',
+    '    x  xx  x       ',
+    '    x  xx  x       ',
+    '    x  xx  xx      ',
+    '    x  xx  xx      ',
+    '     xxx   x       ',
+  ].join("\n")
+};
+
+Scenes.title.prototype.frames[5] = {
+  text:[
+    ' xxxxxx x   x  xxxx  ',
+    '   xx   x   x  xx    ',
+    '   xx   x   x  xx    ',
+    '   xx   xxxxx  xxx   ',
+    '   xx   xxxxx  xx    ',
+    '   xx   x   x  xxxx  ',
+  ].join("\n")
 };
 
 

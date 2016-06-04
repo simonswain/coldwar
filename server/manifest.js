@@ -1,5 +1,6 @@
+"use strict";
 
-export default {
+module.exports = {
   pub: {
     opts: {
       key: 'pub',
@@ -14,7 +15,8 @@ export default {
       'public/js/actor.js',
       'public/js/scene.js',
       'public/js/actors',
-      'public/js/scenes'
+      'public/js/scenes',
     ]
   }
-}
+
+};

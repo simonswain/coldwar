@@ -1,227 +1,276 @@
-import fs from 'fs'
-import _ from 'lodash'
-import async from 'async'
-import UglifyJS from 'uglify-js'
-import less from 'less'
+"use strict";
 
-export function create (opts) {
-  opts = Object.assign({
-    key: false,
-    base: '',
-    url: '/',
-    out: __dirname + '/public/assets',
-    outUrl: '/assets'
-  }, opts)
+var fs = require('fs');
+var _ = require('lodash');
+var async = require('async');
+var UglifyJS = require('uglify-js');
+var less = require('less');
 
-  const assets = {
+var create = function(opts){
+
+  opts = _.defaults(
+    opts, {
+      key: false,
+      base: '',
+      url: '/',
+      out: __dirname + '/public/assets',
+      outUrl: '/assets'
+    });
+
+  var assets = {
     css: [],
     js: []
-  }
+  };
 
-  const html = {
+  var html = {
     css: '',
-    js: ''
-  }
+    js : ''
+  };
 
-  let renderedFiles
+  var urls = {
+    css: '',
+    js : ''
+  };
 
-  const preload = files => {
-    renderedFiles = files
-  }
+  var renderedFiles;
 
-  const renderJs = done => {
-    const files = assets.js.map(x => opts.base + '/' + x)
+  var preload = function(files){
+    renderedFiles = files;
+  };
 
-    const filename =
-      `${ opts.key ? `${ opts.key }-` : '' }` +
-      `script-${ new Date().getTime() }.js`
+  var renderJs = function(done){
 
-    const outf = opts.out + '/' + filename
+    var files = _.map(assets.js, function(x){
+      return opts.base + '/' + x;
+    });
 
-    const { code } = UglifyJS.minify(files)
-    fs.writeFileSync(outf, code)
-    renderedFiles.js = opts.outUrl + '/' + filename
-    done()
-  }
+    var filename = 'script-' + new Date().getTime() + '.js';
 
-  const renderCss = done => {
-    var filename = 'styles-' + new Date().getTime() + '.css'
-
-    if (opts.key) {
-      filename = opts.key + '-' + filename
+    if(opts.key){
+      filename = opts.key + '-' + filename;
     }
 
-    const outf = opts.out + '/' + filename
+    var outf = opts.out + '/' + filename;
 
-    const css = []
+    var minified = UglifyJS.minify(files);
+    fs.writeFileSync(outf, minified.code);
+    renderedFiles.js = opts.outUrl + '/' + filename;
+    done();
+  };
 
-    const renderOne = function (x, cb) {
-      const src = opts.base + '/' + x
+  var renderCss = function(done){
+
+    var filename = 'styles-' + new Date().getTime() + '.css';
+
+    if(opts.key){
+      filename = opts.key + '-' + filename;
+    }
+
+    var outf = opts.out + '/' + filename;
+
+    var css = [];
+
+    var renderOne = function(x, cb){
+      var src = opts.base + '/' + x;
       less.render(
         fs.readFileSync(src, 'utf8'), {
           compress: true
         }, function (e, output) {
-          css.push(output.css)
-          cb()
-        }
-      )
-    }
+          css.push(output.css);
+          cb();
+        });
+    };
 
     async.eachSeries(
       assets.css,
       renderOne,
-      function (err, res) {
-        if (err) return console.error(err)
-        const s = css.join('\n')
-        fs.writeFileSync(outf, s)
-        renderedFiles.css = opts.outUrl + '/' + filename
-        done()
+      function(err, res){
+        var s = css.join("\n");
+        fs.writeFileSync(outf, s);
+        renderedFiles.css = opts.outUrl + '/' + filename;
+        done();
+    });
+
+  };
+
+  var render = function(done){
+
+    renderedFiles = {};
+
+    var checkdir = function(next){
+
+      var d = fs.existsSync(opts.out);
+      if(!d){
+        fs.mkdirSync(opts.out);
       }
-    )
-  }
+      return next();
 
-  const render = function (done) {
-    renderedFiles = {}
+    };
 
-    const checkdir = function (next) {
-      const d = fs.existsSync(opts.out)
-      if (!d) {
-        fs.mkdirSync(opts.out)
-      }
-      return next()
-    }
+    var cleandir = function(next){
 
-    const cleandir = function (next) {
-      let files
-      const dirpath = opts.out
+      var files;
+      var dirpath = opts.out;
       try {
-        files = fs.readdirSync(dirpath)
-      } catch (e) {
-        return next()
+        files = fs.readdirSync(dirpath);
+      } catch(e) {
+        return next();
       }
 
       if (files.length === 0) {
-        return next()
+        return next();
       }
 
-      for (let i = 0; i < files.length; i++) {
-        if (opts.key && files[i].substr(0, opts.key.length) !== opts.key) {
-          continue
+      for (var i = 0; i < files.length; i++) {
+        if(opts.key && files[i].substr(0, opts.key.length) !== opts.key){
+          continue;
         }
-        const filepath = dirpath + '/' + files[i]
+        var filepath = dirpath + '/' + files[i];
         if (fs.statSync(filepath).isFile()) {
-          fs.unlinkSync(filepath)
+          fs.unlinkSync(filepath);
         }
       }
-      next()
-    }
+      next();
+    };
 
     async.series([
       checkdir,
       cleandir,
       renderJs,
       renderCss
-    ], function () {
-      done(null, renderedFiles)
-    })
-  }
+    ], function(){
+      done(null, renderedFiles);
+    });
 
-  const gen = function () {
-    html.css = assets.css.map(
-      x => `<link rel="stylesheet" href="${ opts.url }${ x.substr(-5) === '.less' ? `${ x.slice(0, -5) }.css` : x }" />`
-    ).join('\n')
+  };
 
-    html.js = assets.js.map(
-      x => `<script type="text/javascript" src="${ opts.url }${ x }"></script>`
-    ).join('\n')
-  }
-
-  const add = function (f) {
-    if (f.substr(0, 1) === '/') {
-      f = f.substr(1)
-    }
-    const src = opts.base + '/' + f
-    if (fs.lstatSync(src).isDirectory()) {
-      for (const file of fs.readdirSync(src)) {
-        if (file.substr(0, 1) === '.') return
-        if (file.substr(0, 1) === '#') return
-        add(f + '/' + file)
+  var gen = function(){
+    html.css = _.map(assets.css, function(x){
+      if(x.substr(-5) === '.less'){
+        return '<link rel="stylesheet" href="' + opts.url + '' + x.slice(0, -5) + '.css' + '" />';
       }
+      return '<link rel="stylesheet" href="' + opts.url + '' + x + '" />';
+    }).join("\n");
+
+    html.js = _.map(assets.js, function(x){
+      return '<script type="text/javascript" src="' + opts.url + '' + x + '"></script>';
+    }).join("\n");
+  };
+
+  var add = function(f){
+
+    if(f.substr(0,1) === '/'){
+      f = f.substr(1);
     }
 
-    if (f.substr(-3) === '.js') assets.js.push(f)
-    if (f.substr(-4) === '.css') assets.css.push(f)
-    if (f.substr(-5) === '.less') assets.css.push(f)
+    var src = opts.base + '/' + f;
 
-    gen()
-  }
+    if(fs.lstatSync(src).isDirectory()){
+      fs.readdirSync(src).forEach(function(file) {
+        if (file.substr(0,1) === '.' ) {
+          return;
+        }
+        if ( file.substr(0,1) === '#' ) {
+          return;
+        }
+        add(f + '/' + file);
+      });
+    }
 
-  const js = () => renderedFiles
-    ? `<script type="text/javascript" src="${ renderedFiles.js }"></script>`
-    : html.js
+    if(f.substr(-3) === '.js'){
+      assets.js.push(f);
+    }
 
-  const css = () => renderedFiles
-    ? `<link rel="stylesheet" href="${ renderedFiles.css }" />`
-    : html.css
+    if(f.substr(-4) === '.css'){
+      assets.css.push(f);
+    }
+
+    if(f.substr(-5) === '.less'){
+      assets.css.push(f);
+    }
+
+    gen();
+
+  };
+
+  var js = function(){
+    if(renderedFiles){
+      return '<script type="text/javascript" src="' + renderedFiles.js + '"></script>';
+    }
+    return html.js;
+  };
+
+  var css = function(){
+    if(renderedFiles){
+      return '<link rel="stylesheet" href="' + renderedFiles.css + '" />';
+    }
+    return html.css;
+  };
 
   return {
-    add,
-    css,
-    js,
-    render,
-    preload
-  }
-}
+    add: add,
+    css: css,
+    js: js,
+    render: render,
+    preload: preload
+  };
+};
 
-export function load (manifests) {
-  const files = {}
-  const keys = {}
+var load = function(manifests){
 
-  for (const [key, manifest] of Object.entries(manifests)) {
-    keys[key] = {}
-    keys[key] = create(manifest.opts)
-    for (const f of manifest.assets) {
-      keys[key].add(f)
-    }
-    keys[key].key = key
-  }
+  var files = {};
+  var keys = {};
+  _.each(manifests, function(manifest, key){
+    keys[key] = {};
+    keys[key] = create(manifest.opts);
+    _.each(manifest.assets, function(f){
+      keys[key].add(f);
+    });
+    keys[key].key = key;
+  });
 
-  const renderOne = (key, next) => {
-    key.render((err, res) => {
-      if (err) return console.error(err)
-      files[key.key] = res
-      next()
-    })
-  }
+  var renderOne = function(key, next){
+    key.render(function(err, res){
+      files[key.key] = res;
+      next();
+    });
+  };
 
-  const render = (target, done) => {
-    if (arguments.length === 1) {
-      done = target
-      target = false
+  var render = function(target, done){
+    if(arguments.length === 1){
+      done = target;
+      target = false;
     }
 
     async.eachSeries(
       _.toArray(keys),
       renderOne,
-      () => {
-        if (target) {
+      function(){
+        if(target){
           fs.writeFileSync(
             target,
             JSON.stringify(files)
-          )
+          );
         }
-        done()
-      }
-    )
-  }
+        done();
+      });
+  };
 
-  const preload = assets => {
-    assets.forEach((files, key) => keys[key].preload(files))
-  }
+  var preload = function(assets){
+    _.each(assets, function(files, key){
+      keys[key].preload(files);
+    });
+  };
 
   return {
-    keys,
-    render,
-    preload
-  }
-}
+    keys: keys,
+    render: render,
+    preload: preload
+  };
+
+};
+
+module.exports = {
+  create: create,
+  load: load
+};

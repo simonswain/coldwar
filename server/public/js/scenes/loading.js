@@ -1,0 +1,114 @@
+/*global Scenes:true, Actors:true */
+/*jshint browser:true */
+/*jshint strict:false */
+/*jshint latedef:false */
+
+Scenes.loading = function(env, opts){
+  this.env = env;
+  this.opts = this.genOpts(opts);
+  this.attrs = this.genAttrs();
+  this.init();
+};
+
+Scenes.loading.prototype = Object.create(Scene.prototype);
+
+Scenes.loading.prototype.title = 'Loading';
+
+Scenes.loading.prototype.layout = '';
+
+Scenes.loading.prototype.init = function(){
+}
+
+Scenes.loading.prototype.getCast = function(){
+  return {
+  }
+};
+
+Scenes.loading.prototype.defaults = [{
+  key: 'max_x',
+  value: 640,
+  min: 32,
+  max: 1024
+}, {
+  key: 'max_y',
+  value: 640,
+  min: 32,
+  max: 1024
+}, {
+  key: 'max_z',
+  value: 1,
+  min: 1,
+  max: 1
+}, {
+  key: 'step_delay',
+  value: 1,
+  min: 1,
+  max: 120
+}, {
+  key: 'step_hold',
+  value: 85,
+  min: 1,
+  max: 1000
+}, {
+  key: 'step_skip',
+  value: 1,
+  min: 1,
+  max: 20
+}, {
+  key: 'frame_hold',
+  value: 140,
+  min: 1,
+  max: 2400
+}, {
+  key: 'font-size',
+  value: 24,
+  min: 8,
+  max: 64
+}];
+
+Scenes.loading.prototype.genAttrs = function(){
+  return {
+    frame_index: 0,
+    step_index: 0,
+    time: 0,
+    hold: 0,
+  };
+};
+
+Scenes.loading.prototype.update = function(delta){
+
+
+}
+
+Scenes.loading.prototype.paint = function(fx, gx, sx){
+
+  // var ix = this.attrs.step_index;
+  // if(ix >= frame.text.length){
+  //   ix = frame.text.length;
+  // }
+  
+  // gx.ctx.fillStyle = '#0f0';
+  // //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
+  // gx.ctx.font = '28pt ubuntu mono';
+
+  // var yy = (this.opts.max_y * 0.2);
+  // var dy = (this.opts.max_y * 0.066);
+  // var xx = (this.opts.max_x * 0.01);
+  // var dx = (this.opts.max_x * 0.027);
+  // var y = 0;
+  // var x = 0;
+  // for (var i = 0; i < ix; i++) {
+  //   if(frame.text[i] === "\n"){
+  //     y ++;
+  //     x = 0;
+  //     continue;
+  //   }
+  //   gx.ctx.save();
+  //   gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
+  //   gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
+  //   gx.ctx.restore();
+  //   x ++;
+  // }
+
+  
+}

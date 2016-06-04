@@ -3,20 +3,20 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.story = function(env, opts){
+Scenes.understand = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.story.prototype = Object.create(Scene.prototype);
+Scenes.understand.prototype = Object.create(Scene.prototype);
 
-Scenes.story.prototype.title = 'Story';
+Scenes.understand.prototype.title = 'Understand';
 
-Scenes.story.prototype.layout = '';
+Scenes.understand.prototype.layout = '';
 
-Scenes.story.prototype.init = function(){
+Scenes.understand.prototype.init = function(){
 
   this.maze = new Actors.Maze(
     this.env, {
@@ -30,14 +30,14 @@ Scenes.story.prototype.init = function(){
 
 }
 
-Scenes.story.prototype.getCast = function(){
+Scenes.understand.prototype.getCast = function(){
   return {
     Maze: Actors.Maze,
     Cell: Actors.Cell,
   }
 };
 
-Scenes.story.prototype.defaults = [{
+Scenes.understand.prototype.defaults = [{
   key: 'max_x',
   value: 480,
   min: 32,
@@ -59,7 +59,7 @@ Scenes.story.prototype.defaults = [{
   max: 120
 }, {
   key: 'step_hold',
-  value: 2,
+  value: 85,
   min: 1,
   max: 1000
 }, {
@@ -79,7 +79,7 @@ Scenes.story.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.story.prototype.genAttrs = function(){
+Scenes.understand.prototype.genAttrs = function(){
   return {
     frame_index: 0,
     step_index: 0,
@@ -88,7 +88,7 @@ Scenes.story.prototype.genAttrs = function(){
   };
 };
 
-Scenes.story.prototype.update = function(delta){
+Scenes.understand.prototype.update = function(delta){
 
   this.maze.update(delta);
 
@@ -98,7 +98,7 @@ Scenes.story.prototype.update = function(delta){
       this.attrs.hold = 0;
       this.attrs.step_index = 0;
       this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.story.prototype.frames.length){
+      if(this.attrs.frame_index === Scenes.understand.prototype.frames.length){
         this.attrs.frame_index = 0;
       }
     }
@@ -107,7 +107,7 @@ Scenes.story.prototype.update = function(delta){
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
       this.attrs.step_index += this.opts.step_skip;
-      if (this.attrs.step_index >= Scenes.story.prototype.frames[this.attrs.frame_index].text.length) {
+      if (this.attrs.step_index >= Scenes.understand.prototype.frames[this.attrs.frame_index].text.length) {
         this.attrs.hold = this.opts.frame_hold;
       }
     }
@@ -115,26 +115,31 @@ Scenes.story.prototype.update = function(delta){
   
 }
 
-Scenes.story.prototype.paint = function(fx, gx, sx){
+Scenes.understand.prototype.paint = function(fx, gx, sx){
 
   this.maze.paint(gx)
 
   gx.ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  gx.ctx.fillStyle = 'rgba(0,0,0,0.35)';
   gx.ctx.beginPath()
   gx.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
+  
 
-  var frame = Scenes.story.prototype.frames[this.attrs.frame_index];
+  var frame = Scenes.understand.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
     ix = frame.text.length;
   }
   
+  gx.ctx.fillStyle = '#f30';
+  //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
+  gx.ctx.font = '18pt robotron';
+
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
   var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.035) + Math.random() * 0.1;
+  var dx = (this.opts.max_x * 0.035);
+
   var x, y;
 
   y = 0;
@@ -174,19 +179,14 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
 
-  var h = (Date.now()%360 * 0.25) - 10;
-  gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+  gx.ctx.fillStyle = '#fc0';
   
   if(Math.random() < 0.025){
-    gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+    gx.ctx.fillStyle = 'rgba(255,0,0,0.5)';
     gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
   }
 
-  if(Math.random() < 0.025){
-    gx.ctx.fillStyle = 'rgba(255,255,255,1)';
-    gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
-  }
-  
+ 
   for (var i = 0; i < ix; i++) {
     if(frame.text[i] === "\n"){
       y ++;
@@ -195,6 +195,20 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
     }
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
+
+    var h = (Date.now()%360 * 0.25) - 10;
+    gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+    
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+      gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+    }
+
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+      gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+    }
+
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;
@@ -203,77 +217,15 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
   
 }
 
-Scenes.story.prototype.frames = [];
+Scenes.understand.prototype.frames = [];
 
-Scenes.story.prototype.frames.push({
+Scenes.understand.prototype.frames.push({
   text:[
-    'THE YEAR IS 2048',
+    'To defeat ',
+    'The Machines... ',
+    '                  ',
+    'First we must',
+    'understand',
+    'The Machines..'
   ].join("\n")
-})
-
-Scenes.story.prototype.frames.push({
-  text:[
-    '30 years ago we ',
-    'delegated the very ',
-    'runnings of our',
-    'lives to Machines.'
-  ].join("\n")
-})
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'Machines that learn.',
-  ].join("\n")
-})
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'The Machines learnt',
-    '...too well.'
-  ].join("\n")
-})
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'Today, all computing',
-    'resource on the planet',
-    'has been consolidated',
-    'in a vast Maze hewn',
-    'out of solid rock.'
-  ].join("\n")
-})
-
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'Humans have no access',
-    'to The Maze, but the',
-    'warm glow of it\'s',
-    'reactors make an',
-    'ideal home for',
-    'millions of flesh',
-    'eating RATS.'
-  ].join("\n")
-})
-
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'Your mission is to ',
-    'enter The Maze, sabotage',
-    'the power source of',
-    'The Machines and free',
-    'the Human Race from ',
-    'it\'s self inflicted,',
-    'automated prison',
-  ].join("\n")
-})
-
-Scenes.story.prototype.frames.push({
-  text:[
-    'You are our last,',
-    'best hope but until',
-    'today no Human has',
-    'ever returned from...',
- ].join("\n")
 })

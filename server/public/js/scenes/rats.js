@@ -18,10 +18,33 @@ Scenes.rats.prototype.layout = '';
 
 Scenes.rats.prototype.init = function(){
 
+  this.demo = new Actors.Demo(
+    this.env, {
+      scene: this
+    }, {
+    });
+
+  this.frames = [{
+    title:'Human'
+  }, {
+    title:'Breeder'
+  }, {
+    title:'Grey Rat'
+  }, {
+    title:'Baby Rat',
+  }, {
+    title:'King Rat',
+  }, {
+    title:'Droid',
+  }];
+  
 }
 
 Scenes.rats.prototype.getCast = function(){
   return {
+    Demo: Actors.Demo,
+    Demobreeder: Actors.Demobreeder,
+    Demorat: Actors.Demorat,
   }
 };
 
@@ -32,7 +55,7 @@ Scenes.rats.prototype.defaults = [{
   max: 1024
 }, {
   key: 'max_y',
-  value: 640,
+  value: 480,
   min: 32,
   max: 1024
 }, {
@@ -41,23 +64,8 @@ Scenes.rats.prototype.defaults = [{
   min: 1,
   max: 1
 }, {
-  key: 'step_delay',
-  value: 1,
-  min: 1,
-  max: 120
-}, {
-  key: 'step_hold',
-  value: 85,
-  min: 1,
-  max: 1000
-}, {
-  key: 'step_skip',
-  value: 1,
-  min: 1,
-  max: 20
-}, {
-  key: 'frame_hold',
-  value: 140,
+  key: 'hold',
+  value: 3000,
   min: 1,
   max: 2400
 }, {
@@ -70,76 +78,37 @@ Scenes.rats.prototype.defaults = [{
 Scenes.rats.prototype.genAttrs = function(){
   return {
     frame_index: 0,
-    step_index: 0,
     time: 0,
-    hold: 0,
   };
 };
 
 Scenes.rats.prototype.update = function(delta){
+  this.demo.update(delta)
 
-  if(this.attrs.hold > 0){
-    this.attrs.hold -= delta;
-    if(this.attrs.hold <= 0){
-      this.attrs.hold = 0;
-      this.attrs.step_index = 0;
-      this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.rats.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
-    }
-  } else {
-    this.attrs.time += this.env.diff * 100;
-    if (this.attrs.time > this.opts.step_hold) {
-      this.attrs.time = 0;
-      this.attrs.step_index += this.opts.step_skip;
-      if (this.attrs.step_index >= Scenes.rats.prototype.frames[this.attrs.frame_index].text.length) {
-        this.attrs.hold = this.opts.frame_hold;
-      }
+  this.attrs.time += this.env.diff;
+  if (this.attrs.time > this.opts.hold) {
+    this.attrs.time = 0;
+    this.attrs.frame_index ++;
+    if (this.attrs.frame_index >= this.frames.length) {
+      this.attrs.frame_index = 0;
     }
   }
-  
 }
 
 Scenes.rats.prototype.paint = function(fx, gx, sx){
 
-  var frame = Scenes.rats.prototype.frames[this.attrs.frame_index];
+  this.demo.paint(gx)
 
-  var ix = this.attrs.step_index;
-  if(ix >= frame.text.length){
-    ix = frame.text.length;
-  }
-  
-  gx.ctx.fillStyle = '#0f0';
-  //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
-  gx.ctx.font = '28pt ubuntu mono';
+  var frame = this.frames[this.attrs.frame_index];
 
-  var yy = (this.opts.max_y * 0.2);
-  var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.027);
-  var y = 0;
-  var x = 0;
-  for (var i = 0; i < ix; i++) {
-    if(frame.text[i] === "\n"){
-      y ++;
-      x = 0;
-      continue;
-    }
-    gx.ctx.save();
-    gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
-    gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
-    gx.ctx.restore();
-    x ++;
-  }
+  gx.ctx.fillStyle='#0f0';
+  gx.ctx.textAlign='center';
+  gx.ctx.font = '28pt robotron';
 
-  
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
+  gx.ctx.translate(Math.random(), Math.random());
+  gx.ctx.fillText(frame.title, 0, 0);
+  gx.ctx.restore();
+
 }
-
-Scenes.rats.prototype.frames = [];
-
-Scenes.rats.prototype.frames[0] = {
-  text:[
-    'Rats and baby rats',
-  ].join("\n"),
-};

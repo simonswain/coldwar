@@ -3,29 +3,29 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.reactor = function(env, opts){
+Scenes.robots = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.reactor.prototype = Object.create(Scene.prototype);
+Scenes.robots.prototype = Object.create(Scene.prototype);
 
-Scenes.reactor.prototype.title = 'Reactor';
+Scenes.robots.prototype.title = 'Robots';
 
-Scenes.reactor.prototype.layout = '';
+Scenes.robots.prototype.layout = '';
 
-Scenes.reactor.prototype.init = function(){
+Scenes.robots.prototype.init = function(){
 
 }
 
-Scenes.reactor.prototype.getCast = function(){
+Scenes.robots.prototype.getCast = function(){
   return {
   }
 };
 
-Scenes.reactor.prototype.defaults = [{
+Scenes.robots.prototype.defaults = [{
   key: 'max_x',
   value: 640,
   min: 32,
@@ -67,7 +67,7 @@ Scenes.reactor.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.reactor.prototype.genAttrs = function(){
+Scenes.robots.prototype.genAttrs = function(){
   return {
     frame_index: 0,
     step_index: 0,
@@ -76,32 +76,34 @@ Scenes.reactor.prototype.genAttrs = function(){
   };
 };
 
-Scenes.reactor.prototype.update = function(delta){
+Scenes.robots.prototype.update = function(delta){
+
   if(this.attrs.hold > 0){
-    // this.attrs.hold -= delta;
-    // if(this.attrs.hold <= 0){
-    //   this.attrs.hold = 0;
-    //   this.attrs.step_index = 0;
-    //   this.attrs.frame_index ++;
-    //   if(this.attrs.frame_index === Scenes.reactor.prototype.frames.length){
-    //     this.attrs.frame_index = 0;
-    //   }
-    // }
+    this.attrs.hold -= delta;
+    if(this.attrs.hold <= 0){
+      this.attrs.hold = 0;
+      this.attrs.step_index = 0;
+      this.attrs.frame_index ++;
+      if(this.attrs.frame_index === Scenes.robots.prototype.frames.length){
+        this.attrs.frame_index = 0;
+      }
+    }
   } else {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
       this.attrs.step_index += this.opts.step_skip;
-      if (this.attrs.step_index >= Scenes.reactor.prototype.frames[this.attrs.frame_index].text.length) {
+      if (this.attrs.step_index >= Scenes.robots.prototype.frames[this.attrs.frame_index].text.length) {
         this.attrs.hold = this.opts.frame_hold;
       }
     }
-  } 
+  }
+  
 }
 
-Scenes.reactor.prototype.paint = function(fx, gx, sx){
+Scenes.robots.prototype.paint = function(fx, gx, sx){
 
-  var frame = Scenes.reactor.prototype.frames[this.attrs.frame_index];
+  var frame = Scenes.robots.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
@@ -122,8 +124,8 @@ Scenes.reactor.prototype.paint = function(fx, gx, sx){
     }
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
-    var h = ((Date.now()/5) - i*2) % 255;
-    gx.ctx.fillStyle = 'hsl(' + h + ',100%,50%)';
+    var h = ((Date.now()/5) - i*5) % 255;
+    gx.ctx.fillStyle = '#fff';
     gx.ctx.font = '28pt robotron';
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
@@ -133,18 +135,15 @@ Scenes.reactor.prototype.paint = function(fx, gx, sx){
   
 }
 
-Scenes.reactor.prototype.frames = [];
+Scenes.robots.prototype.frames = [];
 
-Scenes.reactor.prototype.frames[0] = {
+// paradroid roomba style robots
+
+Scenes.robots.prototype.frames[0] = {
   text:[
-    'Each section',
-    'of the maze',
-    'has a reactor.',
-    '    ',
-    'Find it',
-    'sabotage',
-    'get out',
-    '    ',
-    'befre it explodes'
+    'Although the machines are',
+    'imobile, their robot servants',
+    'patrol the maze, keeping it clean',
+    'and free of intruders',
   ].join("\n"),
 };

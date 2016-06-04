@@ -29,7 +29,7 @@ Actors.Reactor.prototype.init = function (attrs) {
 
 Actors.Reactor.prototype.defaults = [{
   key: 'r',
-  value: 96,
+  value: 180,
   min: 1,
   max: 128
 }]
@@ -75,15 +75,12 @@ Actors.Reactor.prototype.paint = function (view) {
 
 
   
-  // // var z = this.opts.z;
-  // // view.ctx.beginPath()
-  // // view.ctx.strokeStyle = '#f0f'
-
-  // // if(this.env.ms < 500){
-  // //   view.ctx.arc(0, 0, z / 4, 0, 2 * Math.PI)
-  // // }
-
-  // // view.ctx.rect(-z/2, -z/2, z, z)
-  // view.ctx.stroke()
-
+  var z = this.opts.r * 2;
+  if(this.attrs.primed && this.env.ms / 100 < 1){
+    view.ctx.strokeStyle = '#fff'
+    view.ctx.lineWidth = 8
+    view.ctx.beginPath()
+    view.ctx.rect(-z/2, -z/2, z, z)
+    view.ctx.stroke()
+  }
 }

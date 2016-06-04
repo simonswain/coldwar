@@ -73,65 +73,9 @@ Scenes.index.prototype.tick = function () {
 
 Scenes.index.prototype.init = function () {
 
-  this.scenes = [{
-    title: 'Loading',
-    slug: 'loading'
-  }, {
-    title: 'Title',
-    slug: 'title'
-  }, {
-    title: 'Story',
-    slug: 'story'
-  }, {
-    title: 'Cell',
-    slug: 'cell'
-  }, {
-    title: 'Maze',
-    slug: 'maze'
-  }, {
-    title: 'Mazegen',
-    slug: 'mazegen'
-  }, {
-    title: 'Goal',
-    slug: 'goal'
-  }, {
-    title: 'A*',
-    slug: 'astar'
-  }, {
-    title: 'Rats',
-    slug: 'rats'
-  }, {
-    title: 'Swarm', //  of Rats seeking you in the maze
-    slug: 'swarm'
-  }, {
-    title: 'Factory',
-    slug: 'factory'
-  }, {
-    title: 'Weapons',
-    slug: 'weapons'
-  }, {
-    title: 'Reactor',
-    slug: 'reactor'
-  }, {
-    title: 'King Rat',
-    slug: 'king_rat'
-  }, {
-    title: 'Robots',
-    slug: 'robots'
-  }, {
-    title: 'Machines',
-    slug: 'machines'
-  }, {
-    title: 'Sonics',
-    slug: 'sonics'
-  }, {
-    title: 'Tone',
-    slug: 'tone'
-  }, {
-    title: 'R.o.t.M',
-    slug: 'rats_of_the_maze'
-  }]
-}
+  this.scenes = Coldwar.prototype.scenes;
+
+ }
 
 Scenes.index.prototype.render = function () {
   var html

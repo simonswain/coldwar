@@ -290,6 +290,7 @@ Actors.Factory.prototype.paint = function (view) {
   }
 
   view.ctx.restore()
+
 }
 
 Actors.Factory.prototype.elevation = function (view) {

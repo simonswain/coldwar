@@ -1,6 +1,6 @@
 /* global Actors, Actor, Vec3 */
 
-Actors.Cell = function (env, refs, attrs) {
+Actors.Demo = function (env, refs, attrs) {
   this.env = env
   this.refs = refs
   this.opts = this.genOpts()
@@ -8,11 +8,11 @@ Actors.Cell = function (env, refs, attrs) {
   this.init()
 }
 
-Actors.Cell.prototype = Object.create(Actor.prototype)
+Actors.Demo.prototype = Object.create(Actor.prototype)
 
-Actors.Cell.prototype.title = 'Cell'
+Actors.Demo.prototype.title = 'Demo'
 
-Actors.Cell.prototype.genAttrs = function (attrs) {
+Actors.Demo.prototype.genAttrs = function (attrs) {
   return {
     i: attrs.i,
     x: attrs.x,
@@ -24,16 +24,7 @@ Actors.Cell.prototype.genAttrs = function (attrs) {
   }
 }
 
-Actors.Cell.prototype.init = function () {
-
-  // top right bottom left 
-  this.exits = [
-    null, null, null, null
-  ];
-  
-  this.gridmates = [
-    null, null, null, null
-  ];
+Actors.Demo.prototype.init = function () {
 
   this.humans = [];
   this.breeders = [];
@@ -43,14 +34,36 @@ Actors.Cell.prototype.init = function () {
   this.zaps = [];
   this.robots = [];
   this.reactors = [];
-  this.portals = [];
 
+  this.breeders.push(new Actors.Demobreeder(
+    this.env, {
+      demo: this,
+      rats: this.rats,
+    }, {
+      x: this.opts.max_x * 0.9,
+      y: this.opts.max_y * 0.5
+    }));
+
+  var human
+
+  human = new Actors.Demohuman(
+    this.env, {
+      maze: this.refs.maze,
+      demo: this,
+    }, {
+      x: this.opts.max_x * 0.15,
+      y: this.opts.max_y * 0.5,
+    })
+
+  this.humans.push(human)
+  return human;
+  
 }
 
-Actors.Cell.prototype.defaults = [{
+Actors.Demo.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 480,
+  value: 640,
   min: 100,
   max: 1600
 }, {
@@ -66,16 +79,16 @@ Actors.Cell.prototype.defaults = [{
   max: 1
 }]
 
-Actors.Cell.prototype.colors = [
+Actors.Demo.prototype.colors = [
   '#00c',
   '#090',
   '#fff'
 ]
 
-Actors.Cell.prototype.addZap = function (x, y, target_x, target_y) {
-  this.zaps.push(new Actors.Zap(
+Actors.Demo.prototype.addZap = function (x, y, target_x, target_y) {
+  this.zaps.push(new Actors.Demozap(
     this.env, {
-      cell: this,
+      demo: this,
     }, {
       x: x,
       y: y,
@@ -84,20 +97,10 @@ Actors.Cell.prototype.addZap = function (x, y, target_x, target_y) {
     }));
 }
 
-Actors.Cell.prototype.addBreeder = function () {
-  this.breeders.push(new Actors.Breeder(
-    this.env, {
-      cell: this,
-    }, {
-      x: this.opts.max_x * 0.5,
-      y: this.opts.max_y * 0.5
-    }));
-}
-
-Actors.Cell.prototype.addReactor = function () {
+Actors.Demo.prototype.addReactor = function () {
   var reactor = new Actors.Reactor(
     this.env, {
-      cell: this,
+      demo: this,
     }, {
       x: this.opts.max_x * 0.5,
       y: this.opts.max_y * 0.5
@@ -107,14 +110,14 @@ Actors.Cell.prototype.addReactor = function () {
 }
 
 
-Actors.Cell.prototype.addHuman = function () {
+Actors.Demo.prototype.addHuman = function () {
 
   var human
 
   human = new Actors.Human(
     this.env, {
       maze: this.refs.maze,
-      cell: this,
+      demo: this,
     }, {
       x: this.opts.max_x * 0.75,
       y: this.opts.max_y * 0.25,
@@ -125,35 +128,8 @@ Actors.Cell.prototype.addHuman = function () {
   
 }
 
-Actors.Cell.prototype.addPortal = function () {
-  var portal
-  portal = new Actors.Portal(
-    this.env, {
-      maze: this.refs.maze,
-      cell: this,
-    }, {
-      x: this.opts.max_x * 0.5,
-      y: this.opts.max_y * 0.5,
-    })
-  this.portals.push(portal)
-  return portal;
-}
+Actors.Demo.prototype.update = function (delta) {
 
-Actors.Cell.prototype.update = function (delta) {
-  var intentToHuman = null;
-
-  if(this.refs.maze && this.refs.maze.human){
-    this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
-
-    var qq=[];
-    for(var i=0; i<4; i++){
-      if(this.exits[i] && this.exits[i].attrs.i == this.routeToHuman[1]){
-        intentToHuman = i;
-        break;
-      }
-    }
-  }
-  
   var i, ii;
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     if(this.breeders[i]){
@@ -163,7 +139,7 @@ Actors.Cell.prototype.update = function (delta) {
 
   for (i = 0, ii = this.rats.length; i<ii; i++) {
     if(this.rats[i]){
-      this.rats[i].update(delta, intentToHuman);
+      this.rats[i].update(delta);
     }
   }
 
@@ -214,13 +190,13 @@ Actors.Cell.prototype.update = function (delta) {
   
 }
 
-Actors.Cell.prototype.paint = function (view) {
+Actors.Demo.prototype.paint = function (view) {
   
-  // view.ctx.strokeStyle = '#666'
-  // view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-  // view.ctx.stroke()
+  view.ctx.strokeStyle = '#666'
+  view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
+  view.ctx.stroke()
 
-  var intents = [[0,-1],[1,0],[0,1],[-1,0]];
+  // var intents = [[0,-1],[1,0],[0,1],[-1,0]];
   
   // for(var i=0; i<4; i++){
   //   if(this.exits[i]){
@@ -277,7 +253,7 @@ Actors.Cell.prototype.paint = function (view) {
   }
   
   //trbl
-  // expect cell.exits to br array of 4 cells or nulls
+  // expect demo.exits to br array of 4 demos or nulls
   var vecs =  [
     [0, 0, 1, 0],
     [1, 0, 1, 1],
@@ -290,24 +266,24 @@ Actors.Cell.prototype.paint = function (view) {
     rgb = '153, 0, 0';
   }
   
-  for(var exit = 0; exit < 4; exit ++){
+  // for(var exit = 0; exit < 4; exit ++){
 
-    if(this.exits[exit]){
-    }
+  //   if(this.exits[exit]){
+  //   }
 
-    if(!this.exits[exit]){
+  //   if(!this.exits[exit]){
 
-      view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
-      if(!this.gridmates[exit]){
-        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
-      }
+  //     view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
+  //     if(!this.gridmates[exit]){
+  //       view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
+  //     }
    
-      view.ctx.beginPath()
-      view.ctx.moveTo(this.opts.max_x * vecs[exit][0], this.opts.max_y * vecs[exit][1])
-      view.ctx.lineTo(this.opts.max_x * vecs[exit][2], this.opts.max_y * vecs[exit][3])
-      view.ctx.stroke()
-    }
-  }
+  //     view.ctx.beginPath()
+  //     view.ctx.moveTo(this.opts.max_x * vecs[exit][0], this.opts.max_y * vecs[exit][1])
+  //     view.ctx.lineTo(this.opts.max_x * vecs[exit][2], this.opts.max_y * vecs[exit][3])
+  //     view.ctx.stroke()
+  //   }
+  // }
 
   view.ctx.restore()
 
@@ -316,16 +292,9 @@ Actors.Cell.prototype.paint = function (view) {
     reactor = this.reactors[i];
     view.ctx.save()
     view.ctx.translate(reactor.pos.x, reactor.pos.y);
-    this.reactors[i].paint(view)
-    view.ctx.restore()
-  }
 
-  var portal
-  for (i = 0, ii = this.portals.length; i<ii; i++) {
-    portal = this.portals[i];
-    view.ctx.save()
-    view.ctx.translate(portal.pos.x, portal.pos.y);
-    this.portals[i].paint(view)
+    this.reactors[i].paint(view)
+
     view.ctx.restore()
   }
   

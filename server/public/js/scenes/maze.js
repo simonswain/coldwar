@@ -37,7 +37,7 @@ Scenes.maze.prototype.getCast = function () {
 Scenes.maze.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 480,
+  value: 640,
   min: 100,
   max: 1600
 }, {

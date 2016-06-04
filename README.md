@@ -1,6 +1,24 @@
-# Cold War
+# Rats of the Maze
 
-[coldwar.io](https://coldwar.io)
+The year is 2048.
+
+Thirty years ago we outsourced the mundane running of our lives to Machines. Machines that learn. The Machines learnt too well.
+
+All computing resource on the planet has been consolidated in an immense Maze hewn out of solid rock.
+
+No humans are permitted in The Maze, but the warm glow of it's reactors make it an ideal home for millions of giant Rats.
+
+Your mission is to enter The Maze and deactivate the systems that power The Machines.
+
+No human has ever returned from The Maze of the Rats.
+
++++ TRANSMISSION END
+
+Rats of the Maze is an arcade simulation.
+
+The talk will be a journey through the theory and technique of programming radioactive maze-solving rats that seek human flesh -- a journey from the very foundations of computer memory through to the algorithms used to create and solve mazes, wrapped up in unique hand crafted vector graphics running in the browser.
+
+[ratsofthemaze.com](https://ratsofthemaze.com)
 
 ## Simulation Platform
 

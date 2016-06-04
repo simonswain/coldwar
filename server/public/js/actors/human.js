@@ -34,8 +34,8 @@ Actors.Human.prototype.defaults = [{
   max: 100
 }, {
   key: 'speed_flux',
-  value: 5,
-  min: 0,
+  value: 3,
+  min: 0.2,
   max: 50
 }, {
   key: 'velo_scale',
@@ -45,7 +45,7 @@ Actors.Human.prototype.defaults = [{
   step: 0.1
 }, {
   key: 'intent_scale',
-  value: 35,
+  value: 20,
   min: 0,
   max: 100,
 }, {
@@ -128,7 +128,7 @@ Actors.Human.prototype.defaults = [{
   max: 100
 }, {
   key: 'flashbang_rats',
-  value: 6,
+  value: 15,
   min: 1,
   max: 100
 }, {
@@ -166,57 +166,61 @@ Actors.Human.prototype.update = function (delta) {
   this.shoot()
 
   this.flashbang()
-  //console.log(this.refs.cell.attrs.i, this.refs.maze.attrs.entry_cell, this.refs.maze.attrs.reactor_cell);
-  if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.maze.attrs.escape ){
-    //console.log('AT REACTOR');
-    this.refs.maze.attrs.escape = true;
-  } if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
-    //console.log('BACK TO START');
-    this.env.restart()
-  } else{
 
-    if(this.refs.maze.attrs.escape){
-      // escaping from countdown
-      route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.entry_cell]);
-    } else {
-      // seeking reactor
-      route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
-      route.push(this.refs.maze.attrs.reactor_cell)
-     }
-
-    if(route[0] === this.refs.cell.attrs.i){
-      route.shift();
+  if(this.refs.maze){
+    if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell){
+      this.refs.maze.attrs.escape = true;
     }
-
-    var intent = null;
-    var intents = [[0,-1],[1,0],[0,1],[-1,0]];
-    var qq=[];
-    for(var i=0; i<4; i++){
-      if(this.refs.cell.exits[i] && this.refs.cell.exits[i].attrs.i == route[0]){
-        intent = i;
-        break;
-      }
-    }
-    if(intent !== null){
-      vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(this.opts.intent_scale))
-      if(intent === 1 || intent === 3){
-        if(this.pos.y < this.refs.cell.opts.max_y * 0.4){
-          vec.add(new Vec3(0, 1).scale(this.opts.intent_scale))
-        }
-        if(this.pos.y > this.refs.cell.opts.max_y * 0.6){
-          vec.add(new Vec3(0, -1).scale(this.opts.intent_scale))
-        }
+    if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
+      this.env.restart()
+    } else{
+     
+      if(this.refs.maze.attrs.escape){
+        // escaping from countdown
+        route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.entry_cell]);
+      } else {
+        // seeking reactor
+        route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.reactor_cell]);
+        //
+        route.push(this.refs.maze.attrs.reactor_cell)
       }
 
-      if(intent === 0 || intent === 2){
-        if(this.pos.x < this.refs.cell.opts.max_x * 0.4){
-          vec.add(new Vec3(1, 0).scale(this.opts.intent_scale))
-        }
-        if(this.pos.x > this.refs.cell.opts.max_x * 0.6){
-          vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
+      if(route[0] === this.refs.cell.attrs.i){
+        route.shift();
+      }
+
+      var intent = null;
+      var intents = [[0,-1],[1,0],[0,1],[-1,0]];
+      var qq=[];
+      for(var i=0; i<4; i++){
+        if(this.refs.cell.exits[i] && this.refs.cell.exits[i].attrs.i == route[0]){
+          intent = i;
+          break;
         }
       }
-      
+      if(intent !== null){
+        vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(this.opts.intent_scale))
+        if(intent === 1 || intent === 3){
+          if(this.pos.y < this.refs.cell.opts.max_y * 0.4){
+            vec.add(new Vec3(0, 1).scale(this.opts.intent_scale))
+          }
+          if(this.pos.y > this.refs.cell.opts.max_y * 0.6){
+            vec.add(new Vec3(0, -1).scale(this.opts.intent_scale))
+          }
+        }
+
+        if(intent === 0 || intent === 2){
+          if(this.pos.x < this.refs.cell.opts.max_x * 0.4){
+            vec.add(new Vec3(1, 0).scale(this.opts.intent_scale))
+          }
+          if(this.pos.x > this.refs.cell.opts.max_x * 0.6){
+            vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
+          }
+        }
+        
+      }
+
+
     }
   }
 
@@ -630,36 +634,36 @@ Actors.Human.prototype.paint = function (view) {
 
   view.ctx.restore()
   
-  if(this.attrs.intent === 0){
-    view.ctx.strokeStyle = '#f00'
-    view.ctx.beginPath()
-    view.ctx.moveTo(0, 0)
-    view.ctx.lineTo(0, -2*z)
-    view.ctx.stroke()
-  }
+  // if(this.attrs.intent === 0){
+  //   view.ctx.strokeStyle = '#f00'
+  //   view.ctx.beginPath()
+  //   view.ctx.moveTo(0, 0)
+  //   view.ctx.lineTo(0, -2*z)
+  //   view.ctx.stroke()
+  // }
 
-  if(this.attrs.intent === 1){
-    view.ctx.strokeStyle = '#f00'
-    view.ctx.beginPath()
-    view.ctx.moveTo(0, 0)
-    view.ctx.lineTo(2*z, 0)
-    view.ctx.stroke()
-  }
+  // if(this.attrs.intent === 1){
+  //   view.ctx.strokeStyle = '#f00'
+  //   view.ctx.beginPath()
+  //   view.ctx.moveTo(0, 0)
+  //   view.ctx.lineTo(2*z, 0)
+  //   view.ctx.stroke()
+  // }
 
-  if(this.attrs.intent === 2){
-    view.ctx.strokeStyle = '#f00'
-    view.ctx.beginPath()
-    view.ctx.moveTo(0, 0)
-    view.ctx.lineTo(0, 2*z)
-    view.ctx.stroke()
-  }
+  // if(this.attrs.intent === 2){
+  //   view.ctx.strokeStyle = '#f00'
+  //   view.ctx.beginPath()
+  //   view.ctx.moveTo(0, 0)
+  //   view.ctx.lineTo(0, 2*z)
+  //   view.ctx.stroke()
+  // }
 
-  if(this.attrs.intent === 3){
-    view.ctx.strokeStyle = '#f00'
-    view.ctx.beginPath()
-    view.ctx.moveTo(0, 0)
-    view.ctx.lineTo(-2*z, 0)
-    view.ctx.stroke()
-  }
+  // if(this.attrs.intent === 3){
+  //   view.ctx.strokeStyle = '#f00'
+  //   view.ctx.beginPath()
+  //   view.ctx.moveTo(0, 0)
+  //   view.ctx.lineTo(-2*z, 0)
+  //   view.ctx.stroke()
+  // }
   
 }

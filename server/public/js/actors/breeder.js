@@ -30,13 +30,13 @@ Actors.Breeder.prototype.init = function (attrs) {
 Actors.Breeder.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 128,
+  value: 96,
   min: 100,
   max: 1600
 }, {
   key: 'max_y',
   info: 'Max Y',
-  value: 64,
+  value: 96,
   min: 100,
   max: 1000
 }, {

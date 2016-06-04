@@ -40,8 +40,9 @@ Coldwar.prototype.boot = function () {
     this.setOpts(i, Actors[i].prototype.defaults, opts[i])
   }
   this.env = this.genEnv()
+  this.slug = scene;
   this.Scene = Scenes[scene]
-
+  
   if (scene === 'index') {
     this.env.show_opts = false
   }
@@ -59,7 +60,6 @@ Coldwar.prototype.start = function (scene, opts) {
   this.env.timer = 0
   this.env.ms = 0
   this.env.diff = 0
-
   this.scene = new this.Scene(
     this.env,
     this.optsVals.scene
@@ -495,6 +495,43 @@ Coldwar.prototype.toggleMeta = function () {
   this.env.show_meta = !this.env.show_meta
 }
 
+Coldwar.prototype.goto = function(key){
+  window.location.href='/' + key
+  // document.title = key;
+  // window.history.pushState(null, '', '/' + key);
+  // this.boot();
+};
+
+Coldwar.prototype.goPrev = function(){
+  var prev = null;
+  var ix = 0;
+  prev = this.scenes[0].slug;
+  while(this.scenes[ix].slug !== this.slug && ix < this.scenes.length - 1){
+    prev = this.scenes[ix].slug;
+    ix ++;
+  }
+  this.goto(prev);
+};
+
+Coldwar.prototype.goNext = function(){
+  var next = null;
+  if(!this.scene){
+    this.render(this.scenes[0].slug);
+    return;
+  }
+  
+  // next
+  var ix = 0;
+  while(this.scenes[ix].slug !== this.slug && ix < this.scenes.length - 1){
+    ix ++;
+  }
+  ix ++;
+  if(ix === this.scenes.length){
+    ix --;
+  }
+  this.goto(this.scenes[ix].slug);
+};
+
 Coldwar.prototype.advanceCaptions = function () {
   this.env.caption_index++
   if (this.env.caption_index >= this.scene.captions.length) {
@@ -558,23 +595,13 @@ Coldwar.prototype.layout = function () {
   if (this.env.show_opts) {
     html += '<div id="controls">'
     html += '<div id="params">'
-    html += '<div class="expose expose-params expose-active">&equiv;</div>'
     if (this.Scene) {
       html += '<div class="title">' + this.Scene.prototype.title + '</div>'
     }
     html += '</div>'
     html += '<div id="options"></div>'
     html += '</div>'
-  } else {
-    html += '<div class="expose expose-params">&equiv;</div>'
   }
-
-  html += '<div class="expose expose-help">?</div>'
-
-  html += '<div id="help">'
-  html += '<div class="help-content">'
-  html += '</div>'
-  html += '</div>'
 
   if (this.scene && typeof this.scene.render === 'function') {
     html += '<div id="content" class="' + c + '"></div>'
@@ -582,14 +609,7 @@ Coldwar.prototype.layout = function () {
     html += '<div id="content" class="' + c + '"></div>'
   }
 
-  // html += '<div id="index">'
-  // html += '</div>'
-
   this.env.el.innerHTML = html
-
-  document.querySelector('.expose-params').addEventListener('click', this.toggleOpts.bind(this), false)
-
-  document.querySelector('.expose-help').addEventListener('click', this.toggleHelp.bind(this), false)
 
   if (this.env.show_opts) {
     this.paintOpts()
@@ -808,79 +828,193 @@ Coldwar.prototype.bindKeys = function () {
 }
 
 Coldwar.prototype.onKey = function (e) {
+
+  //console.log(e.which);
+
   switch (e.which) {
-    case 9:
-      // 'tab'
-      e.preventDefault()
-      this.toggleOpts()
-      break
+  case 9:
+    // 'tab'
+    e.preventDefault()
+    this.toggleOpts()
+    break
 
-    case 13:
-      // 'cr'
-      e.preventDefault()
-      this.restart()
-      break
+  case 13:
+    // 'cr'
+    e.preventDefault()
+    this.restart()
+    break
 
-    case 27:
-      // 'esc'
-      e.preventDefault()
-      window.location.href = '/'
-      break
+  case 27:
+    // 'esc'
+    e.preventDefault()
+    window.location.href = '/'
+    break
 
-    case 32:
-      // 'space'
-      e.preventDefault()
-      this.advanceCaptions()
-      break
+    // left
+  case 37:
+    // prev
+    this.goPrev();
+    break;
 
-    case 39:
-      e.preventDefault()
-      this.advanceCaptions()
-      break
+    // right
+  case 39:
+    this.goNext();
+    // next
+    break;
 
-    case 37:
-      e.preventDefault()
-      this.retreatCaptions()
-      break
+    // space
+  case 32:
+    this.goNext();
+    // next
+    break;
 
-    case 48:
-      // '0'
-      e.preventDefault()
-      this.resetZoom()
-      break
+  case 39:
+    e.preventDefault()
+    this.advanceCaptions()
+    break
 
-    case 96:
-      // pad '0'
-      e.preventDefault()
-      this.resetZoom()
-      break
+  case 37:
+    e.preventDefault()
+    this.retreatCaptions()
+    break
 
-    case 107:
-    case 187:
-      // +
-      e.preventDefault()
-      this.doZoom(1)
-      break
+  case 48:
+    // '0'
+    e.preventDefault()
+    this.resetZoom()
+    break
 
-    case 109:
-    case 189:
-      // -
-      e.preventDefault()
-      this.doZoom(-1)
-      break
+  case 96:
+    // pad '0'
+    e.preventDefault()
+    this.resetZoom()
+    break
 
-    case 220:
-      // '\'
-      e.preventDefault()
-      this.toggleMeta()
-      break
+  case 107:
+  case 187:
+    // +
+    e.preventDefault()
+    this.doZoom(1)
+    break
 
-    case 191:
-      // '?'
-      e.preventDefault()
-      if (e.shiftKey) {
-        this.toggleHelp()
-      }
-      break
+  case 109:
+  case 189:
+    // -
+    e.preventDefault()
+    this.doZoom(-1)
+    break
+
+  case 220:
+    // '\'
+    e.preventDefault()
+    this.toggleMeta()
+    break
+
+  case 191:
+    // '?'
+    e.preventDefault()
+    if (e.shiftKey) {
+      this.toggleHelp()
+    }
+    break
   }
+
 }
+
+Coldwar.prototype.scenes = [{
+  title: 'Index',
+  slug: 'index'
+}, {
+  title: 'Logo',
+  slug: 'logo'
+}, {
+  title: 'Story',
+  slug: 'story'
+}, {
+  title: 'Title',
+  slug: 'title'
+}, {
+  title: 'Understand',
+  slug: 'understand'
+}, {
+  title: 'Capacitor',
+  slug: 'capacitor'
+}, {
+  title: 'Discharge',
+  slug: 'discharge'
+}, {
+  title: 'Refresh',
+  slug: 'refresh'
+}, {
+  title: 'Byte',
+  slug: 'byte'
+}, {
+  title: 'Bit Shift',
+  slug: 'bitshifting'
+}, {
+  title: 'Bytes',
+  slug: 'bytes'
+}, {
+  title: 'Address',
+  slug: 'address'
+}, {
+  title: 'CRT',
+  slug: 'crt'
+}, {
+  title: 'Cells',
+  slug: 'cells'
+}, {
+  title: 'Drunken',
+  slug: 'drunken'
+}, {
+  title: 'Data Structure',
+  slug: 'datastructure'
+}, {
+  title: 'Dungeon',
+  slug: 'dungeon'
+}, {
+  title: 'Mazegen',
+  slug: 'mazegen'
+}, {
+  title: 'Solver',
+  slug: 'solver'
+}, {
+  title: 'Briefing',
+  slug: 'briefing'
+}, {
+  title: 'Machines',
+  slug: 'machines'
+}, {
+  title: 'Reactor',
+  slug: 'reactor'
+}, {
+  title: 'Robots',
+  slug: 'robots'
+}, {
+  title: 'Weapons',
+  slug: 'weapons'
+}, {
+  title: 'Rats',
+  slug: 'rats'
+}, {
+  title: 'Baby Rats',
+  slug: 'baby_rats'
+}, {
+  title: 'King Rat',
+  slug: 'king_rat'
+}, {
+  title: 'Factory',
+  slug: 'factory'
+}, {
+  title: 'Cell',
+  slug: 'cell'
+}, {
+  title: 'Rats of the Maze',
+  slug: 'maze'
+}]
+
+// dungeon contains mazes
+// maze 1 basic maze
+// maze 2 more open maze with robots
+// mase 3 room with machine boss, maze growing from top and bottom
+// maze 4 king rat
