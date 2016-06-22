@@ -1,10 +1,10 @@
 /* global Actors, Actor */
 
-Actors.Maze = function (env, refs, attrs) {
+Actors.Maze = function (env, refs, attrs, opts) {
 
   this.env = env
   this.refs = refs
-  this.opts = this.genOpts()
+  this.opts = this.genOpts(opts)
   this.attrs = this.genAttrs(attrs)
   this.init()
 }
@@ -17,9 +17,12 @@ Actors.Maze.prototype.genAttrs = function (attrs) {
   return {
     max: Math.min(this.opts.max_x, this.opts.max_y),
     escape: false,
-    mode: attrs.mode || this.opts.mode,
+    escape_done: false,
     rows: attrs.rows || this.opts.rows,
     cols: attrs.cols || this.opts.cols,
+    humanCountdown: 60,
+    boom: false,
+    boomCountdown: 0
   }
 }
 
@@ -39,12 +42,12 @@ Actors.Maze.prototype.defaults = [{
   max: 1000
 }, {
   key: 'rows',
-  value: 8,
+  value: 3,
   min: 3,
   max: 24
 }, {
   key: 'cols',
-  value: 12,
+  value: 4,
   min: 8,
   max: 32
 }, {
@@ -53,18 +56,13 @@ Actors.Maze.prototype.defaults = [{
   min: 100,
   max: 1600
 }, {
-  key: 'mode',
-  value: 0,
-  min: 0,
-  max: 1
-}, {
   key: 'fit',
   value: 1,
   min: 0,
   max: 1
 }, {
   key: 'breeders',
-  value: 10,
+  value: 2,
   min: 0,
   max: 16
 }]
@@ -72,6 +70,8 @@ Actors.Maze.prototype.defaults = [{
 Actors.Maze.prototype.makeGrid = function () {
 
   // init blank grid
+  this.booms = [];
+
   this.cells = new Array(this.attrs.rows * this.attrs.cols);
   x = 0;
   y = 0;
@@ -95,30 +95,12 @@ Actors.Maze.prototype.makeGrid = function () {
 
   this.makeGridmates();
 
-  switch(this.attrs.mode){
-
-  case 1:
-    this.connectAllCells();
-    break;
-
-  case 2:
-    // step generate perfect maze
-    break;
-
-  default:
-    this.generatePerfectMaze();
-    this.randomBreeders(this.opts.breeders);
-    //this.maze.randomJoins(20);
-    //this.maze.randomReactors(1);
-    //this.maze.randomHumans(1);
-    this.attrs.entry_cell = 0;
-    this.attrs.reactor_cell = this.cells.length-1;
-    this.addReactor(this.attrs.reactor_cell);
-    this.human = this.addHuman(this.attrs.entry_cell);
-    this.portal = this.addPortal(this.attrs.entry_cell);
-    break;
-  }
-
+  this.generatePerfectMaze();
+  this.attrs.entry_cell = 0;
+  this.attrs.reactor_cell = this.cells.length-1;
+  this.addReactor(this.attrs.reactor_cell);
+  this.portal = this.addPortal(this.attrs.entry_cell);
+  this.randomBreeders(this.opts.breeders);
 
 }
 
@@ -217,69 +199,6 @@ Actors.Maze.prototype.generatePerfectMaze = function (max) {
 
 }
 
-Actors.Maze.prototype.stepGeneratePerfectMaze = function (delta) {
-
-  if(!this._steps){
-
-    this._steps = {
-      ttl: 0,
-      lifetime: 1, //ms
-    };
-
-    this._steps.ttl = this._steps.lifetime
-
-    this._steps.stack = [];
-    this._steps.total = this.cells.length
-    this._steps.visited = 1;
-
-  }
-
-  if(this._steps.ttl >= 0){
-    this._steps.ttl -= delta
-    return
-  }
-
-  this._steps.ttl += this._steps.lifetime
-
-  var n, i, j, k, c;
-  var cell, pick, other, dir
-  var flip = [2,3,0,1];
-
-  var cell = pickOne(this.cells)
-
-  while(this._steps.visited < this._steps.total){
-    n = [];
-    // find all neighbors of Cell with all walls intact
-    for(i=0; i<4; i ++){
-      if(cell.gridmates[i]){
-        c = 0;
-        other = cell.gridmates[i]
-        for(j=0; j<4; j++){
-          if(!other.exits[j]){
-            c++;
-          }
-        }
-        if(c === 4){
-          n.push([i, other])
-        }
-      }
-    }
-    if(n.length > 0){
-      pick = pickOne(n)
-      dir = pick[0]
-      other = pick[1]
-      cell.exits[dir] = other
-      other.exits[flip[dir]] = cell
-      this._steps.stack.push(cell)
-      cell = other
-      this._steps.visited ++
-    } else {
-      cell = this._steps.stack.pop()
-    }
-  }
-
-}
-
 
 Actors.Maze.prototype.randomJoin = function () {
 
@@ -302,7 +221,7 @@ Actors.Maze.prototype.randomJoin = function () {
 }
 
 
-Actors.Maze.prototype.randomSplit = function (max) {
+Actors.Maze.prototype.randomSplits = function (max) {
 
   if(!max){
     max = 1
@@ -361,6 +280,10 @@ Actors.Maze.prototype.randomBreeder = function (max) {
       continue;
     }
     if(this.cells[ix].reactors.length > 0){
+      x --;
+      continue;
+    }
+    if(this.cells[ix].portals.length > 0){
       x --;
       continue;
     }
@@ -528,27 +451,124 @@ Actors.Maze.prototype.route = function (cell, other) {
 
 Actors.Maze.prototype.update = function (delta) {
 
-  switch(this.attrs.mode){
-  case 1:
-    this.randomJoins(1);
-    this.randomSplit(1);
-    break;
+  if(this.attrs.humanCountdown > 0){
+    this.attrs.humanCountdown --;
 
-  case 2:
-    this.stepGeneratePerfectMaze(delta);
-    break;
+    if(this.attrs.humanCountdown === 15){
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'decolonize',
+          radius: 128,
+          x: 0,
+          y: 0,
+          color: '0,255,255'
+        }
+      ))
 
-  default:
-    break;
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'decolonize',
+          radius: 132,
+          x: 0,
+          y: 0,
+          color: '255,255,255',
+          ttl: 20
+        }
+      ))
+
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'decolonize',
+          radius: 82,
+          x: 0,
+          y: 0,
+          color: '255,255,255',
+          ttl: 60
+        }
+      ))
+    }
+
+    if(this.attrs.humanCountdown === 0){
+      this.human = this.addHuman(this.attrs.entry_cell);
+    }
   }
 
+  if(this.attrs.escape_done && !this.human.attrs.escaped){
+    this.human.attrs.escaped = true;
+    this.attrs.boom = true;;
+    this.attrs.boomCountdown = 60;
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'colonize',
+          radius: 128,
+          x: 0,
+          y: 0,
+          color: '0,255,255'
+        }
+      ))
 
-  //console.log(this.route);  
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'colonize',
+          radius: 132,
+          x: 0,
+          y: 0,
+          color: '255,255,255',
+          ttl: 20
+        }
+      ))
 
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'colonize',
+          radius: 82,
+          x: 0,
+          y: 0,
+          color: '255,255,255',
+          ttl: 60
+        }
+      ))
+  }
+  
+  if(this.attrs.boom && this.attrs.boomCountdown > 0){
+    this.attrs.boomCountdown --;
+    if(this.attrs.boomCountdown === 0){
+
+      var i, ii;
+      for (i = 0, ii = this.cells.length; i<ii; i++) {
+        this.cells[i].killAllActors();
+      }
+
+      setTimeout(this.env.restart, 2500)
+      //setTimeout(this.env.goNext, 2500)
+    }
+  }
+  
   var i, ii;
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     this.cells[i].update(delta);
   }
+
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(this.booms[i]){
+      this.booms[i].update(delta);
+    }
+  }
+
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(!this.booms[i] || this.booms[i].attrs.dead){
+      this.booms.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+
 }
 
 Actors.Maze.prototype.paint = function (view) {
@@ -580,7 +600,6 @@ Actors.Maze.prototype.paint = function (view) {
     (this.opts.max_y - (this.attrs.rows * w))/2
   );
 
-
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     x = i % this.attrs.cols;
     y = Math.floor(i/this.attrs.rows);
@@ -596,10 +615,17 @@ Actors.Maze.prototype.paint = function (view) {
 
   var routes, route, from, to, dx, dy;
 
+  // show route
+  
   if(this.human && this.human.attrs.route){
-
-  routes = this.human.attrs.route;
-  //routes = this.route;
+    routes = this.human.attrs.route; 
+    
+    if(!this._routeIndex){
+      this._routeIndex = 0;
+    }
+    if(this._routeIndex >=  routes.length){
+      this._routeIndex = 0;
+    }
 
     for(i = 0, ii<routes.length; i<ii; i++){
       route = routes[i];
@@ -624,11 +650,23 @@ Actors.Maze.prototype.paint = function (view) {
       from = this.cells[routes[i]];
       to = this.cells[routes[i+1]];
 
+      if(from && from.breeders.length > 0){
+        continue;
+      }
+      
       if(from && to){
-        if(this.attrs.escape){
-          view.ctx.strokeStyle='rgba(255,0,0,0.25)';
-        } else { 
-          view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+        if(Math.floor(this._routeIndex) === i){
+          if(this.attrs.escape){
+            view.ctx.strokeStyle='rgba(255,0,0,0.75)';
+          } else { 
+            view.ctx.strokeStyle='rgba(0,255,255,0.75)';
+          }
+        } else {
+          if(this.attrs.escape){
+            view.ctx.strokeStyle='rgba(255,0,0,0.25)';
+          } else { 
+            view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+          }
         }
         view.ctx.lineWidth = 1
         view.ctx.beginPath();
@@ -653,8 +691,32 @@ Actors.Maze.prototype.paint = function (view) {
       }
 
     }
+    this._routeIndex += 0.2
+    5;
   }
 
+  var boom;
+  for (i = 0, ii = this.booms.length; i < ii; i++) {
+    boom = this.booms[i]
+    if(!boom){
+      continue
+    }      
+    view.ctx.save()
+    view.ctx.translate(w/2 + boom.attrs.x * w, w/2 + boom.attrs.y * w);
+    this.booms[i].paint(view)
+    view.ctx.restore()
+  }
+
+  if(this.attrs.humanCountdown > 10){
+    view.ctx.save()
+    view.ctx.fillStyle = '#0ff'
+    view.ctx.font = '12pt robotron'
+    view.ctx.textAlign='center';
+    view.ctx.textBaseline='middle';
+    view.ctx.fillText(Math.floor(this.attrs.humanCountdown/10), w * 0.5, w * 0.5);
+    view.ctx.restore()
+  }
+ 
 
   view.ctx.restore()
 

@@ -26,14 +26,15 @@ Scenes.solver.prototype.genAttrs = function(){
 Scenes.solver.prototype.init = function(){
   this.makeGrid();
   this.attrs.ttl = this.opts.ttl;
-  this._steps = {
-    cell: pickOne(this.cells),
-    other: false,
-    stack: [],
-    total: this.cells.length,
-    visited: 1,
-    hot: false,
-  };
+  // this._steps = {
+  //   cell: pickOne(this.cells),
+  //   other: false,
+  //   stack: [],
+  //   total: this.cells.length,
+  //   visited: 1,
+  //   hot: false,
+  // };
+  this.generatePerfectMaze();
   this._solve = null;
 }
 
@@ -107,7 +108,10 @@ Scenes.solver.prototype.makeGrid = function () {
 
 Scenes.solver.prototype.update = function(delta){
   if(this.attrs.phase === 'gen'){
-    this.gen(delta);
+    this.makeGrid();
+    this.generatePerfectMaze();
+    this.attrs.phase = 'solve'
+    //this.gen(delta);
   } else {
     this.solve(delta);
   }
@@ -214,7 +218,7 @@ Scenes.solver.prototype.solve = function(delta){
       result.reverse();
       //console.log('RESULT', result);
 
-      this._steps.cell = false;
+      //this._steps.cell = false;
       this.attrs.phase = 'gen'
       this.init();
       return;
@@ -266,6 +270,52 @@ Scenes.solver.prototype.solve = function(delta){
   
   // if(solved){
   // }
+}
+
+Scenes.solver.prototype.generatePerfectMaze = function () {
+
+  var stack = [];
+  var cells = this.cells
+  var total = cells.length
+  var cell
+  var visited = 1;
+  var n; // neighbours
+  var i, j, k, c;
+  var pick, other, dir;
+  var flip = [2,3,0,1];
+
+  var cell = pickOne(cells)
+  while(visited < total){
+    n = [];
+    // find all neighbors of Cell with all walls intact
+    for(i=0; i<4; i ++){
+      if(cell.gridmates[i]){
+        c = 0;
+        other = cell.gridmates[i]
+        for(j=0; j<4; j++){
+          if(!other.exits[j]){
+            c++;
+          }
+        }
+        if(c === 4){
+          n.push([i, other])
+        }
+      }
+    }
+    if(n.length > 0){
+      pick = pickOne(n)
+      dir = pick[0]
+      other = pick[1]
+      cell.exits[dir] = other
+      other.exits[flip[dir]] = cell
+      stack.push(cell)
+      cell = other
+      visited ++
+    } else {
+      cell = stack.pop()
+    }
+  }
+
 }
 
 Scenes.solver.prototype.gen = function(delta){
@@ -460,6 +510,8 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
 
     var cell = this.cells[i];
 
+    gx.ctx.lineCap='round';
+    
     gx.ctx.save();
     gx.ctx.translate(ww * x * 0.1, hh * y * 0.1);
     gx.ctx.scale(0.9, 0.9);
@@ -472,15 +524,15 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
     
 
     if(this._solve.open.indexOf(i) > -1){
-      gx.ctx.fillStyle = '#f0f';
+      gx.ctx.fillStyle = '#f00';
       gx.ctx.beginPath();
       gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
     }
 
     if(this._solve.from_i === i){
-      gx.ctx.fillStyle = '#f0f';
+      gx.ctx.fillStyle = '#f00';
       if(Date.now() % 300 < 100){ 
-        gx.ctx.fillStyle = '#fdd';
+        gx.ctx.fillStyle = '#ff0';
       }
       gx.ctx.beginPath();
       gx.ctx.fillRect((x * ww), (y * hh), ww, hh);

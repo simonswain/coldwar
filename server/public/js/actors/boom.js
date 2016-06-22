@@ -22,7 +22,8 @@ Actors.Boom.prototype.styles = [
   'spinner',
   'expand',
   'laser',
-  'colonize'
+  'colonize',
+  'decolonize'
 ]
 
 Actors.Boom.prototype.genAttrs = function (attrs) {
@@ -228,32 +229,46 @@ Actors.Boom.prototype.paint = function (view) {
       view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
 
       view.ctx.beginPath()
-      view.ctx.moveTo(-radius, 0)
-      view.ctx.lineTo(radius, 0)
-      view.ctx.stroke()
+    view.ctx.moveTo(-radius, 0)
+    view.ctx.lineTo(radius, 0)
+    view.ctx.stroke()
 
-      view.ctx.restore()
-      break
+    view.ctx.restore()
+    break
 
-    case 7:
-    case 'colonize':
-      view.ctx.lineWidth = this.opts.fatness
-      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
-      view.ctx.beginPath()
-      view.ctx.rect(-radius / 2, -radius / 2, radius, radius)
-      view.ctx.stroke()
-      break
+  case 7:
+  case 'colonize':
+    view.ctx.lineWidth = this.opts.fatness
+    view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
+    view.ctx.beginPath()
+    view.ctx.rect(-radius / 2, -radius / 2, radius, radius)
+    view.ctx.stroke()
+    break
 
-    case 8:
-    case 'inbound':
-      for (i = 0; i < 10; i++) {
-        view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
-        view.ctx.lineWidth = this.fatness * (i / 10)
-        view.ctx.beginPath()
-        view.ctx.arc(0, 0, (radius / i) * (this.attrs.initial_radius / i), 0, 2 * Math.PI)
-        view.ctx.stroke()
-      }
-      break
+  case 8:
+  case 'decolonize':
+    view.ctx.lineWidth = this.opts.fatness
+    view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
+    view.ctx.beginPath()
+    view.ctx.rect(
+      (this.attrs.radius/2) - (this.attrs.radius - radius / 2),
+      (this.attrs.radius/2) - (this.attrs.radius - radius / 2),
+      this.attrs.radius - radius,
+      this.attrs.radius - radius
+    )    
+    view.ctx.stroke()
+    break
+
+    // case 8:
+    // case 'inbound':
+    //   for (i = 0; i < 10; i++) {
+    //     view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
+    //     view.ctx.lineWidth = this.fatness * (i / 10)
+    //     view.ctx.beginPath()
+    //     view.ctx.arc(0, 0, (radius / i) * (this.attrs.initial_radius / i), 0, 2 * Math.PI)
+    //     view.ctx.stroke()
+    //   }
+    //   break
 
     case 'crater':
       // nop
@@ -268,9 +283,11 @@ Actors.Boom.prototype.paint = function (view) {
 
     default:
       view.ctx.fillStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
+      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
       view.ctx.beginPath()
       view.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
       view.ctx.fill()
+      view.ctx.stroke()
       break
   }
 

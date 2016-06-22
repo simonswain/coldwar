@@ -85,65 +85,44 @@ Scenes.crt.prototype.drawCap = function(gx, charge, shade){
 
   gx.ctx.save();
 
-  if(!shade){
-    gx.ctx.fillStyle = 'rgba(0, 255, 255, 0.25)';
-    gx.ctx.beginPath();
-    gx.ctx.fillRect(
-      0,
-      0,    
-      this.opts.max_x,
-      this.opts.max_y    
-    )
-  }
-
-  gx.ctx.strokeStyle = '#fff';
+  gx.ctx.fillStyle = 'rgba(255,0,255,' + charge + ')';
+  gx.ctx.strokeStyle = '#000';
   gx.ctx.lineWidth = 32;
 
-  if(shade){
-    gx.ctx.strokeStyle = '#0ff';
-    gx.ctx.lineWidth = 16;
-  }
+  // if(shade){ 
+  //   gx.ctx.fillStyle = 'rgba(255,0,255,0.25)';
+  //   gx.ctx.strokeStyle = 'rgba(255,0,255,0.25)';
+  //   gx.ctx.lineWidth = 16;
+  // }
 
-  gx.ctx.fillStyle = 'rgba(255,0,255,' + charge + ')';
   gx.ctx.beginPath();
   gx.ctx.fillRect(
-    this.opts.max_x * 0.3,
-    this.opts.max_y * 0.4,    
+    this.opts.max_x * 0.25,
+    this.opts.max_y * 0.25,    
     this.opts.max_x * 0.4,
     this.opts.max_y * 0.2    
   )
 
   gx.ctx.beginPath();
-  gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0.2) 
-  gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 0.4)
+  gx.ctx.moveTo(this.opts.max_x * 0.45, this.opts.max_y * 0.1) 
+  gx.ctx.lineTo(this.opts.max_x * 0.45, this.opts.max_y * 0.25)
   gx.ctx.stroke();
 
   gx.ctx.beginPath();
-  gx.ctx.moveTo(this.opts.max_x * 0.3, this.opts.max_y * 0.4) 
-  gx.ctx.lineTo(this.opts.max_x * 0.7, this.opts.max_y * 0.4)
+  gx.ctx.moveTo(this.opts.max_x * 0.25, this.opts.max_y * 0.25) 
+  gx.ctx.lineTo(this.opts.max_x * 0.65, this.opts.max_y * 0.25)
   gx.ctx.stroke();
 
   gx.ctx.beginPath();
-  gx.ctx.moveTo(this.opts.max_x * 0.3, this.opts.max_y * 0.6) 
-  gx.ctx.lineTo(this.opts.max_x * 0.7, this.opts.max_y * 0.6)
+  gx.ctx.moveTo(this.opts.max_x * 0.25, this.opts.max_y * 0.45) 
+  gx.ctx.lineTo(this.opts.max_x * 0.65, this.opts.max_y * 0.45)
   gx.ctx.stroke();
 
   gx.ctx.beginPath();
-  gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0.6) 
-  gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 0.8)
+  gx.ctx.moveTo(this.opts.max_x * 0.45, this.opts.max_y * 0.45) 
+  gx.ctx.lineTo(this.opts.max_x * 0.45, this.opts.max_y * 0.6)
   gx.ctx.stroke();
 
-  if(shade){
-    gx.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    gx.ctx.beginPath();
-    gx.ctx.fillRect(
-      0,
-      0,    
-      this.opts.max_x,
-      this.opts.max_y    
-    )
-  }
-  
   gx.ctx.restore();
   
 }
@@ -165,20 +144,21 @@ Scenes.crt.prototype.paint = function(fx, gx, sx){
   var value;
 
   var ww = this.opts.max_x / 16;
+  var hh = this.opts.max_y * 0.05;
   var hhw = this.opts.max_y / 16;
   var scan = 0;
   for(var i = 0; i < this.memory.length; i++){
     for(var j = 0; j < 12; j++){
-
-      gx.ctx.save();
-      gx.ctx.translate(ww*2 + (ww * j), this.opts.max_y * 0.05 * (i+0.25));
-      gx.ctx.scale(0.07, 0.07);
       value = (this.memory[i] & Math.pow(2, j));
-      if (scan === this.attrs.scan){
-        this.drawCap(gx, value);
-      } else {
-        this.drawCap(gx, value, true);
+      if(value){
+        gx.ctx.fillStyle = 'rgba(255,0,255, 0.5)';
+        gx.ctx.beginPath();
+        gx.ctx.fillRect(ww*2 + (ww * j), hh * i, ww, hh)
       }
+      gx.ctx.save();
+      gx.ctx.translate(ww*2 + (ww * j), hh * i);
+      gx.ctx.scale(0.07, 0.07);
+      this.drawCap(gx, value);
       gx.ctx.restore()
 
       scan ++;

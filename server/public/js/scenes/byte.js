@@ -130,7 +130,7 @@ Scenes.byte.prototype.paint = function(fx, gx, sx){
 
   for(var i = 0; i < 8; i++){
     gx.ctx.save();
-    gx.ctx.translate((this.opts.max_x / 8) * (7-i), this.opts.max_y * 0.3);
+    gx.ctx.translate((this.opts.max_x / 8) * (6.7-i), this.opts.max_y * 0.3);
     gx.ctx.scale(0.2, 0.2);
     this.drawCap(gx, this.caps[i]);
     gx.ctx.restore()

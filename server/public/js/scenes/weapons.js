@@ -79,15 +79,15 @@ Scenes.weapons.prototype.genAttrs = function(){
 Scenes.weapons.prototype.update = function(delta){
 
   if(this.attrs.hold > 0){
-    this.attrs.hold -= delta;
-    if(this.attrs.hold <= 0){
-      this.attrs.hold = 0;
-      this.attrs.step_index = 0;
-      this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.weapons.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
-    }
+    // this.attrs.hold -= delta;
+    // if(this.attrs.hold <= 0){
+    //   this.attrs.hold = 0;
+    //   this.attrs.step_index = 0;
+    //   this.attrs.frame_index ++;
+    //   if(this.attrs.frame_index === Scenes.weapons.prototype.frames.length){
+    //     this.attrs.frame_index = 0;
+    //   }
+    // }
   } else {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
@@ -103,6 +103,38 @@ Scenes.weapons.prototype.update = function(delta){
 
 Scenes.weapons.prototype.paint = function(fx, gx, sx){
 
+  // human
+  var view = gx;
+  view.ctx.save()
+  view.ctx.translate(this.opts.max_x * 0.2, this.opts.max_y * 0.6)
+
+  view.ctx.fillStyle = '#022'
+  view.ctx.strokeStyle = '#0ff'
+  view.ctx.lineWidth = 1
+
+  var z = 24
+  view.ctx.lineWidth = 4
+
+  view.ctx.beginPath()
+  view.ctx.rect(-z ,-z-z, z, z+z+z+z)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(z, 0)
+  view.ctx.lineTo(-z, z)
+  view.ctx.lineTo(-z, -z)
+  view.ctx.lineTo(z, 0)
+  view.ctx.closePath()
+  view.ctx.fill()
+  view.ctx.stroke()
+
+  view.ctx.restore()
+
+
+
+
+
+  
   var frame = Scenes.weapons.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
@@ -139,6 +171,8 @@ Scenes.weapons.prototype.frames = [];
 
 Scenes.weapons.prototype.frames[0] = {
   text:[
-    'Armoury',
+    '   but we are ',
+    '    are not   ',
+    '  defenceless ',
   ].join("\n"),
 };

@@ -19,6 +19,11 @@ Actors.Zap.prototype.init = function (attrs) {
     attrs.y
   )
 
+  this.origin = new Vec3(
+    attrs.x,
+    attrs.y
+  )
+
   this.target = new Vec3(
     attrs.target_x,
     attrs.target_y
@@ -57,11 +62,18 @@ Actors.Zap.prototype.genAttrs = function (attrs) {
     ttl: 120,
     launched: 0,
     dead: false,
-    speed: this.opts.speed
+    speed: this.opts.speed,
+    h: Math.floor(Math.random() * 3)
   }
 }
 
 Actors.Zap.prototype.update = function (delta) {
+
+  this.attrs.h = Math.floor(Math.random() * 3);
+  // this.attrs.h ++
+  // if(this.attrs.h > 2){
+  //   this.attrs.h = 0;
+  // }
 
   this.attrs.ttl -= delta;
   if(this.attrs.ttl < 0){
@@ -92,80 +104,65 @@ Actors.Zap.prototype.update = function (delta) {
     ))
   }
 
-
-  if(this.refs.cell.rats.length === 0){
-    return;
-  };
-  
-  var rat;
+  var enemy;
   var i ,ii, range;
-  
-  for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
-    rat = this.refs.cell.rats[i]
-    if(!rat){
-      continue
-    }
-    range = this.pos.range(rat.pos)
 
-    if (range < this.opts.sensitivity) {
-
-      this.attrs.dead = true;
-      rat.attrs.dead = true;
-
-      for (i = 0, ii = rat.refs.breeder.rats.length; i < ii; i++) {
-        if (rat.refs.breeder.rats[i] === this) {
-          rat.refs.breeder.rats[i] = null;
-          break
-        }
+  if(this.refs.cell.breeders.length > 0){
+    for (i = 0, ii = this.refs.cell.breeders.length; i < ii; i++) {
+      enemy = this.refs.cell.breeders[i]
+      if(!enemy){
+        continue
       }
+      range = this.pos.range(enemy.pos)
 
-      for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
-        if (this.refs.cell.rats[i] === this) {
-          this.refs.cell.rats[i] = null;
-          break
-        }
-      }
-
-      this.refs.cell.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: '',
-          radius: 16,
-          x: rat.pos.x,
-          y: rat.pos.y,
-          color: '255,0,0'
-        }
-      ))
-
-      
-      break;
+      if (range < this.opts.sensitivity) {
+        this.attrs.dead = true;
+        enemy.damage();
+        return;
+      }    
     }
-    
   }
+  
+  if(this.refs.cell.rats.length > 0){
+    
+    for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
+      enemy = this.refs.cell.rats[i]
+      if(!enemy){
+        continue
+      }
+      range = this.pos.range(enemy.pos)
 
+      if (range < this.opts.sensitivity) {
+        this.attrs.dead = true;
+        enemy.kill();
+        return;
+      }    
+    }
+  }
   
 }
 
 Actors.Zap.prototype.paint = function (view) {
-
-  var a = this.pos.angleXY(this.target);
   view.ctx.save()
-  
-  view.ctx.fillStyle = '#f0f'
-  view.ctx.lineWidth = 4
-  view.ctx.beginPath()
-  view.ctx.arc(0, 0, 12, 0, 2 * Math.PI)
-  view.ctx.fill()
 
-  view.ctx.lineWidth = 4
-  view.ctx.strokeStyle = '#0f0'
-  view.ctx.beginPath()
-  view.ctx.moveTo(-12, 0)
-  view.ctx.lineTo(12, 0)
-  view.ctx.moveTo(0, -12)
-  view.ctx.lineTo(0, 12)
-  view.ctx.stroke()
+  var h = (Date.now()%360 * 0.22) - 10;
+  view.ctx.strokeStyle = 'hsl(' + h + ', 100%, 50%)';
   
+  if(Math.random() < 0.025){
+    view.ctx.strokeStyle = 'rgba(255,255,0,0.5)';
+  }
+
+  if(Math.random() < 0.025){
+    view.ctx.strokeStyle = 'rgba(255,255,255,1)';
+  }
+  
+  view.ctx.lineWidth = 8
+  view.ctx.lineCap='round';
+  view.ctx.rotate(this.origin.angleXYto(this.target))
+  view.ctx.beginPath()
+  view.ctx.moveTo(12, 0)
+  view.ctx.lineTo(-12, 0)
+  view.ctx.stroke()
 
   view.ctx.restore()
 }

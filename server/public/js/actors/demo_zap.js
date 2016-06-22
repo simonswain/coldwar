@@ -19,6 +19,11 @@ Actors.Demozap.prototype.init = function (attrs) {
     attrs.y
   )
 
+  this.origin = new Vec3(
+    attrs.x,
+    attrs.y
+  )
+  
   this.target = new Vec3(
     attrs.target_x,
     attrs.target_y
@@ -57,11 +62,18 @@ Actors.Demozap.prototype.genAttrs = function (attrs) {
     ttl: 120,
     launched: 0,
     dead: false,
-    speed: this.opts.speed
+    speed: this.opts.speed,
+    h: Math.floor(Math.random() * 3)
   }
 }
 
 Actors.Demozap.prototype.update = function (delta) {
+
+  this.attrs.h = Math.floor(Math.random() * 3)
+  // this.attrs.h ++
+  // if(this.attrs.h > 2){
+  //   this.attrs.h = 0;
+  // }
 
   this.attrs.ttl -= delta;
   if(this.attrs.ttl < 0){
@@ -92,7 +104,6 @@ Actors.Demozap.prototype.update = function (delta) {
     ))
   }
 
-
   if(this.refs.demo.rats.length === 0){
     return;
   };
@@ -119,25 +130,26 @@ Actors.Demozap.prototype.update = function (delta) {
 }
 
 Actors.Demozap.prototype.paint = function (view) {
-
-  var a = this.pos.angleXY(this.target);
   view.ctx.save()
-  
-  view.ctx.fillStyle = '#055'
-  view.ctx.lineWidth = 4
-  view.ctx.beginPath()
-  view.ctx.arc(0, 0, 12, 0, 2 * Math.PI)
-  view.ctx.fill()
 
-  view.ctx.lineWidth = 4
-  view.ctx.strokeStyle = '#ff0'
-  view.ctx.beginPath()
-  view.ctx.moveTo(-12, 0)
-  view.ctx.lineTo(12, 0)
-  view.ctx.moveTo(0, -12)
-  view.ctx.lineTo(0, 12)
-  view.ctx.stroke()
+  var h = (Date.now()%360 * 0.22) - 10;
+  view.ctx.strokeStyle = 'hsl(' + h + ', 100%, 50%)';
   
+  if(Math.random() < 0.025){
+    view.ctx.strokeStyle = 'rgba(255,255,0,0.5)';
+  }
+
+  if(Math.random() < 0.025){
+    view.ctx.strokeStyle = 'rgba(255,255,255,1)';
+  }
+  
+  view.ctx.lineWidth = 8
+  view.ctx.lineCap='round';
+  view.ctx.rotate(this.origin.angleXYto(this.target))
+  view.ctx.beginPath()
+  view.ctx.moveTo(12, 0)
+  view.ctx.lineTo(-12, 0)
+  view.ctx.stroke()
 
   view.ctx.restore()
 }

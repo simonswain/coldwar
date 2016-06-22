@@ -25,7 +25,7 @@ Actors.Portal.prototype.init = function (attrs) {
 
 Actors.Portal.prototype.defaults = [{
   key: 'r',
-  value: 96,
+  value: 160,
   min: 1,
   max: 128
 }]
@@ -45,7 +45,7 @@ Actors.Portal.prototype.paint = function (view) {
     view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
     view.ctx.fill()
 
-    view.ctx.strokeStyle = 'rgba(0, 255, 0, 1)'
+    view.ctx.strokeStyle = 'rgba(0, 255, 255, 1)'
     view.ctx.lineWidth = 24
     view.ctx.beginPath()
     view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)
@@ -55,7 +55,7 @@ Actors.Portal.prototype.paint = function (view) {
     view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
     view.ctx.fill()
 
-    view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+    view.ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)'
     view.ctx.lineWidth = 24
     view.ctx.beginPath()
     view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)

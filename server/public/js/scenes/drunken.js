@@ -95,21 +95,24 @@ Scenes.drunken.prototype.update = function(delta){
   if(dy < 0) {dy = 0}
   if(dy >= this.opts.cols){dy = this.opts.cols-1}
 
+  this.memory[(this.opts.rows*y)+x] = false
+  this.attrs.x = dx
+  this.attrs.y = dy
 
 
-  if(this.memory[(this.opts.rows*dy)+dx]){
-    this.memory[(this.opts.rows*y)+x] = false
-    this.attrs.x = dx
-    this.attrs.y = dy
-  } else {
-    this.attrs.failed ++;
-  }
+  // if(this.memory[(this.opts.rows*dy)+dx]){
+  //   this.memory[(this.opts.rows*y)+x] = false
+  //   this.attrs.x = dx
+  //   this.attrs.y = dy
+  // } else {
+  //   this.attrs.failed ++;
+  // }
 
-  if(this.attrs.failed > 50 && ! this.env.gameover){
-    this.env.gameover = true;
-    setTimeout(this.env.restart, 1000)
-  }
-  
+  // if(this.attrs.failed > 50 && ! this.env.gameover){
+  //   this.env.gameover = true;
+  //   setTimeout(this.env.restart, 1000)
+  // }
+ 
   
 }
 
@@ -127,10 +130,10 @@ Scenes.drunken.prototype.paint = function(fx, gx, sx){
     x = i % this.opts.cols;
     y = Math.floor(i/this.opts.rows);
     if(this.memory[i]){
-      gx.ctx.fillStyle = '#f0f';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.strokeStyle = '#000';
     } else {
-      gx.ctx.fillStyle = '#0ff';
+      gx.ctx.fillStyle = '#0f0';
       gx.ctx.strokeStyle = '#000';
     }
 

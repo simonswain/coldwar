@@ -17,12 +17,10 @@ Scenes.cells.prototype.title = 'Cells';
 Scenes.cells.prototype.layout = '';
 
 Scenes.cells.prototype.init = function(){
-
   this.memory = [];
   for(var i = 0, ii=this.opts.rows * this.opts.cols; i < ii; i++){
     this.memory.push([true, true, true, true]);
   }
-  
 }
 
 Scenes.cells.prototype.getCast = function(){
@@ -84,8 +82,6 @@ Scenes.cells.prototype.update = function(delta){
   }
 
 Scenes.cells.prototype.drawCap = function(gx, charge){
-
-
 }
 
 
@@ -107,6 +103,7 @@ Scenes.cells.prototype.paint = function(fx, gx, sx){
 
     var val = this.memory[i];
 
+    gx.ctx.lineCap='round';
     gx.ctx.save();
     gx.ctx.translate(ww * x * 0.1, hh * y * 0.1);
     gx.ctx.scale(0.9, 0.9);

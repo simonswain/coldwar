@@ -3,27 +3,27 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.mazegen = function(env, opts){
+Scenes.loaded = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.mazegen.prototype = Object.create(Scene.prototype);
+Scenes.loaded.prototype = Object.create(Scene.prototype);
 
-Scenes.mazegen.prototype.title = 'Mazegen';
+Scenes.loaded.prototype.title = 'Loaded';
 
-Scenes.mazegen.prototype.genAttrs = function(){
+Scenes.loaded.prototype.genAttrs = function(){
   return {
-    ttl: 32,
-    rows: 4,
-    cols: 4,
-    
+    ttl: 0,
+    rows: this.opts.rows,
+    cols: this.opts.cols,
+    hsl: 360
   };
 };
 
-Scenes.mazegen.prototype.init = function(){
+Scenes.loaded.prototype.init = function(){
   this.makeGrid();
   this._steps = {
     ttl: this.attrs.ttl,
@@ -32,11 +32,11 @@ Scenes.mazegen.prototype.init = function(){
     stack: [],
     total: this.cells.length,
     visited: 1,
-    hot: false,
+    hot: false
   };
 }
 
-Scenes.mazegen.prototype.defaults = [{
+Scenes.loaded.prototype.defaults = [{
   key: 'max_x',
   value: 480,
   min: 32,
@@ -48,12 +48,12 @@ Scenes.mazegen.prototype.defaults = [{
   max: 1024
 }, {
   key: 'rows',
-  value: 2,
+  value: 24,
   min: 3,
   max: 24
 }, {
   key: 'cols',
-  value: 2,
+  value: 24,
   min: 8,
   max: 32
 }, {
@@ -83,7 +83,7 @@ Scenes.mazegen.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.mazegen.prototype.makeGrid = function () {
+Scenes.loaded.prototype.makeGrid = function () {
   // init blank grid
   this.cells = new Array(this.attrs.rows * this.attrs.cols);
   x = 0;
@@ -124,8 +124,12 @@ Scenes.mazegen.prototype.makeGrid = function () {
   }
 }
 
-Scenes.mazegen.prototype.update = function(delta){
+Scenes.loaded.prototype.update = function(delta){
 
+  if(this.attrs.hsl > 0){
+    this.attrs.hsl -= delta * 0.3;
+  }
+  
   if(this._steps.ttl >= 0){
     this._steps.ttl -= delta
     return
@@ -180,32 +184,32 @@ Scenes.mazegen.prototype.update = function(delta){
     this._steps.cell = this._steps.stack.pop()
     if(this._steps.stack.length === 0 && !this.env.gameover){
       this._steps.cell = false;
-      if(this.attrs.rows < 16){
-        this.attrs.rows ++;
-        this.attrs.cols ++;
-        this.attrs.ttl /= 2;
-      }
-      this.init();
+      //this.init();
     }
   }
   
 
 }
 
-Scenes.mazegen.prototype.paint = function(fx, gx, sx){
+Scenes.loaded.prototype.paint = function(fx, gx, sx){
 
   var ww = this.opts.max_x / this.attrs.rows;
   var hh = this.opts.max_y / this.attrs.cols;
 
   gx.ctx.save();
+
+  gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
+  gx.ctx.scale(0.9, 0.9);
   
   gx.ctx.lineCap='round';
   gx.ctx.lineWidth = 6;
-  gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
-  //gx.ctx.strokeStyle = 'rgba(255,0,0,' + (0.5-(Math.sin(Math.PI * (Date.now()%2000)/1000)/2)) + ')';
+  //gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
 
   var x, y;
-  
+
+  //gx.ctx.strokeStyle = 'rgba(255,0,0,' + (0.5-(Math.sin(Math.PI * (Date.now()%2000)/1000)/2)) + ')';
+  gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
+
   for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
     x = i % this.attrs.cols;
     y = Math.floor(i / this.attrs.rows);
@@ -230,8 +234,8 @@ Scenes.mazegen.prototype.paint = function(fx, gx, sx){
       }      
     }
 
-    gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
-    
+    gx.ctx.strokeStyle = 'hsl(' + this.attrs.hsl + ',100%,50%)';
+
     if(!cell.exits[0]){
       gx.ctx.beginPath();
       gx.ctx.moveTo(

@@ -18,13 +18,12 @@ Scenes.story.prototype.layout = '';
 
 Scenes.story.prototype.init = function(){
 
-  this.maze = new Actors.Maze(
+  this.maze = new Actors.TitleMaze(
     this.env, {
       scene: this
     }, {
-      rows: 8,
-      cols: 8,
-      mode: 1,
+      rows: 16,
+      cols: 16,
     }, {
     })
 
@@ -32,14 +31,14 @@ Scenes.story.prototype.init = function(){
 
 Scenes.story.prototype.getCast = function(){
   return {
-    Maze: Actors.Maze,
-    Cell: Actors.Cell,
+    TitleMaze: Actors.TitleMaze,
+    TitleCell: Actors.TitleCell,
   }
 };
 
 Scenes.story.prototype.defaults = [{
   key: 'max_x',
-  value: 480,
+  value: 640,
   min: 32,
   max: 1024
 }, {
@@ -98,11 +97,11 @@ Scenes.story.prototype.update = function(delta){
       this.attrs.hold = 0;
       this.attrs.step_index = 0;
       this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.story.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
+      // if(this.attrs.frame_index === Scenes.story.prototype.frames.length){
+      //   this.attrs.frame_index = 0;
+      // }
     }
-  } else {
+  } else if(this.attrs.frame_index < Scenes.story.prototype.frames.length) {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
@@ -124,7 +123,14 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
   gx.ctx.beginPath()
   gx.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
 
-  var frame = Scenes.story.prototype.frames[this.attrs.frame_index];
+  var frame;
+  if(this.attrs.frame_index < Scenes.story.prototype.frames.length){
+    frame = Scenes.story.prototype.frames[this.attrs.frame_index];
+  }
+
+  if(!frame){
+    return;
+  }
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
@@ -134,13 +140,13 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
   var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.035) + Math.random() * 0.1;
+  var dx = (this.opts.max_x * 0.03) + Math.random() * 0.1;
   var x, y;
 
   y = 0;
   x = 0;
 
-  fx.ctx.fillStyle = '#c00';
+  fx.ctx.fillStyle = '#f00';
   fx.ctx.font = '18pt robotron';
 
   if(Math.random() < 0.5){
@@ -174,7 +180,7 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
 
-  var h = (Date.now()%360 * 0.25) - 10;
+  var h = (Date.now()%360 * 0.22) - 10;
   gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
   
   if(Math.random() < 0.025){
@@ -214,7 +220,7 @@ Scenes.story.prototype.frames.push({
 Scenes.story.prototype.frames.push({
   text:[
     '30 years ago we ',
-    'delegated the very ',
+    'outsourced the very ',
     'runnings of our',
     'lives to Machines.'
   ].join("\n")
@@ -229,6 +235,7 @@ Scenes.story.prototype.frames.push({
 Scenes.story.prototype.frames.push({
   text:[
     'The Machines learnt',
+    '   ',
     '...too well.'
   ].join("\n")
 })
@@ -238,7 +245,7 @@ Scenes.story.prototype.frames.push({
     'Today, all computing',
     'resource on the planet',
     'has been consolidated',
-    'in a vast Maze hewn',
+    'in a vast Maze, hewn',
     'out of solid rock.'
   ].join("\n")
 })
@@ -246,7 +253,7 @@ Scenes.story.prototype.frames.push({
 
 Scenes.story.prototype.frames.push({
   text:[
-    'Humans have no access',
+    'No humans have access',
     'to The Maze, but the',
     'warm glow of it\'s',
     'reactors make an',
@@ -271,9 +278,9 @@ Scenes.story.prototype.frames.push({
 
 Scenes.story.prototype.frames.push({
   text:[
-    'You are our last,',
-    'best hope but until',
-    'today no Human has',
-    'ever returned from...',
+    'You are our last best hope,',
+    '     ',
+    'but until today',
+    'no Human has survived...',
  ].join("\n")
 })

@@ -133,8 +133,8 @@ var chars;
   //var ii = this.attrs.step_index;
   var rowShift = false;
 
-    view.ctx.save();
-    view.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.3);
+  view.ctx.save();
+  view.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.3);
   for (var i = 0; i < ii; i++) {
 
     if(frame.text[i] === "\n"){
@@ -150,34 +150,47 @@ var chars;
         view.ctx.translate((Math.random() * 300)-150, 0);
         rowShift = true;
       }
+
       continue;
     }
     
     view.ctx.save();
     view.ctx.translate(Math.random() * 5, Math.random() * 5);
+
+    // if(text[i] === ' '){
+    //   view.ctx.strokeStyle = '#00f' 
+    //   view.ctx.lineWidth = 1;
+    //   view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    // }
+ 
+    // if(text[i] === ' '){
+    //   view.ctx.strokeStyle = '#00f' 
+    //   view.ctx.lineWidth = 1;
+    //   view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    // }
+  
     if(text[i] !== ' '){
       view.ctx.fillStyle = 'rgba(255, 192, 0, ' + (0.25 + (Math.random()*0.25)) + ')';
-      view.ctx.fillStyle = 'rgba(255, 204, 0, 0.25)';
+      view.ctx.fillStyle = 'rgba(0, 204, 0, 0.25)';
 
       var h = (Date.now()%360 * 0.25) - 10;
-      view.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+      view.ctx.fillStyle = 'hsl(' + (h + 160) + ', 100%, 50%)';
       
       if(Math.random() < 0.025){
         view.ctx.fillStyle = 'rgba(255,255,0,0.5)';
         view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
       }
 
-      if(Math.random() < 0.025){
-        view.ctx.fillStyle = 'rgba(255,255,255,1)';
-        view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
-      }
-
-      view.ctx.fillRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
-
+      // if(Math.random() < 0.025){
+      //   view.ctx.fillStyle = 'rgba(0,0,0,1)';
+      //   view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+      // }
+      view.ctx.fillRect(xx + (x * dx), yy + (y * dy) - 26, 22, 28);
     }
+
     view.ctx.fillStyle = '#fb0';
     if(rowShift){
-      view.ctx.fillStyle = 'rgba(255,255,255,' + (0.25 + (Math.random()*0.25)) + ')';
+      view.ctx.fillStyle = 'rgba(0,255,0,' + (0.25+Math.random()*0.25) + ')';
     }
     if(Math.random() < 0.05){
       view.ctx.fillStyle = '#f00';
@@ -185,15 +198,7 @@ var chars;
     if(Math.random() < 0.05){
       view.ctx.fillStyle = '#222';
     }
-
- 
     view.ctx.fillText(text[i], xx + (x * dx), yy + (y * dy));
-
-    if(text[i] !== ' '){
-      view.ctx.strokeStyle = '#0ff' 
-      view.ctx.lineWidth = 2;
-      view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
-    }
 
     view.ctx.restore();
     x ++;
@@ -210,28 +215,6 @@ Scenes.title.prototype.frames = [];
 
 Scenes.title.prototype.frames[0] = {
   text:[
-    'xxx    xx  xxxxxx xxxx',
-    'x xx  xxxx   xx   xx   ',
-    'x xx  x  x   xx   xx  ',
-    'xxx   xxxx   xx   xxxx',
-    'x  x  x  x   xx     xx',
-    'x  x  x  x   xx   xxxx',
-  ].join("\n")
-};
-
-Scenes.title.prototype.frames[1] = {
-  text:[
-    '     xxx   xxxx    ',
-    '    x  xx  x       ',
-    '    x  xx  x       ',
-    '    x  xx  xx      ',
-    '    x  xx  xx      ',
-    '     xxx   x       ',
-  ].join("\n")
-};
-
-Scenes.title.prototype.frames[2] = {
-  text:[
     ' xxxxxx x   x  xxxx  ',
     '   xx   x   x  xx    ',
     '   xx   x   x  xx    ',
@@ -241,7 +224,7 @@ Scenes.title.prototype.frames[2] = {
   ].join("\n")
 };
 
-Scenes.title.prototype.frames[3] = {
+Scenes.title.prototype.frames[1] = {
   text:[
     ' x x    xx   xxxx  xxxx',
     'xxxxx  xxxx    xx  x   ',
@@ -252,7 +235,7 @@ Scenes.title.prototype.frames[3] = {
   ].join("\n")
 };
 
-Scenes.title.prototype.frames[4] = {
+Scenes.title.prototype.frames[2] = {
   text:[
     '     xxx   xxxx    ',
     '    x  xx  x       ',
@@ -263,7 +246,7 @@ Scenes.title.prototype.frames[4] = {
   ].join("\n")
 };
 
-Scenes.title.prototype.frames[5] = {
+Scenes.title.prototype.frames[3] = {
   text:[
     ' xxxxxx x   x  xxxx  ',
     '   xx   x   x  xx    ',
@@ -274,4 +257,25 @@ Scenes.title.prototype.frames[5] = {
   ].join("\n")
 };
 
+Scenes.title.prototype.frames[4] = {
+  text:[
+    'xxx    xx  xxxxxx xxxx',
+    'x xx  xxxx   xx   xx   ',
+    'x xx  x  x   xx   xx  ',
+    'xxx   xxxx   xx   xxxx',
+    'x  x  x  x   xx     xx',
+    'x  x  x  x   xx   xxxx',
+  ].join("\n")
+};
+
+Scenes.title.prototype.frames[5] = {
+  text:[
+    '     xxx   xxxx    ',
+    '    x  xx  x       ',
+    '    x  xx  x       ',
+    '    x  xx  xx      ',
+    '    x  xx  xx      ',
+    '     xxx   x       ',
+  ].join("\n")
+};
 

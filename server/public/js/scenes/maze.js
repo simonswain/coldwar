@@ -70,7 +70,6 @@ Scenes.maze.prototype.update = function (delta) {
 //Scenes.maze.prototype.paintOnce = true;
 
 Scenes.maze.prototype.paint = function (fx, gx, sx) {
-
   this.maze.paint(gx)
 }
 

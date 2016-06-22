@@ -79,15 +79,18 @@ Scenes.dungeon.prototype.update = function(delta){
   var x = this.attrs.x
   var y = this.attrs.y
   var dx = x, dy = y;
+  var qx = x, qy = y;
 
   var fx = fy = (Math.random() < 0.5 ? 1 : -1);
   
   if(Math.random() < 0.5){
     dx += fx
+    qx += fx + fx
     fy = 0
   }else{
     fx = 0
     dy += fy
+    qy += fy + fx
   }
 
   if(dx < 0) {dx = 0}
@@ -95,15 +98,23 @@ Scenes.dungeon.prototype.update = function(delta){
   if(dy < 0) {dy = 0}
   if(dy >= this.opts.cols){dy = this.opts.cols-1}
 
+  if(dx < 0) {dx = 0}
+  if(dx >= this.opts.rows) {dx = this.opts.rows-1} 
+  if(dy < 0) {dy = 0}
+  if(dy >= this.opts.cols){dy = this.opts.cols-1}
 
-
-  if(this.memory[(this.opts.rows*dy)+dx]){
-    this.memory[(this.opts.rows*y)+x] = false
-    this.attrs.x = dx
-    this.attrs.y = dy
-  } else {
-    this.attrs.failed ++;
-  }
+  this.memory[(this.opts.rows*y)+x] = false
+  this.attrs.x = dx
+  this.attrs.y = dy
+  
+  // //if(this.memory[(this.opts.rows*dy)+dx] && this.memory[(this.opts.rows*qy)+qx]){
+  // if(this.memory[(this.opts.rows*qy)+qx]){
+  //   this.memory[(this.opts.rows*y)+x] = false
+  //   this.attrs.x = dx
+  //   this.attrs.y = dy
+  // } else {
+  //   this.attrs.failed ++;
+  // }
 
   if(this.attrs.failed > 50 && ! this.env.gameover){
     this.env.gameover = true;
@@ -127,10 +138,10 @@ Scenes.dungeon.prototype.paint = function(fx, gx, sx){
     x = i % this.opts.cols;
     y = Math.floor(i/this.opts.rows);
     if(this.memory[i]){
-      gx.ctx.fillStyle = '#f0f';
+      gx.ctx.fillStyle = '#f00';
       gx.ctx.strokeStyle = '#000';
     } else {
-      gx.ctx.fillStyle = '#0ff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.strokeStyle = '#000';
     }
 

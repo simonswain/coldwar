@@ -60,6 +60,7 @@ Coldwar.prototype.start = function (scene, opts) {
   this.env.timer = 0
   this.env.ms = 0
   this.env.diff = 0
+  this.env.goNext = this.goNext.bind(this);
   this.scene = new this.Scene(
     this.env,
     this.optsVals.scene
@@ -445,14 +446,6 @@ Coldwar.prototype.genEnv = function () {
     localStorage.setItem('show_opts', true)
   }
 
-  // if (!localStorage.getItem('show_meta')) {
-  //   localstorage.setItem('show_meta', false)
-  // }
-
-  // if (!localStorage.getItem('show_meta')) {
-  //   localstorage.setItem('show_meta', false)
-  // }
-
   return {
     gameover: false,
     restart: this.restart.bind(this),
@@ -514,6 +507,7 @@ Coldwar.prototype.goPrev = function(){
 };
 
 Coldwar.prototype.goNext = function(){
+  console.log('xx');
   var next = null;
   if(!this.scene){
     this.render(this.scenes[0].slug);
@@ -950,28 +944,37 @@ Coldwar.prototype.scenes = [{
   slug: 'byte'
 }, {
   title: 'Bit Shift',
-  slug: 'bitshifting'
+  slug: 'bitshift'
 }, {
   title: 'Bytes',
   slug: 'bytes'
 }, {
-  title: 'Address',
-  slug: 'address'
-}, {
+//   title: 'Address',
+//   slug: 'address'
+// }, {
   title: 'CRT',
   slug: 'crt'
 }, {
-  title: 'Cells',
-  slug: 'cells'
+  title: 'Array',
+  slug: 'array'
+}, {
+  title: 'Big Array',
+  slug: 'big_array'
 }, {
   title: 'Drunken',
   slug: 'drunken'
 }, {
-  title: 'Data Structure',
-  slug: 'datastructure'
-}, {
   title: 'Dungeon',
   slug: 'dungeon'
+}, {
+  title: 'Snake',
+  slug: 'snake'
+}, {
+  title: 'Cells',
+  slug: 'cells'
+}, {
+  title: 'Structure',
+  slug: 'datastructure'
 }, {
   title: 'Mazegen',
   slug: 'mazegen'
@@ -982,35 +985,44 @@ Coldwar.prototype.scenes = [{
   title: 'Briefing',
   slug: 'briefing'
 }, {
+  title: 'Loading',
+  slug: 'loading'
+}, {
+  title: 'Loaded',
+  slug: 'loaded'
+}, {
   title: 'Machines',
   slug: 'machines'
 }, {
   title: 'Reactor',
   slug: 'reactor'
 }, {
-  title: 'Robots',
-  slug: 'robots'
+  title: 'Factory',
+  slug: 'factory'
 }, {
-  title: 'Weapons',
-  slug: 'weapons'
-}, {
-  title: 'Rats',
-  slug: 'rats'
+  title: 'Enemies',
+  slug: 'enemies'
 }, {
   title: 'Baby Rats',
   slug: 'baby_rats'
 }, {
-  title: 'King Rat',
-  slug: 'king_rat'
-}, {
-  title: 'Factory',
-  slug: 'factory'
-}, {
   title: 'Cell',
   slug: 'cell'
 }, {
-  title: 'Rats of the Maze',
-  slug: 'maze'
+  title: 'Later',
+  slug: 'later'
+}, {
+  title: 'Maze 1',
+  slug: 'maze1'
+}, {
+  title: 'Maze 2',
+  slug: 'maze2'
+}, {
+  title: 'King Rat',
+  slug: 'king_rat'
+}, {
+  title: 'Trap',
+  slug: 'traps'
 }]
 
 // dungeon contains mazes

@@ -130,7 +130,7 @@ Actors.Demo.prototype.addHuman = function () {
 
 Actors.Demo.prototype.update = function (delta) {
 
-  var i, ii;
+  var i, ii, j;
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     if(this.breeders[i]){
       this.breeders[i].update(delta);
@@ -170,7 +170,6 @@ Actors.Demo.prototype.update = function (delta) {
       ii--
     }
   }
-
   
   for (i = 0, ii = this.booms.length; i<ii; i++) {
     if(this.booms[i]){
@@ -186,43 +185,21 @@ Actors.Demo.prototype.update = function (delta) {
     }
   }
 
+  for (i = 0, ii = this.rats.length; i<ii; i++) {
+    if(this.rats[i] && this.rats[i].pos.x < this.opts.max_x * 0.3){
+      this.attrs.flash = 5;
+      for (j = 0; j<ii; j++) {
+        if(this.rats[j]){
+          this.rats[j].kill();
+        }
+      }
+      break;
+    }
+  }
 
-  
 }
 
 Actors.Demo.prototype.paint = function (view) {
-  
-  view.ctx.strokeStyle = '#666'
-  view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-  view.ctx.stroke()
-
-  // var intents = [[0,-1],[1,0],[0,1],[-1,0]];
-  
-  // for(var i=0; i<4; i++){
-  //   if(this.exits[i]){
-  //     view.ctx.font = '32pt ubuntu mono, monospace'
-  //     view.ctx.textAlign='center';
-  //     view.ctx.textBaseline='middle';
-  //     view.ctx.beginPath()
-  //     view.ctx.fillStyle = '#600'
-  //     view.ctx.fillText(
-  //       i,
-  //       (this.opts.max_x / 2) + (intents[i][0] * this.opts.max_x * 0.35),
-  //       (this.opts.max_y / 2) + (intents[i][1] * this.opts.max_y * 0.35)
-  //     );
-  //   }
-  // }
-  
-  if (this.attrs.flash>0) {
-    view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
-    view.ctx.fillStyle = '#ffffff'
-    view.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
-    this.attrs.flash --
-  }
-
-  // view.ctx.fillStyle = '#ffffff'
-  // view.ctx.font = '28pt arial'
-  // view.ctx.fillText(this.attrs.i, this.opts.max_x/2, this.opts.max_y/2)
   
   var i, ii
 

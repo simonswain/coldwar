@@ -29,7 +29,7 @@ Scenes.rats.prototype.init = function(){
   }, {
     title:'Breeder'
   }, {
-    title:'Grey Rat'
+    title:'White Rat'
   }, {
     title:'Baby Rat',
   }, {

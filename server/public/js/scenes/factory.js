@@ -14,16 +14,35 @@ Scenes.factory.prototype = Object.create(Scene.prototype);
 
 Scenes.factory.prototype.title = 'Factory';
 
-Scenes.factory.prototype.layout = '';
+Scenes.factory.prototype.genAttrs = function(){
+  return {
+    frame_index: 0,
+    step_index: 0,
+    time: 0,
+    hold: 0,
+    rats: 0,
+    rats_max: this.opts.rats_max || 0,
+    rats_per_tick: this.opts.rats_per_tick || 1,
+  };
+};
 
 Scenes.factory.prototype.init = function(){
-
+  this.rats = []; 
+  this.booms = [];
+  this.breeders = [];
+  this.breeders.push(new Actors.Demobreeder(
+    this.env, {
+      demo: this,
+      rats: this.rats,
+    }, {
+      x: this.opts.max_x * 0.5,
+      y: this.opts.max_y * 0.5,
+    }, {
+      rats_max: 20,
+      rat_chance: 0.1
+    }));
 }
 
-Scenes.factory.prototype.getCast = function(){
-  return {
-  }
-};
 
 Scenes.factory.prototype.defaults = [{
   key: 'max_x',
@@ -67,27 +86,44 @@ Scenes.factory.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.factory.prototype.genAttrs = function(){
-  return {
-    frame_index: 0,
-    step_index: 0,
-    time: 0,
-    hold: 0,
-  };
-};
-
 Scenes.factory.prototype.update = function(delta){
 
-  if(this.attrs.hold > 0){
-    this.attrs.hold -= delta;
-    if(this.attrs.hold <= 0){
-      this.attrs.hold = 0;
-      this.attrs.step_index = 0;
-      this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.factory.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
+  var i, ii;
+  for (i = 0, ii = this.breeders.length; i<ii; i++) {
+    if(this.breeders[i]){
+      this.breeders[i].update(delta);
     }
+  }
+
+  for (i = 0, ii = this.rats.length; i<ii; i++) {
+    if(this.rats[i]){
+      this.rats[i].update(delta);
+    }
+  }
+
+  for (i = 0, ii = this.rats.length; i<ii; i++) {
+    if(!this.rats[i] || this.rats[i].attrs.dead){
+      this.rats.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(this.booms[i]){
+      this.booms[i].update(delta);
+    }
+  }
+
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(!this.booms[i] || this.booms[i].attrs.dead){
+      this.booms.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+  
+  if(this.attrs.hold > 0){
   } else {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
@@ -98,26 +134,59 @@ Scenes.factory.prototype.update = function(delta){
       }
     }
   }
-  
+
 }
 
 Scenes.factory.prototype.paint = function(fx, gx, sx){
+  var view = gx;
+  var breeder;
+  for (i = 0, ii = this.breeders.length; i<ii; i++) {
+    breeder = this.breeders[i];
+    view.ctx.save()
+    view.ctx.translate(breeder.pos.x - (breeder.opts.max_x/2), breeder.pos.y - (breeder.opts.max_y/2));
 
+    breeder.paint(view)
+    view.ctx.restore()
+  }
+
+  var rat;
+  for (i = 0, ii = this.rats.length; i < ii; i++) {
+    rat = this.rats[i]
+    if(!rat){
+      continue
+    }
+    view.ctx.save()
+    view.ctx.translate(rat.pos.x, rat.pos.y);
+    this.rats[i].paint(view)
+    view.ctx.restore()
+  }
+
+  var boom;
+  for (i = 0, ii = this.booms.length; i < ii; i++) {
+    boom = this.booms[i]
+    if(!boom){
+      continue
+    }
+    view.ctx.save()
+    view.ctx.translate(boom.pos.x, boom.pos.y);
+    this.booms[i].paint(view)
+    view.ctx.restore()
+  }
+
+
+
+  
   var frame = Scenes.factory.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
     ix = frame.text.length;
   }
-  
-  gx.ctx.fillStyle = '#0f0';
-  //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
-  gx.ctx.font = '28pt ubuntu mono';
 
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.027);
+  var xx = (this.opts.max_x * 0.1);
+  var dx = (this.opts.max_x * 0.045);
   var y = 0;
   var x = 0;
   for (var i = 0; i < ix; i++) {
@@ -128,18 +197,51 @@ Scenes.factory.prototype.paint = function(fx, gx, sx){
     }
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
+    var h = ((Date.now()/5) - i*2) % 255;
+    gx.ctx.fillStyle = 'hsl(' + h + ',100%,50%)';
+    gx.ctx.font = '28pt robotron';
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;
   }
 
+
+  // var view = gx;
+  // var r = 80
+  // view.ctx.save()
+  // view.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5);
+
+  // view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
+  // view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+  // view.ctx.lineWidth = 8
+
+  // view.ctx.beginPath()
+  // view.ctx.rect(-r/2, -r/2, r, r)
+
+  // if(this.env.ms % 20 < 10){
+  //   view.ctx.fill()
+  // }
+
+  // view.ctx.stroke()
+  // view.ctx.restore();
+
   
+
 }
 
 Scenes.factory.prototype.frames = [];
 
 Scenes.factory.prototype.frames[0] = {
   text:[
-    'Literally a Factory Function',
+    ' superior machine  ',
+    '   engineering      ',
+    '    ',
+    '    ',
+    '    ',
+    '    ',
+    '    ',
+    '    ',
+    '   creates rat    ',
+    'breeding factories',
   ].join("\n"),
 };

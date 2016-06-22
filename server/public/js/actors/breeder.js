@@ -16,6 +16,7 @@ Actors.Breeder.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
     y: attrs.y,
+    hp: attrs.hp || 100,
     dead: false
   }
 }
@@ -51,35 +52,57 @@ Actors.Breeder.prototype.defaults = [{
   max: 8
 }]
 
-Actors.Breeder.prototype.update = function (delta) {
-  // if (this.refs.rats.length < this.refs.scene.opts.rat_limit) {
-  //   this.refs.rats.push(new Actors.Rat(
-  //     this.env, {
-  //       scene: this.refs.scene,
-  //       maze: this.refs.maze,
-  //       human: this.refs.human,
-  //       reactor: this.refs.reactor,
-  //       rats: this.refs.rats
-  //     }, {
-  //       cell_x: this.attrs.cell_x,
-  //       cell_y: this.attrs.cell_y
-  //     }
-  //   ))
-  // }
+Actors.Breeder.prototype.damage = function (hp) {
 
-  if(this.rats.length < this.opts.rats_max){
-    this.addRat();
+  if (!hp) {
+    hp = 1
   }
 
-  for (i = 0, ii = this.rats.length; i<ii; i++) {
-    if(!this.rats[i] || this.rats[i].attrs.dead){
-      this.rats.splice(i, 1);
-      i--
-      ii--
+  this.attrs.hp -= hp
+  this.attrs.hit = true
+
+  if (this.attrs.hp > 0) {
+    return
+  }
+  
+  if (this.attrs.dead) {
+    return
+  }
+
+  this.kill();
+
+}
+
+Actors.Breeder.prototype.kill = function () {
+
+  if (this.attrs.dead) {
+    return
+  }
+
+  this.attrs.dead = true;
+
+  // for (i = 0, ii = this.rats.length; i < ii; i++) {
+  //   this.rats[i].kill();
+  // }
+
+  for (i = 0, ii = this.refs.cell.breeders.length; i < ii; i++) {
+    if (this.refs.cell.breeders[i] === this) {
+      this.refs.cell.breeders.splice(i, 1);
+      break
     }
   }
 
-  
+  this.refs.cell.booms.push(new Actors.Boom(
+    this.env, {
+    }, {
+      style: '',
+      radius: 128,
+      x: this.pos.x,
+      y: this.pos.y,
+      color: '255,255,255'
+    }
+  ))
+
 }
 
 Actors.Breeder.prototype.addRat = function () {
@@ -98,6 +121,44 @@ Actors.Breeder.prototype.addRat = function () {
   this.rats.push(rat)
 
 }
+
+Actors.Breeder.prototype.update = function (delta) {
+  // if (this.refs.rats.length < this.refs.scene.opts.rat_limit) {
+  //   this.refs.rats.push(new Actors.Rat(
+  //     this.env, {
+  //       scene: this.refs.scene,
+  //       maze: this.refs.maze,
+  //       human: this.refs.human,
+  //       reactor: this.refs.reactor,
+  //       rats: this.refs.rats
+  //     }, {
+  //       cell_x: this.attrs.cell_x,
+  //       cell_y: this.attrs.cell_y
+  //     }
+  //   ))
+  // }
+
+  if(this.rats.length < this.opts.rats_max){
+    if(this.refs.cell.refs.maze){
+      if( !this.refs.cell.refs.maze.attrs.escape){
+        this.addRat();
+      }
+    } else {
+      this.addRat();
+    }
+  }
+
+  for (i = 0, ii = this.rats.length; i<ii; i++) {
+    if(!this.rats[i] || this.rats[i].attrs.dead){
+      this.rats.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+
+  
+}
+
 
 Actors.Breeder.prototype.addRats = function () {
 
@@ -125,17 +186,33 @@ Actors.Breeder.prototype.addRats = function () {
 
 Actors.Breeder.prototype.paint = function (view) {
 
-  view.ctx.strokeStyle = '#fff'
-
   view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
   view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+
+  if(this.refs.cell.refs.maze && this.refs.cell.refs.maze.attrs.escape){
+    view.ctx.fillStyle = 'rgba(255, 0, 0, 0.25)'
+    view.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)'
+  }
+  
   view.ctx.beginPath()
   view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
 
   if(this.env.ms % 20 < 10){
     view.ctx.fill()
   }
-
+ 
   view.ctx.stroke()
 
+  // view.ctx.font='20pt robotron';
+  // view.ctx.textAlign='center';
+  // view.ctx.textBaseline='middle';
+  // view.ctx.fillText(this.attrs.hp, this.opts.max_x/2, this.opts.max_y/2)
+
+  if(this.attrs.hit){
+    this.attrs.hit = false;
+    view.ctx.strokeStyle = 'rgba(255, 0, 0, 1)'
+    view.ctx.beginPath()
+    view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
+  }
+  
 }

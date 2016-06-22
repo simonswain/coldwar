@@ -18,12 +18,12 @@ Scenes.understand.prototype.layout = '';
 
 Scenes.understand.prototype.init = function(){
 
-  this.maze = new Actors.Maze(
+  this.maze = new Actors.TitleMaze(
     this.env, {
       scene: this
     }, {
-      rows: 8,
-      cols: 8,
+      rows: 16,
+      cols: 16,
       mode: 1,
     }, {
     })
@@ -32,14 +32,14 @@ Scenes.understand.prototype.init = function(){
 
 Scenes.understand.prototype.getCast = function(){
   return {
-    Maze: Actors.Maze,
-    Cell: Actors.Cell,
+    TitleMaze: Actors.TitleMaze,
+    TitleCell: Actors.TitleCell,
   }
 };
 
 Scenes.understand.prototype.defaults = [{
   key: 'max_x',
-  value: 480,
+  value: 640,
   min: 32,
   max: 1024
 }, {
@@ -98,11 +98,11 @@ Scenes.understand.prototype.update = function(delta){
       this.attrs.hold = 0;
       this.attrs.step_index = 0;
       this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.understand.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
+      // if(this.attrs.frame_index === Scenes.understand.prototype.frames.length){
+      //   this.attrs.frame_index = 0;
+      // }
     }
-  } else {
+  } else if(this.attrs.frame_index < Scenes.understand.prototype.frames.length) {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
@@ -123,9 +123,15 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
   gx.ctx.beginPath()
   gx.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
   
+  var frame;
+  if(this.attrs.frame_index < Scenes.understand.prototype.frames.length){
+    frame = Scenes.understand.prototype.frames[this.attrs.frame_index];
+  }
 
-  var frame = Scenes.understand.prototype.frames[this.attrs.frame_index];
-
+  if(!frame){
+    return;
+  }
+  
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
     ix = frame.text.length;
@@ -138,14 +144,14 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
   var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.035);
+  var dx = (this.opts.max_x * 0.03);
 
   var x, y;
 
   y = 0;
   x = 0;
 
-  fx.ctx.fillStyle = '#c00';
+  fx.ctx.fillStyle = '#369';
   fx.ctx.font = '18pt robotron';
 
   if(Math.random() < 0.5){
@@ -179,10 +185,10 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
 
-  gx.ctx.fillStyle = '#fc0';
+  gx.ctx.fillStyle = '#69c';
   
   if(Math.random() < 0.025){
-    gx.ctx.fillStyle = 'rgba(255,0,0,0.5)';
+    gx.ctx.fillStyle = 'rgba(0,0,255,0.5)';
     gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
   }
 
@@ -197,10 +203,10 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
 
     var h = (Date.now()%360 * 0.25) - 10;
-    gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+    gx.ctx.fillStyle = 'hsl(' + (h + 160) + ', 100%, 50%)';
     
     if(Math.random() < 0.025){
-      gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+      gx.ctx.fillStyle = 'rgba(0,0,255,0.5)';
       gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
     }
 

@@ -3,20 +3,20 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.bitshifting = function(env, opts){
+Scenes.bitshift = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.bitshifting.prototype = Object.create(Scene.prototype);
+Scenes.bitshift.prototype = Object.create(Scene.prototype);
 
-Scenes.bitshifting.prototype.title = 'Bitshifting';
+Scenes.bitshift.prototype.title = 'Bitshift';
 
-Scenes.bitshifting.prototype.layout = '';
+Scenes.bitshift.prototype.layout = '';
 
-Scenes.bitshifting.prototype.init = function(){
+Scenes.bitshift.prototype.init = function(){
 
   this.caps = [];
   for(var i = 0; i < 8; i++){
@@ -25,12 +25,12 @@ Scenes.bitshifting.prototype.init = function(){
   
 }
 
-Scenes.bitshifting.prototype.getCast = function(){
+Scenes.bitshift.prototype.getCast = function(){
   return {
   }
 };
 
-Scenes.bitshifting.prototype.defaults = [{
+Scenes.bitshift.prototype.defaults = [{
   key: 'max_x',
   value: 640,
   min: 32,
@@ -47,27 +47,32 @@ Scenes.bitshifting.prototype.defaults = [{
   max: 1
 }, {
   key: 'duration',
-  value: 60,
+  value: 240,
   min: 1,
   max: 120
 }];
 
-Scenes.bitshifting.prototype.genAttrs = function(){
+Scenes.bitshift.prototype.genAttrs = function(){
   return {
     time: 0,
     value: 0,
     duration: this.opts.duration,
+    dir: 2,
   };
 };
 
-Scenes.bitshifting.prototype.update = function(delta){
+Scenes.bitshift.prototype.update = function(delta){
   this.attrs.time += this.env.diff
   if (this.attrs.time > this.attrs.duration) {
     this.attrs.time = 0;
-
-    this.attrs.value ++;
-    if(this.attrs.value > 255){
-      this.attrs.value = 0;
+    this.attrs.value *= this.attrs.dir;
+    if(this.attrs.value >= 128){
+      this.attrs.dir = 0.5;
+      this.attrs.value = 128;
+    }
+    if(this.attrs.value <= 1){
+      this.attrs.dir = 2;
+      this.attrs.value = 1;
     }
     for(var i = 0; i < 8; i++){
       this.caps[i] = (this.attrs.value & Math.pow(2, i));
@@ -76,7 +81,7 @@ Scenes.bitshifting.prototype.update = function(delta){
   
 }
 
-Scenes.bitshifting.prototype.drawCap = function(gx, charge){
+Scenes.bitshift.prototype.drawCap = function(gx, charge){
 
   gx.ctx.strokeStyle = '#0ff';
   gx.ctx.lineWidth = 16;
@@ -126,11 +131,11 @@ Scenes.bitshifting.prototype.drawCap = function(gx, charge){
 }
 
 
-Scenes.bitshifting.prototype.paint = function(fx, gx, sx){
+Scenes.bitshift.prototype.paint = function(fx, gx, sx){
 
   for(var i = 0; i < 8; i++){
     gx.ctx.save();
-    gx.ctx.translate((this.opts.max_x / 8) * (7-i), this.opts.max_y * 0.3);
+    gx.ctx.translate((this.opts.max_x / 8) * (6.7-i), this.opts.max_y * 0.3);
     gx.ctx.scale(0.2, 0.2);
     this.drawCap(gx, this.caps[i]);
     gx.ctx.restore()

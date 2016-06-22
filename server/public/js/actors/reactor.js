@@ -45,42 +45,60 @@ Actors.Reactor.prototype.paint = function (view) {
   view.ctx.fillStyle = 'rgba(255, 0, 255, 0.3)'
   var p = (this.env.ms / 2000) + 0.5;
 
+  if(this.attrs.primed && this.env.ms / 80 < 5){
+    view.ctx.fillStyle = '#f0f'
+  }
 
   view.ctx.beginPath()
   view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
   view.ctx.fill()
 
   view.ctx.strokeStyle = 'rgba(51, 0, 51, 1)'
+  if(this.attrs.primed && this.env.ms / 100 < 1){
+    view.ctx.strokeStyle = '#fff'
+  }
   view.ctx.lineWidth = 24
   view.ctx.beginPath()
   view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)
   view.ctx.stroke()
+ 
+  view.ctx.lineWidth = 64
 
-  
-  view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + p + ')'
-  view.ctx.lineWidth = 48
+
+  if(this.attrs.primed && this.env.ms / 80 < 5){
+    view.ctx.strokeStyle = '#000'
+  } else {
+    view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + p + ')'
+  }
+  if(Math.random() < 0.1){
+    view.ctx.strokeStyle = '#fff'
+  }
   view.ctx.beginPath()
   view.ctx.arc(0, 0, this.opts.r/2, 0, arc)
   view.ctx.stroke()
-
-  view.ctx.beginPath()
+ 
+  if(this.attrs.primed && this.env.ms / 80 < 5){
+    view.ctx.strokeStyle = '#000'
+  } else {
+    view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + p + ')'
+  }
+  if(Math.random() < 0.1){
+    view.ctx.strokeStyle = '#fff'
+  }
+ view.ctx.beginPath()
   view.ctx.arc(0, 0, this.opts.r/2, 2*arc, 3*arc)
   view.ctx.stroke()
 
+  if(this.attrs.primed && this.env.ms / 80 < 5){
+    view.ctx.strokeStyle = '#000'
+  } else {
+    view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + p + ')'
+  }
+  if(Math.random() < 0.1){
+    view.ctx.strokeStyle = '#fff'
+  }
   view.ctx.beginPath()
   view.ctx.arc(0, 0, this.opts.r/2, 4*arc, 5*arc)
   view.ctx.stroke()
-
-
-
-
   
-  var z = this.opts.r * 2;
-  if(this.attrs.primed && this.env.ms / 100 < 1){
-    view.ctx.strokeStyle = '#fff'
-    view.ctx.lineWidth = 8
-    view.ctx.beginPath()
-    view.ctx.rect(-z/2, -z/2, z, z)
-    view.ctx.stroke()
-  }
 }

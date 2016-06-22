@@ -1,9 +1,9 @@
 /* global Actors, Actor */
 
-Actors.Demobreeder = function (env, refs, attrs) {
+Actors.Demobreeder = function (env, refs, attrs, opts) {
   this.env = env
   this.refs = refs
-  this.opts = this.genOpts()
+  this.opts = this.genOpts(opts)
   this.attrs = this.genAttrs(attrs)
   this.init(attrs)
 }
@@ -28,13 +28,13 @@ Actors.Demobreeder.prototype.init = function (attrs) {
 Actors.Demobreeder.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
-  value: 64,
+  value: 80,
   min: 100,
   max: 1600
 }, {
   key: 'max_y',
   info: 'Max Y',
-  value: 128,
+  value: 80,
   min: 100,
   max: 1000
 }, {
@@ -47,25 +47,17 @@ Actors.Demobreeder.prototype.defaults = [{
   value: 1,
   min: 0,
   max: 8
+}, {
+  key: 'rat_chance',
+  value: 1,
+  min: 0,
+  max: 1
 }]
 
 Actors.Demobreeder.prototype.update = function (delta) {
   
-  // if (this.rats.length < 1) {
-  //   this.refs.rats.push(new Actors.Demorat(
-  //     this.env, {
-  //       scene: this.refs.scene,
-  //       demo: this.refs.demo,
-  //       rats: this.refs.rats
-  //     }, {
-  //       demo_x: this.attrs.demo_x,
-  //       demo_y: this.attrs.demo_y
-  //     }
-  //   ))
-  // }
-
   if(this.rats.length < this.opts.rats_max){
-    this.addRat();
+    this.addRats();
   }
 
   for (i = 0, ii = this.rats.length; i<ii; i++) {
@@ -75,7 +67,6 @@ Actors.Demobreeder.prototype.update = function (delta) {
       ii--
     }
   }
-
   
 }
 
@@ -98,10 +89,8 @@ Actors.Demobreeder.prototype.addRat = function () {
 
 Actors.Demobreeder.prototype.addRats = function () {
 
-  var launched_this_tick = 0
-
   var rat
-  while (this.rats.length < this.opts.rats_max && launched_this_tick < this.opts.rats_per_tick) {
+  if (this.rats.length < this.opts.rats_max && Math.random() < Number(this.opts.rat_chance)) {
     rat = new Actors.Demorat(
       this.env, {
         reeder: this,
@@ -114,7 +103,6 @@ Actors.Demobreeder.prototype.addRats = function () {
 
     this.refs.demo.rats.push(rat)
     this.rats.push(rat)
-    launched_this_tick++
   }
 
 }
@@ -122,10 +110,13 @@ Actors.Demobreeder.prototype.addRats = function () {
 
 Actors.Demobreeder.prototype.paint = function (view) {
 
-  view.ctx.strokeStyle = '#fff'
-
   view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
-  view.ctx.strokeStyle = 'rgba(158, 204, 0, 0.8)'
+  view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+  view.ctx.lineWidth = 8
+  
+  view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
+  view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+
   view.ctx.beginPath()
   view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
 

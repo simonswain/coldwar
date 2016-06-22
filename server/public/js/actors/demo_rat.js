@@ -42,6 +42,7 @@ Actors.Demorat.prototype.genAttrs = function (attrs) {
     dead: false,
     hp: hp,
     hp_max: hp,
+    ttl: 0
   }
   
 }
@@ -58,6 +59,15 @@ Actors.Demorat.prototype.init = function (attrs) {
     Math.PI * 2 * Math.random(),
     this.attrs.speed
   ).vec3()
+
+  if(this.attrs.type === 1){
+    this.attrs.ttl = 200 + Math.random() * 300
+  }
+
+  if(this.attrs.type === 2){
+    this.attrs.ttl = 100 + Math.random() * 200
+  }
+
 }
 
 Actors.Demorat.prototype.defaults = [{
@@ -165,18 +175,81 @@ Actors.Demorat.prototype.defaults = [{
 Actors.Demorat.prototype.update = function (delta) {
   var vec = new Vec3()
 
-  vec.add(this.separation().scale(this.opts.separation_force))
-  vec.add(this.alignment().scale(this.opts.alignment_force))
-  vec.add(this.cohesion().scale(this.opts.cohesion_force))
-  vec.add(this.chase().scale(this.opts.chase_force))
+  // white rats
+  if(this.attrs.type === 0){
+    //vec.add(this.cohesion().scale(2))
+    vec.add(this.separation().scale(3)) 
+    //vec.add(this.alignment().scale(this.opts.alignment_force))
+    vec.add(this.chase().scale(3))
+  }
+
+  // grey rats stick together
+  if(this.attrs.type === 1){
+    vec.add(this.cohesion().scale(0.25))
+    vec.add(this.separation().scale(0.25)) 
+    vec.add(this.alignment())
+  }
+
+  // baby rats
+  if(this.attrs.type === 2){
+    vec.add(this.cohesion().scale(3))
+    vec.add(this.separation().scale(1)) 
+    vec.add(this.alignment().scale(2))
+    vec.add(this.chase().scale(1))
+  }
+
+  // vec.add(this.separation().scale(this.opts.separation_force))
+  // vec.add(this.alignment().scale(this.opts.alignment_force))
+  // vec.add(this.cohesion().scale(this.opts.cohesion_force))
+  // vec.add(this.chase().scale(this.opts.chase_force))
 
   vec.scale(this.opts.velo_scale)
 
   this.velo.add(vec)
   this.velo.scale(0.8 + (Math.random()*0.5))
   this.velo.limit(this.attrs.speed)
-  this.pos.add(this.velo)
+  this.pos.add(this.velo);
+  
+  if(this.pos.x < 0){
+    this.dead = true;
+  }
 
+  if(this.pos.x > this.opts.max_x){
+    this.dead = true;
+  }
+
+  if(this.pos.y < 0){
+    this.dead = true;
+  }
+
+  if(this.pos.y > this.opts.max_y){
+    this.dead = true;
+  }
+
+
+  // momma maturity
+  
+  if(this.attrs.type === 1){
+    if(this.attrs.ttl>0){
+      this.attrs.ttl --;
+    }
+    if(this.attrs.ttl <= 0){
+      this.kill()
+    }
+  }
+
+  // baby maturity
+  
+  if(this.attrs.type === 2){
+    if(this.attrs.ttl>0){
+      this.attrs.ttl --;
+    }
+    if(this.attrs.ttl <= 0){
+      this.attrs.type = 0;
+    }
+  }
+  
+  
 }
 
 
@@ -186,6 +259,9 @@ Actors.Demorat.prototype.chase = function () {
   var yy = 0
   var c = 0
 
+  if(!this.refs.demo.humans){
+    return new Vec3();
+  }
 
   if(this.refs.demo.humans.length === 0){
     return new Vec3();
@@ -429,10 +505,12 @@ Actors.Demorat.prototype.kill = function () {
 
   this.attrs.dead = true;
 
-  for (i = 0, ii = this.refs.breeder.rats.length; i < ii; i++) {
-    if (this.refs.breeder.rats[i] === this) {
-      this.refs.breeder.rats[i] = null;
-      break
+  if(this.refs.breeder){
+    for (i = 0, ii = this.refs.breeder.rats.length; i < ii; i++) {
+      if (this.refs.breeder.rats[i] === this) {
+        this.refs.breeder.rats[i] = null;
+        break
+      }
     }
   }
 
@@ -457,18 +535,20 @@ Actors.Demorat.prototype.kill = function () {
   var rat;
   if(this.attrs.type === 1){
     // mommy
-    for(var i=0, ii=Math.floor(Math.random()*this.opts.babies_max)+1; i<ii; i++){
+    for(var i=2, ii = 4 + Math.floor(Math.random()*this.opts.babies_max)+1; i<ii; i++){
       rat = new Actors.Demorat(
         this.env, {
           breeder: this.refs.breeder,
           demo: this.refs.demo,
         }, {
-          type: 2, //baby
+          type: 2, // baby
           x: this.pos.x,
           y: this.pos.y,
         })
       this.refs.demo.rats.push(rat)
-      this.refs.breeder.rats.push(rat)  
+      if(this.refs.breeder){
+        this.refs.breeder.rats.push(rat)  
+      }
     }
   }
   
@@ -486,15 +566,23 @@ Actors.Demorat.prototype.paint = function (view) {
   var z = 8
   switch (this.attrs.type) {
   case 0:
-    // gray rat
- 
+    // white rat
+
     // tail
     view.ctx.fillStyle = '#ccc'
     view.ctx.beginPath()
-    view.ctx.moveTo(-z-z-z-z, 0)
+    view.ctx.moveTo(-z-z-z-z-z, 0)
     view.ctx.lineTo(0, z)
     view.ctx.lineTo(0, -z)
-    view.ctx.lineTo(-z-z-z-z, 0)
+    view.ctx.lineTo(-z-z-z-z-z, 0)
+    view.ctx.closePath()
+    view.ctx.fill()
+
+    // head
+    view.ctx.fillStyle = '#fff'
+    view.ctx.beginPath()
+    //view.ctx.arc(z*2, 0, z, 0, 2*Math.PI);
+    view.ctx.ellipse(z*2, 0, z * 1.2, z * 0.8, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
@@ -502,14 +590,20 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.fillStyle = '#eee'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
-    view.ctx.arc(0, 0, 2*z, 0, 2*Math.PI);
+    //view.ctx.arc(0, 0, 2*z, 0, 2*Math.PI);
+    view.ctx.ellipse(0, 0, z * 2.2, z * 1.6, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
-   // head
-    view.ctx.fillStyle = '#fff'
+    //eyes
+    view.ctx.fillStyle = '#f00'
     view.ctx.beginPath()
-    view.ctx.arc(z*2, 0, z, 0, 2*Math.PI);
+    view.ctx.arc(z * 2.5, -z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.closePath()
+
+    view.ctx.fill() 
+    view.ctx.beginPath()
+    view.ctx.arc(z * 2.5, z*0.2, z*0.1, 0, 2*Math.PI);
     view.ctx.closePath()
     view.ctx.fill()
 
@@ -527,12 +621,13 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.lineTo(-z-z-z-z-z, 0)
     view.ctx.closePath()
     view.ctx.fill()
-    
+
     // body
     view.ctx.fillStyle = '#444'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
-    view.ctx.arc(0, 0, 3*z, 0, 2*Math.PI);
+    view.ctx.ellipse(0, 0, z * 2.8, z * 2.2, 0, 2*Math.PI, 0);
+    //view.ctx.arc(0, 0, 3*z, 0, 2*Math.PI);
     view.ctx.closePath()
     view.ctx.fill()
     // head
@@ -542,11 +637,23 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.closePath()
     view.ctx.fill()
 
+       //eyes
+    view.ctx.fillStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.arc(z * 2.5, -z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.closePath()
+
+    view.ctx.fill() 
+    view.ctx.beginPath()
+    view.ctx.arc(z * 2.5, z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.closePath()
+    view.ctx.fill()
+
     break;
 
   case 2:
     // baby rat
- 
+
     // tail
     view.ctx.fillStyle = '#fff'
     view.ctx.beginPath()
@@ -561,20 +668,31 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.fillStyle = '#fff'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
-    view.ctx.arc(0, 0, z, 0, 2*Math.PI);
+    view.ctx.ellipse(0, 0, z * 1.1, z * 0.8, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
-   // head
+    // head
     view.ctx.fillStyle = '#fff'
     view.ctx.beginPath()
     view.ctx.arc(z, 0, z*0.4, 0, 2*Math.PI);
     view.ctx.closePath()
     view.ctx.fill()
 
+           //eyes
+    view.ctx.fillStyle = '#f00'
+    view.ctx.beginPath()
+    view.ctx.arc(z * 1.1, -z*0.2, z*0.08, 0, 2*Math.PI);
+    view.ctx.closePath()
+
+    view.ctx.fill() 
+    view.ctx.beginPath()
+    view.ctx.arc(z * 1.1, z*0.2, z*0.08, 0, 2*Math.PI);
+    view.ctx.closePath()
+    view.ctx.fill()
+
     break;
   default:
-
 
     // tail
     view.ctx.fillStyle = '#ccc'
@@ -602,7 +720,6 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.fill()
     break;
   }
-
 
   view.ctx.restore()
 }

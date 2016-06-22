@@ -57,6 +57,11 @@ Scenes.cell.prototype.genAttrs = function () {
 
 Scenes.cell.prototype.update = function (delta) {
   this.cell.update(delta);
+  if(!this.env.gameover && this.cell.rats.length === 0){
+    this.env.gameover = true;
+    setTimeout(this.env.restart, 1500)
+  }
+  
 }
 
 //Scenes.cell.prototype.paintOnce = true;
@@ -64,15 +69,3 @@ Scenes.cell.prototype.update = function (delta) {
 Scenes.cell.prototype.paint = function (fx, gx, sx) {
   this.cell.paint(gx)
 }
-
-Scenes.cell.prototype.getHelp = function () {
-  return ''
-}
-
-Scenes.cell.prototype.frames = [];
-
-Scenes.cell.prototype.frames[0] = {
-  text:[
-    'What happens in the room',
-  ].join("\n"),
-};

@@ -12,6 +12,25 @@ Actors.Human.prototype = Object.create(Actor.prototype)
 
 Actors.Human.prototype.title = 'Human'
 
+Actors.Human.prototype.genAttrs = function (attrs) {
+
+  var energy = 10 + random0to(10)
+
+  return {
+    face_enemy: false,
+    face_angle: 0,
+    speed: this.opts.speed_base + (Math.random() * this.opts.speed_flux),
+    color: attrs.color || '#fff',
+    dead: false,
+    recharge: 1 + (random1to(10)) / 10,
+    energy_max: energy,
+    energy: energy,
+    damage: 0,
+    escaped: false
+    
+  }
+}
+
 Actors.Human.prototype.init = function (attrs) {
 
   this.pos = new Vec3(
@@ -139,23 +158,6 @@ Actors.Human.prototype.defaults = [{
   step:0.1
 }]
 
-Actors.Human.prototype.genAttrs = function (attrs) {
-
-  var energy = 10 + random0to(10)
-
-  return {
-    face_enemy: false,
-    face_angle: 0,
-    speed: this.opts.speed_base + (Math.random() * this.opts.speed_flux),
-    color: attrs.color || '#fff',
-    dead: false,
-    recharge: 1 + (random1to(10)) / 10,
-    energy_max: energy,
-    energy: energy,
-    damage: 0,
-    
-  }
-}
 
 Actors.Human.prototype.update = function (delta) {
 
@@ -163,16 +165,18 @@ Actors.Human.prototype.update = function (delta) {
   var route 
 
   this.recharge()
-  this.shoot()
+  this.shootRats()
+  this.shootBreeder()
 
   this.flashbang()
 
   if(this.refs.maze){
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell){
       this.refs.maze.attrs.escape = true;
+      this.refs.cell.reactors[0].attrs.primed = true;
     }
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
-      this.env.restart()
+      this.refs.maze.attrs.escape_done = true;
     } else{
      
       if(this.refs.maze.attrs.escape){
@@ -308,8 +312,12 @@ Actors.Human.prototype.recharge = function () {
   }
 }
 
-Actors.Human.prototype.shoot = function () {
+Actors.Human.prototype.shootRats = function () {
 
+  if(this.attrs.escaped){
+    return;
+  }
+  
   var enemy
   var closest = Infinity
   
@@ -320,14 +328,10 @@ Actors.Human.prototype.shoot = function () {
   };
   
   this.refs.cell.rats.forEach(function (other) {
-
     if(!other){
       return;
     }
-    
     var range = this.pos.rangeXY(other.pos)
-
-    // find closest weaker enemy
     if (range < closest) {
       enemy = other
       closest = range
@@ -360,21 +364,57 @@ Actors.Human.prototype.flashbang = function () {
         if(!other){
           return;
         }
-        other.attrs.dead = true;
-        this.refs.cell.booms.push(new Actors.Boom(
-          this.env, {
-          }, {
-            radius: 4,
-            x: other.x,
-            y: other.y,
-            color: '152,0,0'
-          }
-        ))
-        
+        // doesn't affect gray rats
+        if(other.attrs.type === 1){
+          return;
+        }
+        other.kill();
       }, this);
     }
   };
+
+}
+
+Actors.Human.prototype.shootBreeder = function () {
+
+  var enemy
+  var closest = Infinity
   
+  this.attrs.face_enemy = false;
+
+  if(this.refs.cell.breeders.length === 0){
+    return;
+  };
+  
+  this.refs.cell.breeders.forEach(function (other) {
+
+    if(!other){
+      return;
+    }
+    
+    var range = this.pos.rangeXY(other.pos)
+
+    // find closest weaker enemy
+    if (range < closest) {
+      enemy = other
+      closest = range
+    }
+  }, this)
+
+  if(enemy){
+    this.attrs.face_angle = enemy.pos.angleXYto(this.pos)
+    this.attrs.face_enemy = true;
+  }
+  
+  if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
+    this.attrs.energy = this.attrs.energy - 1
+    this.refs.cell.addZap(
+      this.pos.x,
+      this.pos.y,
+      enemy.pos.x,
+      enemy.pos.y
+    )
+  }
 
 }
 
@@ -605,6 +645,10 @@ Actors.Human.prototype.steer = function () {
 
 Actors.Human.prototype.paint = function (view) {
 
+  if(this.attrs.escaped){
+    return;
+  }
+  
   view.ctx.save()
   if(this.attrs.face_enemy){
     view.ctx.rotate(this.attrs.face_angle)

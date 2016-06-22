@@ -116,8 +116,8 @@ Actors.Cell.prototype.addHuman = function () {
       maze: this.refs.maze,
       cell: this,
     }, {
-      x: this.opts.max_x * 0.75,
-      y: this.opts.max_y * 0.25,
+      x: this.opts.max_x * 0.5,
+      y: this.opts.max_y * 0.5,
     })
 
   this.humans.push(human)
@@ -139,9 +139,23 @@ Actors.Cell.prototype.addPortal = function () {
   return portal;
 }
 
+Actors.Cell.prototype.killAllActors = function () {
+  var i, ii;
+  for (i = 0, ii = this.breeders.length; i<ii; i++) {
+    if(this.breeders[i]){
+      this.breeders[i].kill();
+    }
+  }
+
+  for (i = 0, ii = this.rats.length; i<ii; i++) {
+    if(this.rats[i]){
+      this.rats[i].kill(true);
+    }
+  }
+}
+
 Actors.Cell.prototype.update = function (delta) {
   var intentToHuman = null;
-
   if(this.refs.maze && this.refs.maze.human){
     this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
 
@@ -249,7 +263,7 @@ Actors.Cell.prototype.paint = function (view) {
   // view.ctx.fillText(this.attrs.i, this.opts.max_x/2, this.opts.max_y/2)
   
   var i, ii
-
+  
   view.ctx.lineWidth = 16
 
   if(this.attrs.active){
@@ -302,6 +316,7 @@ Actors.Cell.prototype.paint = function (view) {
         view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
       }
    
+      view.ctx.lineCap = 'round'
       view.ctx.beginPath()
       view.ctx.moveTo(this.opts.max_x * vecs[exit][0], this.opts.max_y * vecs[exit][1])
       view.ctx.lineTo(this.opts.max_x * vecs[exit][2], this.opts.max_y * vecs[exit][3])
@@ -320,19 +335,23 @@ Actors.Cell.prototype.paint = function (view) {
     view.ctx.restore()
   }
 
-  var portal
-  for (i = 0, ii = this.portals.length; i<ii; i++) {
-    portal = this.portals[i];
-    view.ctx.save()
-    view.ctx.translate(portal.pos.x, portal.pos.y);
-    this.portals[i].paint(view)
-    view.ctx.restore()
-  }
-  
+  if(this.refs.maze && this.refs.maze.human && !this.refs.maze.human.attrs.escaped){
+    var portal
+    for (i = 0, ii = this.portals.length; i<ii; i++) {
+      portal = this.portals[i];
+      view.ctx.save()
+      view.ctx.translate(portal.pos.x, portal.pos.y);
+      this.portals[i].paint(view)
+      view.ctx.restore()
+    }
+  }  
  
   var breeder;
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     breeder = this.breeders[i];
+    if(!breeder){
+      continue
+    }
     view.ctx.save()
     view.ctx.translate(breeder.pos.x - (breeder.opts.max_x/2), breeder.pos.y - (breeder.opts.max_y/2));
 
