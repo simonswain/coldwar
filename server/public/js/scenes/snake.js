@@ -5,6 +5,7 @@
 
 Scenes.snake = function(env, opts){
   this.env = env;
+  this.fx = env.views.fx;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
@@ -196,6 +197,8 @@ Scenes.snake.prototype.route = function () {
     }
   }
 
+  var self = this;
+
   function distanceFunction(a, b){
     var ax = a % opts.cols;
     var ay = Math.floor(a/opts.rows);
@@ -213,6 +216,30 @@ Scenes.snake.prototype.route = function () {
     var x, y, xx, yy, q, inSnake, i, j;
     x = ix % opts.cols;
     y = Math.floor((ix - x)/opts.rows);
+
+    // var fx = self.fx;
+
+    // fx.ctx.save()
+    // fx.ctx.translate(fx.offset_x, fx.offset_y)
+    // fx.ctx.translate(self.env.page_x, self.env.page_y)
+    // fx.ctx.scale(self.env.zoom, self.env.zoom)
+    // fx.ctx.scale(fx.scale, fx.scale)
+
+    // var ww = self.opts.max_x / self.opts.rows;
+    // var hh = self.opts.max_y / self.opts.cols;
+    // fx.ctx.fillStyle = '#fff';
+    // fx.ctx.beginPath();
+    // fx.ctx.lineWidth = 2;
+    // fx.ctx.rect(
+    //   x * ww,
+    //   y * hh,
+    //   ww,
+    //   hh
+    // )
+    // fx.ctx.fill();
+    // fx.ctx.stroke();
+    // fx.ctx.restore()
+
     for(i=0; i<4; i++){
       xx = x + adds[i][0];
       yy = y + adds[i][1];
@@ -329,24 +356,18 @@ Scenes.snake.prototype.paint = function(fx, gx, sx){
     gx.ctx.fillStyle = '#000';
 
     if(this.memory[i] === 'w'){
-      gx.ctx.fillStyle = '#009';
-    }
-
-    if(this.food === i){
-      gx.ctx.fillStyle = '#0f0';
-    }
-
-    gx.ctx.beginPath();
-    gx.ctx.lineWidth = 2;
-    gx.ctx.rect(
-      x * ww,
-      y * hh,
-      ww,
-      hh
-    )
-    gx.ctx.fill();
-    gx.ctx.stroke();
-    
+      gx.ctx.fillStyle = '#090';
+      gx.ctx.beginPath();
+      gx.ctx.lineWidth = 2;
+      gx.ctx.rect(
+        x * ww,
+        y * hh,
+        ww,
+        hh
+      )
+      gx.ctx.fill();
+      gx.ctx.stroke();
+    }  
   }
 
   // snake
@@ -366,6 +387,43 @@ Scenes.snake.prototype.paint = function(fx, gx, sx){
     )
     gx.ctx.fill();
     gx.ctx.stroke();
+  }
+
+  // food
+  if(this.food){
+    x = this.food % this.opts.cols;
+    y = Math.floor(this.food/this.opts.rows);
+    var h = (Date.now()%360 * 0.22) - 10;
+    var c;
+    c = 'hsl(' + h + ', 100%, 50%)';
+    
+    if(Math.random() < 0.025){
+      c = 'rgba(255,255,0,0.5)';
+    }
+
+    if(Math.random() < 0.15){
+      c = 'rgba(255,255,255,1)';
+    }
+
+    gx.ctx.shadowColor = c;
+    gx.ctx.shadowBlur = 40;
+    gx.ctx.shadowOffsetX = 0;
+    gx.ctx.shadowOffsetY = 0;
+    gx.ctx.shadowBlur = ww * 5;
+
+    gx.ctx.fillStyle = c;
+    gx.ctx.beginPath();
+    gx.ctx.lineWidth = 2;
+    gx.ctx.rect(
+      x * ww,
+      y * hh,
+      ww,
+      hh
+    )
+
+    gx.ctx.fill();
+    gx.ctx.stroke();
+    gx.ctx.shadowBlur = 0;
   }
   
   gx.ctx.restore();

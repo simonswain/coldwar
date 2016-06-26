@@ -28,6 +28,7 @@ Actors.Maze.prototype.genAttrs = function (attrs) {
 
 Actors.Maze.prototype.init = function () {
   this.makeGrid();
+  this.human = false;
 };
 
 Actors.Maze.prototype.defaults = [{

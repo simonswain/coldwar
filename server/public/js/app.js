@@ -196,7 +196,6 @@ Coldwar.prototype.paintScene = function () {
   var ex = this.env.views.ex
   var fx = this.env.views.fx
   var gx = this.env.views.gx
-  var sx = this.env.views.sx
 
   ex.ctx.clearRect(0, 0, ex.w, ex.h)
 
@@ -206,7 +205,7 @@ Coldwar.prototype.paintScene = function () {
   gx.ctx.clearRect(0, 0, gx.w, gx.h)
 
   if (this.scene && typeof this.scene.flash === 'function') {
-    this.scene.flash(fx, gx, sx)
+    this.scene.flash(fx, gx)
   } else {
     gx.ctx.clearRect(0, 0, gx.w, gx.h)
     if (this.env.flash && !this.opts.safe_mode) {
@@ -232,31 +231,11 @@ Coldwar.prototype.paintScene = function () {
   fx.ctx.scale(this.env.zoom, this.env.zoom)
   fx.ctx.scale(fx.scale, fx.scale)
 
-  // fx.ctx.strokeStyle='#ffffff'
-  // fx.ctx.lineWidth=2
-  // fx.ctx.beginPath()
-  // fx.ctx.rect(0, 0, this.optsVals.scene.max_x, this.optsVals.scene.max_y)
-  // fx.ctx.stroke()
-
-  if (sx) {
-    sx.ctx.clearRect(0, 0, sx.w, sx.h)
-    if (this.env.flash && !this.opts.safe_mode) {
-      sx.ctx.fillStyle = '#ffffff'
-      sx.ctx.fillRect(0, 0, sx.w, sx.h)
-    }
-    sx.ctx.save()
-    sx.ctx.translate(sx.offset_x, sx.offset_z)
-    sx.ctx.scale(sx.scale, sx.scale)
-  }
-
-  this.scene.paint(fx, gx, sx, ex)
+  this.scene.paint(fx, gx)
 
   fx.ctx.restore()
   gx.ctx.restore()
 
-  if (sx) {
-    sx.ctx.restore()
-  }
 }
 
 Coldwar.prototype.paintMeta = function () {
@@ -453,8 +432,7 @@ Coldwar.prototype.genEnv = function () {
     views: {
       ex: null,
       fx: null,
-      gx: null,
-      sx: null
+      gx: null
     },
     fx_alpha: 0.15,
     last: Date.now(),
@@ -572,19 +550,9 @@ Coldwar.prototype.layout = function () {
   var html
   var c = this.env.show_opts ? 'has-controls' : ''
   html = ''
-  switch (this.Scene.prototype.layout) {
-    case 'scanner':
-      html += '<div id="ex" class="' + c + ' has-sx"><canvas id="Ex" oncontextmenu="return false"></canvas></div>'
-      html += '<div id="fx" class="' + c + ' has-sx"><canvas id="Fx"></canvas></div>'
-      html += '<div id="gx" class="' + c + ' has-sx"><canvas id="Gx"></canvas></div>'
-      html += '<div id="sx" class="' + c + '"><canvas id="Sx"></canvas></div>'
-      break
-    default:
-      html += '<div id="ex" class="' + c + '"><canvas id="Ex" oncontextmenu="return false"></canvas></div>'
-      html += '<div id="fx" class="' + c + '"><canvas id="Fx"></canvas></div>'
-      html += '<div id="gx" class="' + c + '"><canvas id="Gx"></canvas></div>'
-      break
-  }
+  html += '<div id="ex" class="' + c + '"><canvas id="Ex" oncontextmenu="return false"></canvas></div>'
+  html += '<div id="fx" class="' + c + '"><canvas id="Fx"></canvas></div>'
+  html += '<div id="gx" class="' + c + '"><canvas id="Gx"></canvas></div>'
 
   if (this.env.show_opts) {
     html += '<div id="controls">'
@@ -642,30 +610,6 @@ Coldwar.prototype.render = function () {
     view.offset_x = (view.w * 0.5) - (this.optsVals.scene.max_x * view.scale * 0.5)
     view.offset_y = (view.h * 0.5) - (this.optsVals.scene.max_y * view.scale * 0.5)
   }, this)
-
-  var elSx = document.getElementById('sx')
-
-  if (elSx) {
-    this.env.views.sx = {}
-    this.env.views.sx.wrap = document.getElementById('sx')
-    this.env.views.sx.el = document.getElementById('Sx')
-    this.env.views.sx.ctx = this.env.views.sx.el.getContext('2d')
-
-    this.env.views.sx.w = this.env.views.sx.wrap.offsetWidth
-    this.env.views.sx.h = this.env.views.sx.wrap.offsetHeight
-
-    this.env.views.sx.el.width = this.env.views.sx.w
-    this.env.views.sx.el.height = this.env.views.sx.h
-
-    this.env.views.sx.scale_x = this.env.views.sx.w / this.optsVals.scene.max_x
-    this.env.views.sx.scale_z = this.env.views.sx.h / this.optsVals.scene.max_z
-    this.env.views.sx.scale = Math.min(this.env.views.sx.scale_x, this.env.views.sx.scale_z)
-
-    this.env.views.sx.scale = this.env.views.gx.scale // = Math.min(this.env.views.sx.scale_x, this.env.views.sx.scale_z)
-
-    this.env.views.sx.offset_x = (this.env.views.sx.w * 0.5) - (this.optsVals.scene.max_x * this.env.views.sx.scale * 0.5)
-    this.env.views.sx.offset_z = -60// (this.env.views.sx.h * 0.5) - (this.optsVals.scene.max_z * this.env.views.sx.scale)
-  }
 
   this.env.views.ex.wrap.onmousemove = this.handleMouseMove.bind(this)
   this.env.views.ex.wrap.onmousedown = this.handleMouseDown.bind(this)
@@ -949,9 +893,9 @@ Coldwar.prototype.scenes = [{
   title: 'Bytes',
   slug: 'bytes'
 }, {
-//   title: 'Address',
-//   slug: 'address'
-// }, {
+  title: 'Address',
+  slug: 'address'
+}, {
   title: 'CRT',
   slug: 'crt'
 }, {
@@ -961,20 +905,29 @@ Coldwar.prototype.scenes = [{
   title: 'Big Array',
   slug: 'big_array'
 }, {
-  title: 'Drunken',
-  slug: 'drunken'
-}, {
   title: 'Dungeon',
   slug: 'dungeon'
+}, {
+  title: 'Drunken',
+  slug: 'drunken'
 }, {
   title: 'Snake',
   slug: 'snake'
 }, {
+  title: 'Proximity',
+  slug: 'proximity'
+}, {
+  title: 'Links',
+  slug: 'links'
+}, {
+  title: 'Graph',
+  slug: 'graph'
+}, {
   title: 'Cells',
   slug: 'cells'
-}, {
-  title: 'Structure',
-  slug: 'datastructure'
+// }, {
+//   title: 'Structure',
+//   slug: 'datastructure'
 }, {
   title: 'Mazegen',
   slug: 'mazegen'
@@ -1003,8 +956,8 @@ Coldwar.prototype.scenes = [{
   title: 'Enemies',
   slug: 'enemies'
 }, {
-  title: 'Baby Rats',
-  slug: 'baby_rats'
+  title: 'Beware',
+  slug: 'beware'
 }, {
   title: 'Cell',
   slug: 'cell'

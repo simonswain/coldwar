@@ -1,11 +1,23 @@
-export default (env = 'development') => ({
-  nickname: 'coldwar',
-  env,
-  ga_id: '',
-  server: {
+module.exports = function(env){
+
+  if(!env){
+    env = 'development';
+  }
+
+  var nickname = 'coldwar';
+
+  var server = {
     host: '0.0.0.0',
     port: 4002,
     mount: ''
-  },
-  docroot: ''
-})
+  }
+
+  return {
+    nickname: nickname,
+    env: env,
+    ga_id: '',
+    server: server,
+    docroot: ''
+  };
+
+}

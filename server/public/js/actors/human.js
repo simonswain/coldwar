@@ -27,7 +27,7 @@ Actors.Human.prototype.genAttrs = function (attrs) {
     energy: energy,
     damage: 0,
     escaped: false
-    
+
   }
 }
 
@@ -43,7 +43,7 @@ Actors.Human.prototype.init = function (attrs) {
     Math.PI * 2 * Math.random(),
     this.attrs.speed
   ).vec3()
-  
+
 }
 
 Actors.Human.prototype.defaults = [{
@@ -162,7 +162,7 @@ Actors.Human.prototype.defaults = [{
 Actors.Human.prototype.update = function (delta) {
 
   var vec = new Vec3()
-  var route 
+  var route
 
   this.recharge()
   this.shootRats()
@@ -171,14 +171,14 @@ Actors.Human.prototype.update = function (delta) {
   this.flashbang()
 
   if(this.refs.maze){
-    if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell){
+    if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.cell.reactors[0].attrs.primed ){
       this.refs.maze.attrs.escape = true;
-      this.refs.cell.reactors[0].attrs.primed = true;
+      this.refs.cell.reactors[0].prime();
     }
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
       this.refs.maze.attrs.escape_done = true;
     } else{
-     
+
       if(this.refs.maze.attrs.escape){
         // escaping from countdown
         route = this.refs.maze.route(this.refs.cell, this.refs.maze.cells[this.refs.maze.attrs.entry_cell]);
@@ -221,7 +221,7 @@ Actors.Human.prototype.update = function (delta) {
             vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
           }
         }
-        
+
       }
 
 
@@ -256,7 +256,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.x = 0
     }
   } else if (this.pos.x > this.refs.cell.opts.max_x) {
-    other = this.refs.cell.exits[1]; 
+    other = this.refs.cell.exits[1];
     if(other){
       this.pos.x = this.pos.x - this.refs.cell.opts.max_x
     } else {
@@ -274,7 +274,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.y = 0
     }
   } else if (this.pos.y > this.refs.cell.opts.max_y) {
-    other = this.refs.cell.exits[2]; 
+    other = this.refs.cell.exits[2];
     if(other){
       this.pos.y = this.pos.y - this.refs.cell.opts.max_y
     } else {
@@ -294,7 +294,7 @@ Actors.Human.prototype.update = function (delta) {
     }
     this.refs.cell = other;
     //console.log(this.refs.cell.attrs.i);
-    other.humans.push(this);    
+    other.humans.push(this);
   }
 
 }
@@ -317,16 +317,16 @@ Actors.Human.prototype.shootRats = function () {
   if(this.attrs.escaped){
     return;
   }
-  
+
   var enemy
   var closest = Infinity
-  
+
   this.attrs.face_enemy = false;
 
   if(this.refs.cell.rats.length === 0){
     return;
   };
-  
+
   this.refs.cell.rats.forEach(function (other) {
     if(!other){
       return;
@@ -342,7 +342,7 @@ Actors.Human.prototype.shootRats = function () {
     this.attrs.face_angle = enemy.pos.angleXYto(this.pos)
     this.attrs.face_enemy = true;
   }
-  
+
   if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
     this.attrs.energy = this.attrs.energy - 1
     this.refs.cell.addZap(
@@ -379,19 +379,19 @@ Actors.Human.prototype.shootBreeder = function () {
 
   var enemy
   var closest = Infinity
-  
+
   this.attrs.face_enemy = false;
 
   if(this.refs.cell.breeders.length === 0){
     return;
   };
-  
+
   this.refs.cell.breeders.forEach(function (other) {
 
     if(!other){
       return;
     }
-    
+
     var range = this.pos.rangeXY(other.pos)
 
     // find closest weaker enemy
@@ -405,7 +405,7 @@ Actors.Human.prototype.shootBreeder = function () {
     this.attrs.face_angle = enemy.pos.angleXYto(this.pos)
     this.attrs.face_enemy = true;
   }
-  
+
   if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
     this.attrs.energy = this.attrs.energy - 1
     this.refs.cell.addZap(
@@ -459,7 +459,7 @@ Actors.Human.prototype.separation = function () {
     if (!other) {
       continue
     }
-      
+
     if (other === this) {
       continue
     }
@@ -492,7 +492,7 @@ Actors.Human.prototype.alignment = function () {
 
     if(!other){
       continue
-    }      
+    }
 
     if (other === this) {
       continue
@@ -550,7 +550,7 @@ Actors.Human.prototype.flee = function () {
   if(this.refs.cell.rats.length === 0){
     return vec;
   }
-  
+
   for (i = 0, ii = this.refs.cell.rats.length; i < ii; i++) {
 
     other = this.refs.cell.rats[i]
@@ -558,8 +558,8 @@ Actors.Human.prototype.flee = function () {
     if (!other) {
       continue
     }
-    
-    
+
+
     range = this.pos.rangeXY(other.pos)
 
     if (range === 0) {
@@ -594,7 +594,7 @@ Actors.Human.prototype.steer = function () {
     if (!other) {
       continue
     }
-    
+
     if (other === this) {
       continue
     }
@@ -648,14 +648,14 @@ Actors.Human.prototype.paint = function (view) {
   if(this.attrs.escaped){
     return;
   }
-  
+
   view.ctx.save()
   if(this.attrs.face_enemy){
     view.ctx.rotate(this.attrs.face_angle)
   } else {
     view.ctx.rotate(this.velo.angleXY())
   }
-  
+
   view.ctx.fillStyle = '#022'
   view.ctx.strokeStyle = '#0ff'
   view.ctx.lineWidth = 1
@@ -677,7 +677,7 @@ Actors.Human.prototype.paint = function (view) {
   view.ctx.stroke()
 
   view.ctx.restore()
-  
+
   // if(this.attrs.intent === 0){
   //   view.ctx.strokeStyle = '#f00'
   //   view.ctx.beginPath()
@@ -709,5 +709,5 @@ Actors.Human.prototype.paint = function (view) {
   //   view.ctx.lineTo(-2*z, 0)
   //   view.ctx.stroke()
   // }
-  
+
 }

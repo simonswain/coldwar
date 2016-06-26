@@ -49,7 +49,7 @@ Scenes.big_array.prototype.genAttrs = function () {
 }
 
 Scenes.big_array.prototype.update = function (delta) {
-  this.index += delta * 0.05;
+  this.index += delta * 0.25;
   if(this.index >= this.memory.length){
     this.index -= this.memory.length;
   }

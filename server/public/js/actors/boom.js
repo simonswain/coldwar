@@ -171,7 +171,7 @@ Actors.Boom.prototype.paint = function (view) {
 
     case 2:
     case 'zoom':
-      view.ctx.lineWidth = this.opts.fatness
+      // view.ctx.lineWidth = this.opts.fatness
       // for (i = 0; i< 10; i++) {
       //   view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
       //   view.ctx.beginPath()
@@ -179,12 +179,11 @@ Actors.Boom.prototype.paint = function (view) {
       //   view.ctx.arc(0, 0, (this.attrs.radius - radius) * i / (10 * div), 0, 2 * Math.PI)
       //   view.ctx.stroke()
       // }
-
       for (i = 0; i < 10; i++) {
         view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
         view.ctx.beginPath()
-        view.ctx.lineWidth = this.fatness * (i / 10)
-        view.ctx.arc(0, 0, (radius / 10) * i, 0, 2 * Math.PI)
+        view.ctx.lineWidth = 8
+        view.ctx.arc(0, 0, (this.attrs.radius - radius / 1) * i, 0, 2 * Math.PI)
         view.ctx.stroke()
       }
       break

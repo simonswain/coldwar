@@ -78,15 +78,15 @@ Scenes.briefing.prototype.genAttrs = function(){
 Scenes.briefing.prototype.update = function(delta){
 
   if(this.attrs.hold > 0){
-    this.attrs.hold -= delta;
-    if(this.attrs.hold <= 0){
-      this.attrs.hold = 0;
-      this.attrs.step_index = 0;
-      this.attrs.frame_index ++;
-      if(this.attrs.frame_index === Scenes.briefing.prototype.frames.length){
-        this.attrs.frame_index = 0;
-      }
-    }
+    // this.attrs.hold -= delta;
+    // if(this.attrs.hold <= 0){
+    //   this.attrs.hold = 0;
+    //   this.attrs.step_index = 0;
+    //   this.attrs.frame_index ++;
+    //   if(this.attrs.frame_index === Scenes.briefing.prototype.frames.length){
+    //     this.attrs.frame_index = 0;
+    //   }
+    // }
   } else {
     this.attrs.time += this.env.diff * 100;
     if (this.attrs.time > this.opts.step_hold) {
@@ -108,15 +108,11 @@ Scenes.briefing.prototype.paint = function(fx, gx, sx){
   if(ix >= frame.text.length){
     ix = frame.text.length;
   }
-  
-  gx.ctx.fillStyle = '#0f0';
-  //gx.ctx.font = this.opts.font_size + '28pt ubuntu mono';
-  gx.ctx.font = '22pt robotron';
 
   var yy = (this.opts.max_y * 0.2);
   var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.01);
-  var dx = (this.opts.max_x * 0.037);
+  var xx = (this.opts.max_x * 0.03);
+  var dx = (this.opts.max_x * 0.04);
   var y = 0;
   var x = 0;
   for (var i = 0; i < ix; i++) {
@@ -127,11 +123,62 @@ Scenes.briefing.prototype.paint = function(fx, gx, sx){
     }
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
-    gx.ctx.fillText(frame.text[i], xx + (1.4 * x * dx), yy + (y * dy));
+
+    var h = (Date.now()%360 * 0.22) - 10;
+    gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+    
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+    }
+
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+    }
+
+    if(Date.now() % 1000 < 200){
+      gx.ctx.fillStyle = 'rgba(0,0,0,1)';
+    }
+
+    if(Date.now() % 1000 > 950){
+      gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+    }     
+
+    gx.ctx.font = '28pt robotron';
+
+    gx.ctx.fillText(frame.text[i], xx + (1.5 * x * dx), yy + (y * dy) + dy);
     gx.ctx.restore();
     x ++;
   }
 
+
+  gx.ctx.save()
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.6);
+  //gx.ctx.scale(0.9, 0.9);
+
+  gx.ctx.rotate(Date.now() /1000 % (2*Math.PI))
+  
+  gx.ctx.fillStyle = '#022'
+  gx.ctx.strokeStyle = '#0ff'
+  gx.ctx.lineWidth = 1
+
+  var z = 32
+  gx.ctx.lineWidth = 8
+
+  gx.ctx.beginPath()
+  gx.ctx.rect(-z ,-z-z, z, z+z+z+z)
+  gx.ctx.stroke()
+
+  gx.ctx.beginPath()
+  gx.ctx.moveTo(z, 0)
+  gx.ctx.lineTo(-z, z)
+  gx.ctx.lineTo(-z, -z)
+  gx.ctx.lineTo(z, 0)
+  gx.ctx.closePath()
+  gx.ctx.fill()
+  gx.ctx.stroke()
+
+  gx.ctx.restore()
+  
   
 }
 

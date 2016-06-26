@@ -197,12 +197,11 @@ Scenes.loaded.prototype.paint = function(fx, gx, sx){
   var hh = this.opts.max_y / this.attrs.cols;
 
   gx.ctx.save();
-
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
   gx.ctx.scale(0.9, 0.9);
   
   gx.ctx.lineCap='round';
-  gx.ctx.lineWidth = 6;
+  gx.ctx.lineWidth = 4;
   //gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
 
   var x, y;
@@ -217,8 +216,6 @@ Scenes.loaded.prototype.paint = function(fx, gx, sx){
     var cell = this.cells[i];
 
     gx.ctx.save();
-    gx.ctx.translate(ww * x * 0.1, hh * y * 0.1);
-    gx.ctx.scale(0.9, 0.9);
 
     if(this._steps){
       if(this._steps.stack.indexOf(this.cells[i]) > -1){

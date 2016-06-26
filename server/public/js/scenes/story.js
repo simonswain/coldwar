@@ -63,12 +63,12 @@ Scenes.story.prototype.defaults = [{
   max: 1000
 }, {
   key: 'step_skip',
-  value: 1,
+  value: 0.25,
   min: 1,
   max: 20
 }, {
   key: 'frame_hold',
-  value: 140,
+  value: 180,
   min: 1,
   max: 2400
 }, {

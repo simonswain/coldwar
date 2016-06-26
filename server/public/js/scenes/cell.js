@@ -67,5 +67,42 @@ Scenes.cell.prototype.update = function (delta) {
 //Scenes.cell.prototype.paintOnce = true;
 
 Scenes.cell.prototype.paint = function (fx, gx, sx) {
+
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
+  gx.ctx.scale(0.9, 0.9);
+
   this.cell.paint(gx)
+
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.2);
+
+  var h = (Date.now()%360 * 0.22) - 10;
+  gx.ctx.fillStyle = 'hsla(' + h + ', 100%, 50%, 0.5)';
+  
+  if(Math.random() < 0.025){
+    gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+  }
+
+  if(Math.random() < 0.025){
+    gx.ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  }
+
+  if(Date.now() % 1000 < 200){
+    gx.ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  }
+
+  if(Date.now() % 1000 > 950){
+    gx.ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  }     
+
+  gx.ctx.font = '48pt robotron';
+  gx.ctx.textAlign='center';
+  gx.ctx.textBaseline='middle'
+  gx.ctx.fillText('TRAINING', 0, 0);
+  gx.ctx.restore();
+
+  
+  gx.ctx.restore();
+
 }

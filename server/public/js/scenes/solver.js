@@ -501,6 +501,8 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
   var hh = this.opts.max_y / this.attrs.cols;
 
   gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
+  gx.ctx.scale(0.9, 0.9);
   
   var x, y;
   
@@ -513,8 +515,6 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
     gx.ctx.lineCap='round';
     
     gx.ctx.save();
-    gx.ctx.translate(ww * x * 0.1, hh * y * 0.1);
-    gx.ctx.scale(0.9, 0.9);
 
     if(this._solve.nodes[i].g > 0){
       gx.ctx.fillStyle = '#009';
@@ -556,7 +556,7 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
       gx.ctx.fillText(this._solve.nodes[i].g, (x * ww) + ww/2, (y * hh) + hh/2);
     };
     
-    gx.ctx.lineWidth = 6;
+    gx.ctx.lineWidth = 4;
     gx.ctx.strokeStyle = 'rgba(0,255,0,1)';
 
     if(!cell.exits[0]){

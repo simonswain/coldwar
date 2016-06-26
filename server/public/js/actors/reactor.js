@@ -34,6 +34,24 @@ Actors.Reactor.prototype.defaults = [{
   max: 128
 }]
 
+
+Actors.Reactor.prototype.prime = function () {
+  this.attrs.primed = true;
+
+  this.refs.cell.booms.push(new Actors.Boom(
+    this.env, {
+    }, {
+      style: 'zoom',
+      radius: 64,
+      x: this.pos.x,
+      y: this.pos.y,
+      color: '0,255,255'
+    }
+  ))
+  
+}
+
+
 Actors.Reactor.prototype.update = function (delta) {
 
 }

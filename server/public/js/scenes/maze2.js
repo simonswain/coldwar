@@ -17,10 +17,13 @@ Scenes.maze2.prototype.init = function () {
       scene: this
     }, {
     }, {
-      rows: 12,
-      cols: 16,
+      rows: 6,
+      cols: 8,
       breeders: 10,
-    })
+    });
+  this.target_zoom = 1;
+  this.target_x = 0;
+  this.target_y = 0;
 }
 
 Scenes.maze2.prototype.getCast = function () {
@@ -57,6 +60,52 @@ Scenes.maze2.prototype.genAttrs = function () {
 
 Scenes.maze2.prototype.update = function (delta) {
   this.maze.update(delta);
+  var speed = 6;
+  if(this.maze.human){
+    var cell = this.maze.human.refs.cell;
+    var gx = this.env.views.gx;
+    var max = Math.max(this.maze.opts.max_x, this.maze.opts.max_y);
+    var rc = Math.max(this.maze.attrs.rows, this.maze.attrs.cols);
+    var w = this.maze.opts.max_x / this.maze.attrs.cols;
+    var h = this.maze.opts.max_y / this.maze.attrs.rows;
+
+    this.target_x = (gx.w / 2) - (((w * cell.attrs.x * this.target_zoom)) * gx.scale);
+    this.target_y = (gx.h / 2) - (((h * cell.attrs.y * this.target_zoom)) * gx.scale);
+    
+    this.target_zoom = 2.5;
+  }
+
+  if(this.maze.attrs.boom){
+    this.target_zoom = 1;
+    this.target_x = 0;
+    this.target_y = 0;
+    speed = 15;
+  }
+  
+  if(this.env.zoom < this.target_zoom){
+    this.env.zoom += 0.01;
+  }
+
+  if(this.env.zoom > this.target_zoom){
+    this.env.zoom -= 0.01;
+  }
+
+  if(this.env.page_x < this.target_x){
+    this.env.page_x += speed;
+  }
+
+  if(this.env.page_x > this.target_x){
+    this.env.page_x -= speed;
+  }
+
+  if(this.env.page_y < this.target_y){
+    this.env.page_y += speed;
+  }
+
+  if(this.env.page_y > this.target_y){
+    this.env.page_y -= speed;
+  }  
+
 }
 
 
