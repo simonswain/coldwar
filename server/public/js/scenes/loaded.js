@@ -208,20 +208,20 @@ Scenes.loaded.prototype.paint = function(fx, gx, sx){
 
   //gx.ctx.strokeStyle = 'rgba(255,0,0,' + (0.5-(Math.sin(Math.PI * (Date.now()%2000)/1000)/2)) + ')';
   gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
-
-  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+  var i, ii;
+  
+  for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
     x = i % this.attrs.cols;
     y = Math.floor(i / this.attrs.rows);
-
     var cell = this.cells[i];
-
-    gx.ctx.save();
-
     if(this._steps){
       if(this._steps.stack.indexOf(this.cells[i]) > -1){
         gx.ctx.fillStyle = '#033';
+        gx.ctx.strokeStyle = '#033';
         gx.ctx.beginPath();
-        gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+        gx.ctx.rect((x * ww), (y * hh), ww, hh);
+        gx.ctx.fill();
+        gx.ctx.stroke();
       }
 
       if(this._steps.hot && this._steps.cell.i === i){
@@ -230,9 +230,14 @@ Scenes.loaded.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
       }      
     }
+  }
 
+
+  for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.cols;
+    y = Math.floor(i / this.attrs.rows);
+    var cell = this.cells[i];
     gx.ctx.strokeStyle = 'hsl(' + this.attrs.hsl + ',100%,50%)';
-
     if(!cell.exits[0]){
       gx.ctx.beginPath();
       gx.ctx.moveTo(
@@ -285,10 +290,8 @@ Scenes.loaded.prototype.paint = function(fx, gx, sx){
       gx.ctx.stroke();
     }
 
-    gx.ctx.restore();
-
   }
-
+  
   gx.ctx.restore();
 
   

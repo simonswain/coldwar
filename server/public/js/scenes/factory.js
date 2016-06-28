@@ -172,9 +172,6 @@ Scenes.factory.prototype.paint = function(fx, gx, sx){
     this.booms[i].paint(view)
     view.ctx.restore()
   }
-
-
-
   
   var frame = Scenes.factory.prototype.frames[this.attrs.frame_index];
 

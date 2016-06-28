@@ -935,14 +935,14 @@ Coldwar.prototype.scenes = [{
   title: 'Solver',
   slug: 'solver'
 }, {
-  title: 'Briefing',
-  slug: 'briefing'
+  title: 'Loaded',
+  slug: 'loaded'
 }, {
   title: 'Loading',
   slug: 'loading'
 }, {
-  title: 'Loaded',
-  slug: 'loaded'
+  title: 'Briefing',
+  slug: 'briefing'
 }, {
   title: 'Machines',
   slug: 'machines'
@@ -962,8 +962,8 @@ Coldwar.prototype.scenes = [{
   title: 'Cell',
   slug: 'cell'
 }, {
-  title: 'Later',
-  slug: 'later'
+  title: 'Ready?',
+  slug: 'ready'
 }, {
   title: 'Maze 1',
   slug: 'maze1'

@@ -16,9 +16,9 @@ Scenes.mazegen.prototype.title = 'Mazegen';
 
 Scenes.mazegen.prototype.genAttrs = function(){
   return {
-    ttl: 32,
-    rows: 4,
-    cols: 4,
+    ttl: 128,
+    rows: 2,
+    cols: 2
     
   };
 };
@@ -27,13 +27,15 @@ Scenes.mazegen.prototype.init = function(){
   this.makeGrid();
   this._steps = {
     ttl: this.attrs.ttl,
-    cell: pickOne(this.cells),
+    cell: -1,
     other: false,
+    other_dir: null,
     stack: [],
     total: this.cells.length,
     visited: 1,
-    hot: false,
+    done: false
   };
+  
 }
 
 Scenes.mazegen.prototype.defaults = [{
@@ -130,17 +132,31 @@ Scenes.mazegen.prototype.update = function(delta){
     this._steps.ttl -= delta
     return
   }
-
+  
   this._steps.ttl += this.attrs.ttl
+
+  if (this._steps.cell === -1) {
+    this._steps.cell = pickOne(this.cells);
+    return;
+  }
 
   var n, i, j, k, c;
   var cell, pick, other, dir
   var flip = [2,3,0,1];
   var plucked = false;
+
+  if(this._steps.other){
+    this._steps.cell.exits[this._steps.other_dir] = this._steps.other
+    this._steps.other.exits[flip[this._steps.other_dir]] = this._steps.cell
+    this._steps.stack.push(this._steps.cell)
+    this._steps.cell = this._steps.other;
+    this._steps.other = false;
+    this._steps.visited ++
+    return;
+  }
   
   cell = this._steps.cell;
-  this._steps.other = false;
-  while(this._steps.visited < this._steps.total && ! plucked){
+  while(this._steps.visited < this._steps.total && !plucked){
     n = [];
     // find all neighbors of Cell with all walls intact
     for(i=0; i<4; i ++){
@@ -159,15 +175,8 @@ Scenes.mazegen.prototype.update = function(delta){
     }
     if(n.length > 0){
       pick = pickOne(n)
-      dir = pick[0]
-      other = pick[1]
-      this._steps.hot = [cell, other, dir];
-      cell.exits[dir] = other
-      other.exits[flip[dir]] = cell
-      this._steps.stack.push(cell)
-      this._steps.other = cell;
-      this._steps.cell = other
-      this._steps.visited ++
+      this._steps.other_dir = pick[0]
+      this._steps.other = pick[1]
       plucked = true;
       break;
     } else {
@@ -176,26 +185,44 @@ Scenes.mazegen.prototype.update = function(delta){
     }
   }
 
-  if(this._steps.visited === this._steps.total && this._steps.stack.length > 0){
-    this._steps.cell = this._steps.stack.pop()
-    if(this._steps.stack.length === 0 && !this.env.gameover){
-      this._steps.cell = false;
-      if(this.attrs.rows < 16){
-        this.attrs.rows ++;
-        this.attrs.cols ++;
-        this.attrs.ttl /= 2;
+ 
+  if(this._steps.visited === this._steps.total){
+    if(this._steps.stack.length > 0){
+      this._steps.cell = this._steps.stack.pop();
+      return;
+    }
+
+    if(this._steps.done){
+      if(!this.env.gameover){
+        this._steps.cell = false;
+        if(this.attrs.rows < 24){
+          this.attrs.rows ++;
+          this.attrs.cols ++;
+          this.attrs.ttl *= 0.25; 
+          if(this.attrs.ttl < 0.1){
+            this.attrs.ttl = 0
+          }
+         
+        }
+        this.init();
       }
-      this.init();
+      return;
+    }
+
+    if(this._steps.stack.length === 0){
+      this._steps.done = true;
+      this._steps.cell = false;
+      return;
     }
   }
-  
+
 
 }
 
 Scenes.mazegen.prototype.paint = function(fx, gx, sx){
 
-  var ww = this.opts.max_x / this.attrs.rows;
-  var hh = this.opts.max_y / this.attrs.cols;
+  var ww = this.opts.max_x / this.attrs.cols
+  var hh = this.opts.max_y / this.attrs.rows
 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
@@ -204,31 +231,52 @@ Scenes.mazegen.prototype.paint = function(fx, gx, sx){
   gx.ctx.lineCap='round';
   gx.ctx.lineWidth = 4;
   gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
-  //gx.ctx.strokeStyle = 'rgba(255,0,0,' + (0.5-(Math.sin(Math.PI * (Date.now()%2000)/1000)/2)) + ')';
 
-  var x, y;
+  var x, y, i, ii;
+  var cell;
   
-  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
-    x = i % this.attrs.cols;
-    y = Math.floor(i / this.attrs.rows);
+  for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.rows
+    y = Math.floor(i / this.attrs.cols);
 
-    var cell = this.cells[i];
+    cell = this.cells[i];
 
     gx.ctx.save();
 
     if(this._steps){
       if(this._steps.stack.indexOf(this.cells[i]) > -1){
         gx.ctx.fillStyle = '#033';
+        gx.ctx.strokeStyle = '#033';
         gx.ctx.beginPath();
-        gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+        gx.ctx.rect((x * ww), (y * hh), ww, hh); 
+        gx.ctx.fill();
+        gx.ctx.stroke();
       }
 
-      if(this._steps.hot && this._steps.cell.i === i){
+      if(this._steps.other && this._steps.other.i === i){
         gx.ctx.fillStyle = '#ff0';
         gx.ctx.beginPath();
         gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
       }      
+
+      if(this._steps.cell && this._steps.cell.i === i){
+        gx.ctx.fillStyle = '#0ff';
+        gx.ctx.beginPath();
+        gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      }      
+
+    gx.ctx.restore();
+      
     }
+  }
+  
+  for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.rows
+    y = Math.floor(i / this.attrs.cols);
+
+    cell = this.cells[i];
+
+    gx.ctx.save();
 
     gx.ctx.strokeStyle = 'rgba(255,0,0,1)';
     

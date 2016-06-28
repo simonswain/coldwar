@@ -28,6 +28,7 @@ Scenes.reactor.prototype.genAttrs = function(){
 };
 
 Scenes.reactor.prototype.init = function(){
+  this.booms = [];
 }
 
 Scenes.reactor.prototype.getCast = function(){
@@ -79,6 +80,20 @@ Scenes.reactor.prototype.defaults = [{
 
 Scenes.reactor.prototype.update = function(delta){
 
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(this.booms[i]){
+      this.booms[i].update(delta);
+    }
+  }
+
+  for (i = 0, ii = this.booms.length; i<ii; i++) {
+    if(!this.booms[i] || this.booms[i].attrs.dead){
+      this.booms.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+
   if(this.attrs.mode === 'boom'){
     this.attrs.x -= delta * 1.5;
     if(this.attrs.x < -150){
@@ -97,6 +112,16 @@ Scenes.reactor.prototype.update = function(delta){
     this.attrs.x += delta * 1.5;
     if(this.attrs.x >= this.opts.max_x * 0.4){
       this.attrs.mode = 'primed';
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'zoom',
+          radius: 16,
+          x: this.opts.max_x/2,
+          y: this.opts.max_y/2,
+          color: '0,255,255'
+        }
+      ))
     }
   }
 
@@ -351,6 +376,19 @@ Scenes.reactor.prototype.paint = function(fx, gx, sx){
 
   }
 
+  var boom;
+  for (i = 0, ii = this.booms.length; i < ii; i++) {
+    boom = this.booms[i]
+    if(!boom){
+      continue
+    }      
+    view.ctx.save()
+    view.ctx.translate(boom.pos.x, boom.pos.y);
+    this.booms[i].paint(view)
+    view.ctx.restore()
+  }
+  
+  
 }
 
 Scenes.reactor.prototype.frames = [];

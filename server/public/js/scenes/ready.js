@@ -3,35 +3,36 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.briefing = function(env, opts){
+Scenes.ready = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.briefing.prototype = Object.create(Scene.prototype);
+Scenes.ready.prototype = Object.create(Scene.prototype);
 
-Scenes.briefing.prototype.title = 'Briefing';
+Scenes.ready.prototype.title = 'Ready';
 
-Scenes.briefing.prototype.layout = '';
+Scenes.ready.prototype.layout = '';
 
-Scenes.briefing.prototype.init = function(){
+Scenes.ready.prototype.init = function(){
+
 }
 
-Scenes.briefing.prototype.getCast = function(){
+Scenes.ready.prototype.getCast = function(){
   return {
   }
 };
 
-Scenes.briefing.prototype.defaults = [{
+Scenes.ready.prototype.defaults = [{
   key: 'max_x',
-  value: 480,
+  value: 640,
   min: 32,
   max: 1024
 }, {
   key: 'max_y',
-  value: 480,
+  value: 640,
   min: 32,
   max: 1024
 }, {
@@ -66,7 +67,7 @@ Scenes.briefing.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.briefing.prototype.genAttrs = function(){
+Scenes.ready.prototype.genAttrs = function(){
   return {
     frame_index: 0,
     step_index: 0,
@@ -75,15 +76,15 @@ Scenes.briefing.prototype.genAttrs = function(){
   };
 };
 
-Scenes.briefing.prototype.update = function(delta){
+Scenes.ready.prototype.update = function(delta){
 
   if(this.attrs.hold > 0){
-    // this.attrs.hold -= delta;
+    this.attrs.hold -= delta;
     // if(this.attrs.hold <= 0){
     //   this.attrs.hold = 0;
     //   this.attrs.step_index = 0;
     //   this.attrs.frame_index ++;
-    //   if(this.attrs.frame_index === Scenes.briefing.prototype.frames.length){
+    //   if(this.attrs.frame_index === Scenes.ready.prototype.frames.length){
     //     this.attrs.frame_index = 0;
     //   }
     // }
@@ -92,31 +93,27 @@ Scenes.briefing.prototype.update = function(delta){
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
       this.attrs.step_index += this.opts.step_skip;
-      if (this.attrs.step_index >= Scenes.briefing.prototype.frames[this.attrs.frame_index].text.length) {
+      if (this.attrs.step_index >= Scenes.ready.prototype.frames[this.attrs.frame_index].text.length) {
         this.attrs.hold = this.opts.frame_hold;
       }
     }
   }
-
-  if(Math.random() < 0.02){
-    this.env.flash=1;
-  }
   
 }
 
-Scenes.briefing.prototype.paint = function(fx, gx, sx){
+Scenes.ready.prototype.paint = function(fx, gx, sx){
 
-  var frame = Scenes.briefing.prototype.frames[this.attrs.frame_index];
+  var frame = Scenes.ready.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
     ix = frame.text.length;
   }
-
-  var yy = (this.opts.max_y * 0.2);
-  var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.03);
-  var dx = (this.opts.max_x * 0.04);
+  
+  var yy = (this.opts.max_y * 0.4);
+  var dy = (this.opts.max_y * 0.1);
+  var xx = (this.opts.max_x * 0.33);
+  var dx = (this.opts.max_x * 0.06);
   var y = 0;
   var x = 0;
   for (var i = 0; i < ix; i++) {
@@ -147,51 +144,21 @@ Scenes.briefing.prototype.paint = function(fx, gx, sx){
       gx.ctx.fillStyle = 'rgba(255,255,255,1)';
     }     
 
-    gx.ctx.font = '28pt robotron';
+    gx.ctx.font = '36pt robotron';
     gx.ctx.textAlign='center'
     gx.ctx.textBaseline='middle'
-
-    gx.ctx.fillText(frame.text[i], xx + (1.5 * x * dx), yy + (y * dy) + dy);
+    gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;
   }
 
-
-  gx.ctx.save()
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.6);
-  //gx.ctx.scale(0.9, 0.9);
-
-  gx.ctx.rotate(Date.now() /1000 % (2*Math.PI))
-  
-  gx.ctx.fillStyle = '#022'
-  gx.ctx.strokeStyle = '#0ff'
-  gx.ctx.lineWidth = 1
-
-  var z = 32
-  gx.ctx.lineWidth = 8
-
-  gx.ctx.beginPath()
-  gx.ctx.rect(-z ,-z-z, z, z+z+z+z)
-  gx.ctx.stroke()
-
-  gx.ctx.beginPath()
-  gx.ctx.moveTo(z, 0)
-  gx.ctx.lineTo(-z, z)
-  gx.ctx.lineTo(-z, -z)
-  gx.ctx.lineTo(z, 0)
-  gx.ctx.closePath()
-  gx.ctx.fill()
-  gx.ctx.stroke()
-
-  gx.ctx.restore()
-  
   
 }
 
-Scenes.briefing.prototype.frames = [];
+Scenes.ready.prototype.frames = [];
 
-Scenes.briefing.prototype.frames[0] = {
+Scenes.ready.prototype.frames[0] = {
   text:[
-    'Mission Briefing',
+    'Ready?',
   ].join("\n"),
 };

@@ -139,6 +139,6 @@ Scenes.later.prototype.frames = [];
 
 Scenes.later.prototype.frames[0] = {
   text:[
-    'Three Hours Later...',
+    'READY?',
   ].join("\n"),
 };

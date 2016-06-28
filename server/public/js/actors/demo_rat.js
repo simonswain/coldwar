@@ -546,9 +546,9 @@ Actors.Demorat.prototype.kill = function () {
           y: this.pos.y,
         })
       this.refs.demo.rats.push(rat)
-      if(this.refs.breeder){
-        this.refs.breeder.rats.push(rat)  
-      }
+      // if(this.refs.breeder){
+      //   this.refs.breeder.rats.push(rat)  
+      // }
     }
   }
   
