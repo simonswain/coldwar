@@ -908,9 +908,9 @@ Coldwar.prototype.scenes = [{
   title: 'Dungeon',
   slug: 'dungeon'
 }, {
-  title: 'Drunken',
-  slug: 'drunken'
-}, {
+//   title: 'Drunken',
+//   slug: 'drunken'
+// }, {
   title: 'Snake',
   slug: 'snake'
 }, {
