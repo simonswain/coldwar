@@ -59,17 +59,17 @@ Scenes.understand.prototype.defaults = [{
   max: 120
 }, {
   key: 'step_hold',
-  value: 85,
+  value: 2,
   min: 1,
   max: 1000
 }, {
   key: 'step_skip',
-  value: 1,
+  value: 0.25,
   min: 1,
   max: 20
 }, {
   key: 'frame_hold',
-  value: 140,
+  value: 1800,
   min: 1,
   max: 2400
 }, {
@@ -89,6 +89,7 @@ Scenes.understand.prototype.genAttrs = function(){
 };
 
 Scenes.understand.prototype.update = function(delta){
+
 
   this.maze.update(delta);
 
@@ -112,6 +113,28 @@ Scenes.understand.prototype.update = function(delta){
       }
     }
   }
+  //   this.maze.update(delta);
+
+  // if(this.attrs.hold > 0){
+  //   this.attrs.hold -= delta;
+  //   if(this.attrs.hold <= 0){
+  //     this.attrs.hold = 0;
+  //     this.attrs.step_index = 0;
+  //     this.attrs.frame_index ++;
+  //     // if(this.attrs.frame_index === Scenes.understand.prototype.frames.length){
+  //     //   this.attrs.frame_index = 0;
+  //     // }
+  //   }
+  // } else if(this.attrs.frame_index < Scenes.understand.prototype.frames.length) {
+  //   this.attrs.time += this.env.diff * 100;
+  //   if (this.attrs.time > this.opts.step_hold) {
+  //     this.attrs.time = 0;
+  //     this.attrs.step_index += this.opts.step_skip;
+  //     if (this.attrs.step_index >= Scenes.understand.prototype.frames[this.attrs.frame_index].text.length) {
+  //       this.attrs.hold = this.opts.frame_hold;
+  //     }
+  //   }
+  // }
   
 }
 
@@ -156,7 +179,7 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
 
   if(Math.random() < 0.5){
     fx.ctx.save();
-    fx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
+    fx.ctx.translate(this.opts.max_x * (0.2 + (Math.random() * 0.01)), this.opts.max_y * (0.1 + (Math.random() * 0.01)));
 
     if(Math.random() < 0.1){
       fx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
@@ -183,7 +206,7 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
   gx.ctx.font = '16pt robotron';
  
   gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
+  gx.ctx.translate(this.opts.max_x * 0.2, this.opts.max_y * 0.1);
 
   gx.ctx.fillStyle = '#69c';
   
@@ -215,6 +238,11 @@ Scenes.understand.prototype.paint = function(fx, gx, sx){
       gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
     }
 
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(255,0,0,1)';
+      gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+    }
+    
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;
@@ -232,6 +260,6 @@ Scenes.understand.prototype.frames.push({
     '                  ',
     'First we must',
     'understand',
-    'The Machines..'
+    'The Machines...',
   ].join("\n")
 })
