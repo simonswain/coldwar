@@ -272,7 +272,7 @@ Scenes.story.prototype.frames.push({
     'The Machines and free',
     'the Human Race from ',
     'it\'s self inflicted,',
-    'automated prison',
+    'automated prison.',
   ].join("\n")
 })
 
