@@ -953,13 +953,19 @@ Coldwar.prototype.scenes = [{
   title: 'Factory',
   slug: 'factory'
 }, {
+  title: 'Variants',
+  slug: 'variants'
+}, {
   title: 'Enemies',
   slug: 'enemies'
 }, {
   title: 'Beware',
   slug: 'beware'
 }, {
-  title: 'Cell',
+  title: 'Training',
+  slug: 'training'
+}, {
+  title: 'Simulation',
   slug: 'cell'
 }, {
   title: 'Ready?',

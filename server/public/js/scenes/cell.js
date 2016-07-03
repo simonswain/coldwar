@@ -96,10 +96,10 @@ Scenes.cell.prototype.paint = function (fx, gx, sx) {
     gx.ctx.fillStyle = 'rgba(255,255,255,0.5)';
   }     
 
-  gx.ctx.font = '48pt robotron';
+  gx.ctx.font = '40pt robotron';
   gx.ctx.textAlign='center';
   gx.ctx.textBaseline='middle'
-  gx.ctx.fillText('TRAINING', 0, 0);
+  gx.ctx.fillText('SIMULATION', 0, 0);
   gx.ctx.restore();
 
   

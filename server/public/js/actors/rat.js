@@ -702,52 +702,95 @@ Actors.Rat.prototype.paint = function (view) {
   view.ctx.rotate(this.velo.angleXY())
 
   view.ctx.fillStyle = '#fff'
+  view.ctx.strokeStyle = '#fff'
   view.ctx.lineWidth = 1
 
   var z = 8
+
+  // for tails
+  var q1 = (Math.sin((Date.now()/125) % (2*Math.PI)));
+  var q2 = (Math.sin((Date.now()/333) % (2*Math.PI)));
+
   switch (this.attrs.type) {
   case 0:
     // white rat
 
     // tail
-    view.ctx.fillStyle = '#ccc'
+    view.ctx.fillStyle = '#fff'
+    view.ctx.strokeStyle = '#fff'
+    view.ctx.save()
+    view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
-    view.ctx.moveTo(-z-z-z-z-z, 0)
-    view.ctx.lineTo(0, z)
-    view.ctx.lineTo(0, -z)
-    view.ctx.lineTo(-z-z-z-z-z, 0)
+    view.ctx.moveTo(0, 0.5*z)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, -5 * z, 0)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, 0, -0.5*z)
+    view.ctx.closePath()
+    view.ctx.stroke()
+    view.ctx.fill()
+    view.ctx.restore()
+
+    // body
+    view.ctx.fillStyle = '#fff'
+    view.ctx.lineWidth = 1
+    view.ctx.beginPath()
+    view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
     // head
+    view.ctx.save()
+    view.ctx.translate(2.2*z, 0)
+    view.ctx.rotate(q2 * 0.3)
+
+    // whiskers
+    view.ctx.strokeStyle = '#fff'
+    view.ctx.lineWidth=0.5
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, z)
+    view.ctx.stroke()
+
+    // skull
     view.ctx.fillStyle = '#fff'
     view.ctx.beginPath()
-    //view.ctx.arc(z*2, 0, z, 0, 2*Math.PI);
-    view.ctx.ellipse(z*2, 0, z * 1.2, z * 0.8, 0, 2*Math.PI, 0);
-    view.ctx.closePath()
-    view.ctx.fill()
-
-    // body
-    view.ctx.fillStyle = '#eee'
-    view.ctx.lineWidth = 1
-    view.ctx.beginPath()
-    //view.ctx.arc(0, 0, 2*z, 0, 2*Math.PI);
-    view.ctx.ellipse(0, 0, z * 2.2, z * 1.6, 0, 2*Math.PI, 0);
+    view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
     //eyes
     view.ctx.fillStyle = '#f00'
+    // blink
+    if(Math.random() < 0.1){
+      view.ctx.fillStyle = '#fff'
+    }
     view.ctx.beginPath()
-    view.ctx.arc(z * 2.5, -z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.8, -z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
 
-    view.ctx.fill() 
+    view.ctx.fill()
     view.ctx.beginPath()
-    view.ctx.arc(z * 2.5, z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.8, z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
+    view.ctx.restore()
+    // end head
     break;
 
   case 1:
@@ -755,41 +798,80 @@ Actors.Rat.prototype.paint = function (view) {
 
     // tail
     view.ctx.fillStyle = '#ccc'
+    view.ctx.strokeStyle = '#ccc'
+    view.ctx.save()
+    view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
-    view.ctx.moveTo(-z-z-z-z-z, 0)
-    view.ctx.lineTo(0, z)
-    view.ctx.lineTo(0, -z)
-    view.ctx.lineTo(-z-z-z-z-z, 0)
+    view.ctx.moveTo(0, 0.5*z)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, -5 * z, 0)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, 0, -0.5*z)
     view.ctx.closePath()
+    view.ctx.stroke()
     view.ctx.fill()
+    view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#444'
+    view.ctx.fillStyle = '#666'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
-    view.ctx.ellipse(0, 0, z * 2.8, z * 2.2, 0, 2*Math.PI, 0);
-    //view.ctx.arc(0, 0, 3*z, 0, 2*Math.PI);
+    view.ctx.ellipse(0, 0, z * 2.4, z * 1.8, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
+
     // head
-    view.ctx.fillStyle = '#fff'
+    view.ctx.save()
+    view.ctx.translate(2.2*z, 0)
+    view.ctx.rotate(q2 * 0.3)
+
+    // whiskers
+    view.ctx.strokeStyle = '#666'
+    view.ctx.lineWidth=0.5
+
     view.ctx.beginPath()
-    view.ctx.arc(z*2, 0, z, 0, 2*Math.PI);
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, z)
+    view.ctx.stroke()
+
+    // skull
+    view.ctx.fillStyle = '#666'
+    view.ctx.beginPath()
+    view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
-       //eyes
+    //eyes
     view.ctx.fillStyle = '#f00'
+    // blink
+    if(Math.random() < 0.1){
+      view.ctx.fillStyle = '#000'
+    }
     view.ctx.beginPath()
-    view.ctx.arc(z * 2.5, -z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.8, -z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
 
-    view.ctx.fill() 
+    view.ctx.fill()
     view.ctx.beginPath()
-    view.ctx.arc(z * 2.5, z*0.2, z*0.1, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.8, z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
+    view.ctx.restore()
+    // end head
     break;
 
   case 2:
@@ -797,13 +879,17 @@ Actors.Rat.prototype.paint = function (view) {
 
     // tail
     view.ctx.fillStyle = '#fff'
+    view.ctx.strokeStyle = '#fff'
+    view.ctx.save()
+    view.ctx.translate(-0.8*z, 0)
     view.ctx.beginPath()
-    view.ctx.moveTo(-z-z-z, 0)
-    view.ctx.lineTo(0, z*0.25)
-    view.ctx.lineTo(0, -z*0.25)
-    view.ctx.lineTo(-z-z-z, 0)
+    view.ctx.moveTo(0, 0.25*z)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, -3 * z, 0)
+    view.ctx.quadraticCurveTo(-2*z, z * q1, 0, -0.25*z)
     view.ctx.closePath()
+    view.ctx.stroke()
     view.ctx.fill()
+    view.ctx.restore()
 
     // body
     view.ctx.fillStyle = '#fff'
@@ -814,28 +900,60 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.fill()
 
     // head
+    view.ctx.save()
+    view.ctx.translate(z, 0)
+    view.ctx.rotate(q2 * 0.3)
+
+    // whiskers
+    view.ctx.strokeStyle = '#fff'
+    view.ctx.lineWidth=0.5
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.2, 0)
+    view.ctx.lineTo(z*0.1, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.2, 0)
+    view.ctx.lineTo(z*0.3, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.2, 0)
+    view.ctx.lineTo(z*0.1, z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.2, 0)
+    view.ctx.lineTo(z*0.3, z)
+    view.ctx.stroke()
+
+    // skull
     view.ctx.fillStyle = '#fff'
     view.ctx.beginPath()
-    view.ctx.arc(z, 0, z*0.4, 0, 2*Math.PI);
+    view.ctx.ellipse(0, 0, z * 0.4, z * 0.4, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
-           //eyes
+    //eyes
     view.ctx.fillStyle = '#f00'
+    // blink
+    if(Math.random() < 0.1){
+      view.ctx.fillStyle = '#fff'
+    }
     view.ctx.beginPath()
-    view.ctx.arc(z * 1.1, -z*0.2, z*0.08, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.2, -z*0.1, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
 
-    view.ctx.fill() 
+    view.ctx.fill()
     view.ctx.beginPath()
-    view.ctx.arc(z * 1.1, z*0.2, z*0.08, 0, 2*Math.PI);
+    view.ctx.ellipse(z * 0.2, z*0.1, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
     view.ctx.closePath()
     view.ctx.fill()
 
+    view.ctx.restore()
     break;
   default:
-
-
     // tail
     view.ctx.fillStyle = '#ccc'
     view.ctx.beginPath()

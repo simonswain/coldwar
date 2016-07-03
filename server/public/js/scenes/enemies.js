@@ -12,9 +12,15 @@ Scenes.enemies = function(env, opts){
 
 Scenes.enemies.prototype = Object.create(Scene.prototype);
 
-Scenes.enemies.prototype.title = 'Rats';
+Scenes.enemies.prototype.title = 'Enemies';
 
-Scenes.enemies.prototype.layout = '';
+Scenes.enemies.prototype.genAttrs = function(){
+  return {
+    frame_index: 0,
+    time: 0,
+    flash: 0
+  };
+};
 
 Scenes.enemies.prototype.init = function(){
 
@@ -69,13 +75,6 @@ Scenes.enemies.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.enemies.prototype.genAttrs = function(){
-  return {
-    frame_index: 0,
-    time: 0,
-  };
-};
-
 Scenes.enemies.prototype.update = function(delta){
   this.demo.update(delta)
 
@@ -92,6 +91,7 @@ Scenes.enemies.prototype.update = function(delta){
 Scenes.enemies.prototype.flash = function(fx, gx){
   var view = fx;
   if(this.demo.attrs.flash > 0){
+    this.attrs.flash += 5;
     gx.ctx.fillStyle = '#ffffff'
     gx.ctx.fillRect(0, 0, gx.w, gx.h)
     if(this.demo.attrs.flash === 1){
@@ -104,11 +104,31 @@ Scenes.enemies.prototype.flash = function(fx, gx){
 
 Scenes.enemies.prototype.paint = function(fx, gx, sx){
 
+  if(this.attrs.flash > 0){
+    this.attrs.flash --;
+    fx.ctx.save();
+    fx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
+    fx.ctx.translate(Math.random(), Math.random());
+    fx.ctx.fillStyle='#fff';
+    if(Math.random() < 0.025){
+      fx.ctx.fillStyle = '#f00';
+    }
+    if(Math.random() < 0.025){
+      fx.ctx.fillStyle = '#ff0';
+    }
+    fx.ctx.textAlign='center';
+    fx.ctx.textBaseline = 'middle';
+    fx.ctx.font = '28pt robotron';
+    fx.ctx.fillText('SUPERZAPPER', 0, 0);
+    fx.ctx.restore();
+  }
+  
   this.demo.paint(gx)
 
   var frame = this.frames[this.attrs.frame_index];
 
   gx.ctx.textAlign='center';
+  gx.ctx.textBaseline = 'middle';
   gx.ctx.font = '28pt robotron';
 
   gx.ctx.save();
@@ -129,18 +149,19 @@ Scenes.enemies.prototype.paint = function(fx, gx, sx){
   gx.ctx.fillText('destroy rats, no mercy', 0, 0);
   gx.ctx.restore();
 
+
   
-  gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
-  gx.ctx.translate(Math.random(), Math.random());
-  gx.ctx.fillStyle='#0f0';
-  if(Math.random() < 0.025){
-    gx.ctx.fillStyle = '#fff';
-  }
-  if(Math.random() < 0.025){
-    gx.ctx.fillStyle = '#000';
-  }
-  gx.ctx.fillText(frame.title, 0, 0);
-  gx.ctx.restore();
+  // gx.ctx.save();
+  // gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
+  // gx.ctx.translate(Math.random(), Math.random());
+  // gx.ctx.fillStyle='#0f0';
+  // if(Math.random() < 0.025){
+  //   gx.ctx.fillStyle = '#fff';
+  // }
+  // if(Math.random() < 0.025){
+  //   gx.ctx.fillStyle = '#000';
+  // }
+  // gx.ctx.fillText(frame.title, 0, 0);
+  // gx.ctx.restore();
 
 }
