@@ -107,7 +107,7 @@ Scenes.enemies.prototype.paint = function(fx, gx, sx){
   if(this.attrs.flash > 0){
     this.attrs.flash --;
     fx.ctx.save();
-    fx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
+    fx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5);
     fx.ctx.translate(Math.random(), Math.random());
     fx.ctx.fillStyle='#fff';
     if(Math.random() < 0.025){
@@ -131,9 +131,6 @@ Scenes.enemies.prototype.paint = function(fx, gx, sx){
   gx.ctx.textBaseline = 'middle';
   gx.ctx.font = '28pt robotron';
 
-  gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.2);
-  gx.ctx.translate(Math.random(), Math.random());
 
   var h = (Date.now()%360 * 0.22) - 10;
   gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
@@ -146,7 +143,16 @@ Scenes.enemies.prototype.paint = function(fx, gx, sx){
     gx.ctx.fillStyle = 'rgba(255,255,255,1)';
   }
 
-  gx.ctx.fillText('destroy rats, no mercy', 0, 0);
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.2);
+  gx.ctx.translate(Math.random(), Math.random());
+  gx.ctx.fillText('destroy rats', 0, 0);
+  gx.ctx.restore();
+
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
+  gx.ctx.translate(Math.random(), Math.random());
+  gx.ctx.fillText('no mercy', 0, 0);
   gx.ctx.restore();
 
 

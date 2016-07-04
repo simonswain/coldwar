@@ -148,7 +148,7 @@ Scenes.briefing.prototype.paint = function(fx, gx, sx){
     }     
 
     gx.ctx.font = '28pt robotron';
-    gx.ctx.textAlign='center'
+    //gx.ctx.textAlign='center'
     gx.ctx.textBaseline='middle'
 
     gx.ctx.fillText(frame.text[i], xx + (1.5 * x * dx), yy + (y * dy) + dy);

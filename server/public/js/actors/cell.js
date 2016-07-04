@@ -252,9 +252,19 @@ Actors.Cell.prototype.paint = function (view) {
   // }
   
   if (this.attrs.flash>0) {
-    view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
-    view.ctx.fillStyle = '#ffffff'
-    view.ctx.fillRect(0, 0, this.opts.max_x, this.opts.max_y)
+    if(this.humans && this.humans[0]){
+      view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
+      view.ctx.fillStyle = '#ffffff'
+      view.ctx.beginPath()
+      view.ctx.arc(this.humans[0].pos.x, this.humans[0].pos.y, this.opts.max_x * 0.5, 0, 2*Math.PI);
+      view.ctx.fill();
+    } else {
+      view.ctx.fillStyle = 'rgba(255,255,255,0.7);'
+      view.ctx.fillStyle = '#ffffff'
+      view.ctx.beginPath()
+      view.ctx.arc(this.opts.max_x * 0.5, this.opts.max_y * 0.5, this.opts.max_x * 0.5, 0, 2*Math.PI);
+      view.ctx.fill();
+    }
     this.attrs.flash --
   }
 

@@ -23,7 +23,8 @@ Actors.Boom.prototype.styles = [
   'expand',
   'laser',
   'colonize',
-  'decolonize'
+  'decolonize',
+  'nuke'
 ]
 
 Actors.Boom.prototype.genAttrs = function (attrs) {
@@ -171,14 +172,6 @@ Actors.Boom.prototype.paint = function (view) {
 
     case 2:
     case 'zoom':
-      // view.ctx.lineWidth = this.opts.fatness
-      // for (i = 0; i< 10; i++) {
-      //   view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
-      //   view.ctx.beginPath()
-      //   view.ctx.lineWidth = this.opts.fatness * (i / 10)
-      //   view.ctx.arc(0, 0, (this.attrs.radius - radius) * i / (10 * div), 0, 2 * Math.PI)
-      //   view.ctx.stroke()
-      // }
       for (i = 0; i < 10; i++) {
         view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
         view.ctx.beginPath()
@@ -220,16 +213,22 @@ Actors.Boom.prototype.paint = function (view) {
       view.ctx.fill()
       break
 
-    case 6:
-    case 'laser':
-      view.ctx.save()
-      view.ctx.rotate(2 * Math.PI * Math.random())
-      view.ctx.lineWidth = this.opts.fatness
-      view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ',' + (2 * f.toFixed(2)) + ')'
-
-      view.ctx.beginPath()
-    view.ctx.moveTo(-radius, 0)
-    view.ctx.lineTo(radius, 0)
+  case 6:
+  case 'laser':
+    view.ctx.save()
+    view.ctx.rotate(2 * Math.PI * Math.random())
+    view.ctx.lineCap = 'round'
+    view.ctx.lineWidth = 16
+    view.ctx.strokeStyle = '#f0f'
+    if(Math.random() < 0.25){
+      view.ctx.strokeStyle = '#0ff'
+    }
+    if(Math.random() < 0.25){
+      view.ctx.strokeStyle = '#fff'
+    }
+    view.ctx.beginPath()
+    view.ctx.moveTo(-this.attrs.initial_radius, 0)
+    view.ctx.lineTo(this.attrs.initial_radius, 0)
     view.ctx.stroke()
 
     view.ctx.restore()
@@ -258,18 +257,25 @@ Actors.Boom.prototype.paint = function (view) {
     view.ctx.stroke()
     break
 
-    // case 8:
-    // case 'inbound':
-    //   for (i = 0; i < 10; i++) {
-    //     view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + (1 - (i / 10).toFixed(2)) + ')'
-    //     view.ctx.lineWidth = this.fatness * (i / 10)
-    //     view.ctx.beginPath()
-    //     view.ctx.arc(0, 0, (radius / i) * (this.attrs.initial_radius / i), 0, 2 * Math.PI)
-    //     view.ctx.stroke()
-    //   }
-    //   break
+  case 9:
+  case 'nuke':
+    for (i = 20; i > 0; i--) {
+      view.ctx.strokeStyle = '#f00'
+      if(Math.random() < 0.25){
+        view.ctx.strokeStyle = '#ff0'
+      }
+      if(Math.random() < 0.25){
+        view.ctx.strokeStyle = '#fff'
+      }
+      view.ctx.lineWidth = 16
+      view.ctx.beginPath()
+      view.ctx.arc(0, 0, (this.attrs.initial_radius - radius / i), 2 * Math.PI * Math.random(), 2 * Math.PI * Math.random())
+      view.ctx.stroke()
+    }
 
-    case 'crater':
+    break
+
+  case 'crater':
       // nop
       break
 

@@ -37,19 +37,29 @@ Actors.Reactor.prototype.defaults = [{
 
 Actors.Reactor.prototype.prime = function () {
   this.attrs.primed = true;
-
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
     }, {
-      style: 'zoom',
-      radius: 64,
+      style: 'laser',
+      radius: 240,
       x: this.pos.x,
-      y: this.pos.y,
-      color: '0,255,255'
+      y: this.pos.y
     }
   ))
-  
 }
+
+Actors.Reactor.prototype.detonate = function () {
+  this.refs.cell.booms.push(new Actors.Boom(
+    this.env, {
+    }, {
+      style: 'nuke',
+      radius: 400,
+      x: this.pos.x,
+      y: this.pos.y
+    }
+  )) 
+}
+
 
 
 Actors.Reactor.prototype.update = function (delta) {

@@ -15,6 +15,9 @@ Actors.Maze.prototype.title = 'Maze'
 
 Actors.Maze.prototype.genAttrs = function (attrs) {
   return {
+    ttl: 0,
+    //ttl: (this.opts.rows * this.opts.cols > 24) ? 0 : 8,
+    phase: 'gen',
     max: Math.min(this.opts.max_x, this.opts.max_y),
     escape: false,
     escape_done: false,
@@ -29,6 +32,17 @@ Actors.Maze.prototype.genAttrs = function (attrs) {
 Actors.Maze.prototype.init = function () {
   this.makeGrid();
   this.human = false;
+
+  this._steps = {
+    ttl: this.attrs.ttl,
+    cell: -1,
+    other: false,
+    other_dir: null,
+    stack: [],
+    total: this.cells.length,
+    visited: 1,
+    done: false
+  }; 
 };
 
 Actors.Maze.prototype.defaults = [{
@@ -96,14 +110,20 @@ Actors.Maze.prototype.makeGrid = function () {
 
   this.makeGridmates();
 
-  this.generatePerfectMaze();
+  if(!this.attrs.phase){
+    this.generatePerfectMaze();
+    this.seedActors();
+  }
+
+}
+
+Actors.Maze.prototype.seedActors = function () {
   this.attrs.entry_cell = 0;
   this.attrs.reactor_cell = this.cells.length-1;
   this.addReactor(this.attrs.reactor_cell);
   this.portal = this.addPortal(this.attrs.entry_cell);
   this.randomBreeders(this.opts.breeders);
-
-}
+};
 
 Actors.Maze.prototype.makeGridmates = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
@@ -450,8 +470,111 @@ Actors.Maze.prototype.route = function (cell, other) {
 
 };
 
+Actors.Maze.prototype.doGenPhase = function (delta) {
+  if(this._steps.ttl >= 0){
+    this._steps.ttl -= delta
+    return
+  }
+  
+  this._steps.ttl += this.attrs.ttl
+
+  if (this._steps.cell === -1) {
+    this._steps.cell = pickOne(this.cells);
+    return;
+  }
+
+  var n, i, j, k, c;
+  var cell, pick, other, dir
+  var flip = [2,3,0,1];
+  var plucked = false;
+
+  if(this._steps.other){
+    this._steps.showCell = this._steps.cell;
+    this._steps.cell.exits[this._steps.other_dir] = this._steps.other
+    this._steps.other.exits[flip[this._steps.other_dir]] = this._steps.cell
+    this._steps.stack.push(this._steps.cell)
+    this._steps.cell = this._steps.other;
+    this._steps.other = false;
+    this._steps.visited ++
+    return;
+  }
+  
+  cell = this._steps.cell;
+  while(this._steps.visited < this._steps.total && !plucked){
+    n = [];
+    // find all neighbors of Cell with all walls intact
+    for(i=0; i<4; i ++){
+      if(cell.gridmates[i]){
+        c = 0;
+        other = cell.gridmates[i]
+        for(j=0; j<4; j++){
+          if(!other.exits[j]){
+            c++;
+          }
+        }
+        if(c === 4){
+          n.push([i, other])
+        }
+      }
+    }
+    if(n.length > 0){
+      pick = pickOne(n)
+      this._steps.other_dir = pick[0]
+      this._steps.other = pick[1]
+      plucked = true;
+      break;
+    } else {
+      this._steps.cell = this._steps.stack.pop()
+      break;
+    }
+  }
+  
+  if(this._steps.visited === this._steps.total){
+    if(this._steps.stack.length > 0){
+      this._steps.cell = this._steps.stack.pop();
+      return;
+    }
+
+    if(this._steps.done){
+      if(!this.env.gameover){
+        this._steps.cell = false;
+        if(this.attrs.rows < 24){
+          this.attrs.rows ++;
+          this.attrs.cols ++;
+          this.attrs.ttl *= 0.25; 
+          if(this.attrs.ttl < 0.1){
+            this.attrs.ttl = 0
+          }
+          
+        }
+        this.init();
+      }
+      return;
+    }
+
+    if(this._steps.stack.length === 0){
+      this.attrs.phase = 'seed'
+      this._steps.done = true;
+      //this._steps.cell = false;
+      return;
+    }
+  }
+
+};
+
 Actors.Maze.prototype.update = function (delta) {
 
+  if(this.attrs.phase == 'gen'){
+    this.doGenPhase(delta);
+    return;
+  } 
+
+  if(this.attrs.phase == 'seed'){
+    this.seedActors();
+    this.attrs.phase = null;
+    return;
+  } 
+  
   if(this.attrs.humanCountdown > 0){
     this.attrs.humanCountdown --;
 
@@ -501,40 +624,45 @@ Actors.Maze.prototype.update = function (delta) {
     this.human.attrs.escaped = true;
     this.attrs.boom = true;;
     this.attrs.boomCountdown = 60;
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'colonize',
-          radius: 128,
-          x: 0,
-          y: 0,
-          color: '0,255,255'
-        }
-      ))
+    
+    this.booms.push(new Actors.Boom(
+      this.env, {
+      }, {
+        style: 'colonize',
+        radius: 128,
+        x: 0,
+        y: 0,
+        color: '0,255,255'
+      }
+    ))
 
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'colonize',
-          radius: 132,
-          x: 0,
-          y: 0,
-          color: '255,255,255',
-          ttl: 20
-        }
-      ))
+    this.booms.push(new Actors.Boom(
+      this.env, {
+      }, {
+        style: 'colonize',
+        radius: 132,
+        x: 0,
+        y: 0,
+        color: '255,255,255',
+        ttl: 20
+      }
+    ))
 
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'colonize',
-          radius: 82,
-          x: 0,
-          y: 0,
-          color: '255,255,255',
-          ttl: 60
-        }
-      ))
+    this.booms.push(new Actors.Boom(
+      this.env, {
+      }, {
+        style: 'colonize',
+        radius: 82,
+        x: 0,
+        y: 0,
+        color: '255,255,255',
+        ttl: 60
+      }
+    ))
+  }
+
+  if(this.attrs.boom && this.attrs.boomCountdown === 15){
+    this.cells[this.attrs.reactor_cell].reactors[0].detonate();
   }
   
   if(this.attrs.boom && this.attrs.boomCountdown > 0){
@@ -577,11 +705,45 @@ Actors.Maze.prototype.paint = function (view) {
   var x, y, i, ii;
   var cell;
 
-  // view.ctx.strokeStyle = '#f00'
-  // view.ctx.beginPath()
-  // view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-  // view.ctx.stroke()
+  if(this.attrs.phase == 'gen'){
+    var x, y, i, ii;
+    var cell;
+    var ww = this.opts.max_x / this.attrs.cols
+    var hh = this.opts.max_y / this.attrs.rows
+    
+    for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+      x = i % this.attrs.rows
+      y = Math.floor(i / this.attrs.cols);
 
+      cell = this.cells[i];
+      view.ctx.save();
+      if(this._steps.stack.indexOf(cell) > -1){
+        view.ctx.fillStyle = '#300';
+        view.ctx.strokeStyle = '#300';
+        view.ctx.beginPath();
+        view.ctx.rect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh); 
+        view.ctx.fill();
+        view.ctx.stroke();
+      }
+
+      if(this._steps.other && this._steps.other.attrs.i === i){
+        view.ctx.fillStyle = '#ff0';
+        view.ctx.beginPath();
+        view.ctx.fillRect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh);
+      }      
+
+      if(this._steps.cell && this._steps.cell !== -1 && this._steps.cell.attrs.i === i){
+        view.ctx.fillStyle = '#f00';
+        view.ctx.beginPath();
+        view.ctx.fillRect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh);
+      }      
+
+      view.ctx.restore();
+    }
+  }
+
+
+  
   view.ctx.save()
 
   // if(this.opts.fit){
@@ -708,7 +870,7 @@ Actors.Maze.prototype.paint = function (view) {
     view.ctx.restore()
   }
 
-  if(this.attrs.humanCountdown > 10){
+  if(!this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
     view.ctx.font = '12pt robotron'

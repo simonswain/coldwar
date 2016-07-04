@@ -145,7 +145,7 @@ Scenes.training.prototype.paint = function(fx, gx, sx){
     }     
 
     gx.ctx.font = '40pt robotron';
-    gx.ctx.textAlign = 'center';
+    //gx.ctx.textAlign = 'center';
 
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();

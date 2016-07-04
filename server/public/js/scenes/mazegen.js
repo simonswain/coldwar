@@ -34,8 +34,7 @@ Scenes.mazegen.prototype.init = function(){
     total: this.cells.length,
     visited: 1,
     done: false
-  };
-  
+  }; 
 }
 
 Scenes.mazegen.prototype.defaults = [{

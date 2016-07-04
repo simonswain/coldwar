@@ -947,6 +947,9 @@ Coldwar.prototype.scenes = [{
   title: 'Machines',
   slug: 'machines'
 }, {
+  title: 'Follow',
+  slug: 'follow'
+}, {
   title: 'Reactor',
   slug: 'reactor'
 }, {
@@ -982,6 +985,9 @@ Coldwar.prototype.scenes = [{
 }, {
   title: 'Trap',
   slug: 'traps'
+}, {
+  title: 'Boom',
+  slug: 'boom'
 }]
 
 // dungeon contains mazes
