@@ -17,11 +17,18 @@ Scenes.sorter.prototype.title = 'Sorter';
 Scenes.sorter.prototype.layout = '';
 
 Scenes.sorter.prototype.init = function(){
+
+  Array.prototype.swap = function (x,y) {
+    var b = this[x];
+    this[x] = this[y];
+    this[y] = b;
+    return this;
+  }
+
   this.memory = [];
   for(var i = 0; i < 20; i++){
     this.memory.push(2+Math.floor((Math.random() * 14)+1));
   }
-  console.log(this.memory);
 
   var length = this.memory.length;
   var h = 1;
@@ -68,13 +75,6 @@ Scenes.sorter.prototype.genAttrs = function(){
     duration: this.opts.duration,
   };
 };
-
-Array.prototype.swap = function (x,y) {
-  var b = this[x];
-  this[x] = this[y];
-  this[y] = b;
-  return this;
-}
 
 Scenes.sorter.prototype.update = function(delta){
 
