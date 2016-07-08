@@ -105,6 +105,15 @@ Scenes.reactor.prototype.update = function(delta){
     this.attrs.x -= delta * 1.5;
     if(this.attrs.x < -40){
       this.attrs.mode = 'boom';
+      this.booms.push(new Actors.Boom(
+        this.env, {
+        }, {
+          style: 'nuke',
+          radius: 128,
+          x: this.opts.max_x/2,
+          y: this.opts.max_y/2,
+        }
+      ))
     }
   }
 
@@ -115,8 +124,8 @@ Scenes.reactor.prototype.update = function(delta){
       this.booms.push(new Actors.Boom(
         this.env, {
         }, {
-          style: 'zoom',
-          radius: 16,
+          style: 'laser',
+          radius: 64,
           x: this.opts.max_x/2,
           y: this.opts.max_y/2,
           color: '0,255,255'

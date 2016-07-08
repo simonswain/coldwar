@@ -896,8 +896,8 @@ Coldwar.prototype.scenes = [{
   title: 'Address',
   slug: 'address'
 }, {
-  title: 'CRT',
-  slug: 'crt'
+  title: 'Sorter',
+  slug: 'sorter'
 }, {
   title: 'Array',
   slug: 'array'
@@ -947,11 +947,11 @@ Coldwar.prototype.scenes = [{
   title: 'Machines',
   slug: 'machines'
 }, {
-  title: 'Follow',
-  slug: 'follow'
-}, {
   title: 'Reactor',
   slug: 'reactor'
+}, {
+  title: 'Follow',
+  slug: 'follow'
 }, {
   title: 'Factory',
   slug: 'factory'
@@ -979,6 +979,9 @@ Coldwar.prototype.scenes = [{
 }, {
   title: 'Maze 2',
   slug: 'maze2'
+}, {
+  title: 'Twisty',
+  slug: 'twisty'
 }, {
   title: 'King Rat',
   slug: 'king_rat'

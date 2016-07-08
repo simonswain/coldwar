@@ -24,7 +24,7 @@ Scenes.variants.prototype.genAttrs = function(){
 };
 Scenes.variants.prototype.init = function(){
   this.frames = [{
-    title:'White Rat'
+    title:'Lab Rat'
   }, {
     title:'Momma Rat',
   }, {

@@ -24,6 +24,7 @@ Scenes.follow.prototype.genAttrs = function(){
     step_index: 0,
     time: 0,
     hold: 0,
+    tt: 0
   };
 };
 
@@ -79,7 +80,11 @@ Scenes.follow.prototype.defaults = [{
 
 Scenes.follow.prototype.update = function(delta){
 
-
+  this.attrs.tt += delta/5;
+  if(this.attrs.tt > 5){
+    this.attrs.tt = 0;
+  }
+  
   if(this.attrs.mode === 'boom'){
     this.attrs.x -= delta * 4;
     if(this.attrs.x < -150){
@@ -123,7 +128,7 @@ Scenes.follow.prototype.paint = function(fx, gx, sx){
 
   var yy = (this.opts.max_y * 0.225);
   var dy = (this.opts.max_y * 0.066);
-  var xx = (this.opts.max_x * 0.11);
+  var xx = (this.opts.max_x * 0.08);
   var dx = (this.opts.max_x * 0.047);
   var y = 0;
   var x = 0;
@@ -160,6 +165,44 @@ Scenes.follow.prototype.paint = function(fx, gx, sx){
 
   var view = gx;
 
+
+
+  var w = this.opts.max_x * 0.05;
+  var cx = 0;
+  var tt = Math.floor(this.attrs.tt);
+
+  for (var x = this.opts.max_x * 0.1; x < this.opts.max_x; x += this.opts.max_x * 0.2){
+    view.ctx.save();
+    view.ctx.lineWidth=2;
+    view.ctx.translate(x, this.opts.max_y * 0.5);
+    if(this.attrs.mode === 'attack' && x > this.attrs.x){
+      view.ctx.strokeStyle='rgba(0,255,255,0.75)';
+      if(cx === tt){
+        view.ctx.lineWidth=3;
+        view.ctx.strokeStyle='rgba(0,255,255,1)';
+      }
+      view.ctx.beginPath();
+      view.ctx.moveTo(-w/2, -w);
+      view.ctx.lineTo(w/2, 0);
+      view.ctx.lineTo(-w/2, w);
+      view.ctx.stroke();
+    } else if (this.attrs.mode === 'primed' && x < this.attrs.x) { 
+      view.ctx.strokeStyle='rgba(255,0,0,0.75)';
+      if(4-cx === tt){
+        view.ctx.lineWidth=3;
+        view.ctx.strokeStyle='rgba(255,0,0,1)';
+      }
+      view.ctx.beginPath();
+      view.ctx.moveTo(w/2, -w);
+      view.ctx.lineTo(-w/2, 0);
+      view.ctx.lineTo(w/2, w);
+      view.ctx.stroke();
+    }
+    view.ctx.restore();
+    cx ++;
+  }
+
+  
   if(this.attrs.mode === 'attack' || this.attrs.mode === 'primed'){
     
     var rgb = '0, 153, 0';
@@ -218,8 +261,6 @@ Scenes.follow.prototype.paint = function(fx, gx, sx){
     view.ctx.restore()
 
   }
-
-
   
 }
 
@@ -227,15 +268,14 @@ Scenes.follow.prototype.frames = [];
 
 Scenes.follow.prototype.frames[0] = {
   text:[
-    'Follow direction ',
-    '   indicators    ',
+    '    ',
+    '  Follow markers ',
     '    ',
     '    ',
     '    ',
     '    ',
     '    ',
     '    ',
-    '   and reach      ',
-    '   your goal     ',
+    'to reach your goal  ',
   ].join("\n"),
 };

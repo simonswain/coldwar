@@ -1,7 +1,6 @@
 /* global Actors, Actor */
 
-Actors.Maze = function (env, refs, attrs, opts) {
-
+Actors.TwistyMaze = function (env, refs, attrs, opts) {
   this.env = env
   this.refs = refs
   this.opts = this.genOpts(opts)
@@ -9,14 +8,13 @@ Actors.Maze = function (env, refs, attrs, opts) {
   this.init()
 }
 
-Actors.Maze.prototype = Object.create(Actor.prototype)
+Actors.TwistyMaze.prototype = Object.create(Actor.prototype)
 
-Actors.Maze.prototype.title = 'Maze'
+Actors.TwistyMaze.prototype.title = 'TwistyMaze'
 
-Actors.Maze.prototype.genAttrs = function (attrs) {
+Actors.TwistyMaze.prototype.genAttrs = function (attrs) {
   return {
     ttl: 0,
-    //ttl: (this.opts.rows * this.opts.cols > 24) ? 0 : 8,
     phase: 'gen',
     max: Math.min(this.opts.max_x, this.opts.max_y),
     escape: false,
@@ -29,7 +27,7 @@ Actors.Maze.prototype.genAttrs = function (attrs) {
   }
 }
 
-Actors.Maze.prototype.init = function () {
+Actors.TwistyMaze.prototype.init = function () {
   this.makeGrid();
   this.human = false;
 
@@ -45,7 +43,7 @@ Actors.Maze.prototype.init = function () {
   }; 
 };
 
-Actors.Maze.prototype.defaults = [{
+Actors.TwistyMaze.prototype.defaults = [{
   key: 'max_x',
   value: 640,
   min: 100,
@@ -82,7 +80,7 @@ Actors.Maze.prototype.defaults = [{
   max: 16
 }]
 
-Actors.Maze.prototype.makeGrid = function () {
+Actors.TwistyMaze.prototype.makeGrid = function () {
 
   // init blank grid
   this.booms = [];
@@ -91,7 +89,7 @@ Actors.Maze.prototype.makeGrid = function () {
   x = 0;
   y = 0;
   for (i = 0, ii = this.cells.length; i<ii; i++) {
-    this.cells[i] = new Actors.Cell(
+    this.cells[i] = new Actors.TwistyCell(
       this.env, {
         maze: this,
         cells: this.cells
@@ -117,15 +115,12 @@ Actors.Maze.prototype.makeGrid = function () {
 
 }
 
-Actors.Maze.prototype.seedActors = function () {
-  this.attrs.entry_cell = 0;
-  this.attrs.reactor_cell = this.cells.length-1;
-  this.addReactor(this.attrs.reactor_cell);
-  this.portal = this.addPortal(this.attrs.entry_cell);
-  this.randomBreeders(this.opts.breeders);
+Actors.TwistyMaze.prototype.seedActors = function () {
+  this.attrs.entry_cell = 16
+  this.attrs.exit_cell =  23
 };
 
-Actors.Maze.prototype.makeGridmates = function () {
+Actors.TwistyMaze.prototype.makeGridmates = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
   var i, ix, exit;
   var other, cell;
@@ -143,7 +138,7 @@ Actors.Maze.prototype.makeGridmates = function () {
   }
 }
 
-Actors.Maze.prototype.connectAllCells = function () {
+Actors.TwistyMaze.prototype.connectAllCells = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
   var i, ix, exit;
   var other;
@@ -162,19 +157,7 @@ Actors.Maze.prototype.connectAllCells = function () {
   }
 }
 
-Actors.Maze.prototype.randomJoins = function (max) {
-
-  if(!max){
-    max = 1
-  }
-
-  for(var i=0; i<max; i++){
-    this.randomJoin();
-  }
-
-}
-
-Actors.Maze.prototype.generatePerfectMaze = function (max) {
+Actors.TwistyMaze.prototype.generatePerfectMaze = function (max) {
 
   var stack = [];
   var cells = this.cells
@@ -220,140 +203,12 @@ Actors.Maze.prototype.generatePerfectMaze = function (max) {
 
 }
 
-
-Actors.Maze.prototype.randomJoin = function () {
-
-  var cell, dir, other;
-
-  cell = pickOne(this.cells);
-
-  while(!other){
-    dir = random.from0to(3);
-    if(!cell.gridmates[dir]){
-      continue;
-    }
-    other = cell.gridmates[dir];
-  }
-
-  cell.exits[dir] = other;
-  var flip = [2,3,0,1];
-  other.exits[flip[dir]] = cell;
-
-}
-
-
-Actors.Maze.prototype.randomSplits = function (max) {
-
-  if(!max){
-    max = 1
-  }
-
-  for(var i=0; i<max; i++){
-    this.randomSplit();
-  }
-
-}
-
-Actors.Maze.prototype.randomSplit = function () {
-
-  var cell, dir, other;
-
-  cell = pickOne(this.cells);
-
-  while(!other){
-    dir = random.from0to(3);
-    if(!cell.gridmates[dir]){
-      continue;
-    }
-    other = cell.gridmates[dir];
-  }
-
-  cell.exits[dir] = null;
-  var flip = [2,3,0,1];
-  other.exits[flip[dir]] = null;
-
-}
-
-Actors.Maze.prototype.randomBreeders = function (max) {
-  if(!max){
-    max = 0
-  }
-  for(var i=0; i<max; i++){
-    this.randomBreeder();
-  }
-}
-
-Actors.Maze.prototype.addBreeder = function (ix) {
-  this.cells[ix].addBreeder();
-}
-
-Actors.Maze.prototype.addReactor = function (ix) {
-  this.cells[ix].addReactor();
-}
-
-Actors.Maze.prototype.randomBreeder = function (max) {
-  var x = 5; // attempts
-  var ix;
-  while (x>0){
-    ix = random.from0upto(this.cells.length)
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactors.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portals.length > 0){
-      x --;
-      continue;
-    }
-    this.cells[ix].addBreeder();
-    break;
-  }
-}
-
-
-Actors.Maze.prototype.randomReactors = function (max) {
-  if(!max){
-    max = 1
-  }
-  for(var i=0; i<max; i++){
-    this.randomReactor();
-  }
-}
-
-
-Actors.Maze.prototype.randomReactor = function (max) {
-  var ix = random.from0upto(this.cells.length)
-  this.cells[ix].addReactor();
-}
-
-Actors.Maze.prototype.addHuman = function (ix) {
+Actors.TwistyMaze.prototype.addHuman = function (ix) {
   var human = this.cells[ix].addHuman();
   return human
 }
 
-Actors.Maze.prototype.addPortal = function (ix) {
-  var portal = this.cells[ix].addPortal();
-  return portal
-}
-
-Actors.Maze.prototype.randomHuman = function (max) {
-  var ix = random.from0upto(this.cells.length)
-  this.cells[ix].addHuman();
-}
-
-Actors.Maze.prototype.randomHumans = function (max) {
-  if(!max){
-    max = 1
-  }
-  for(var i=0; i<max; i++){
-    this.randomHuman();
-  }
-}
-
-Actors.Maze.prototype.route = function (cell, other) {
+Actors.TwistyMaze.prototype.route = function (cell, other) {
 
   var from_i = cell.attrs.i;
   var to_i = other.attrs.i;
@@ -470,7 +325,7 @@ Actors.Maze.prototype.route = function (cell, other) {
 
 };
 
-Actors.Maze.prototype.doGenPhase = function (delta) {
+Actors.TwistyMaze.prototype.doGenPhase = function (delta) {
   if(this._steps.ttl >= 0){
     this._steps.ttl -= delta
     return
@@ -562,7 +417,7 @@ Actors.Maze.prototype.doGenPhase = function (delta) {
 
 };
 
-Actors.Maze.prototype.update = function (delta) {
+Actors.TwistyMaze.prototype.update = function (delta) {
 
   if(this.attrs.phase == 'gen'){
     this.doGenPhase(delta);
@@ -585,7 +440,7 @@ Actors.Maze.prototype.update = function (delta) {
           style: 'decolonize',
           radius: 128,
           x: 0,
-          y: 0,
+          y: 2,
           color: '0,255,255'
         }
       ))
@@ -596,7 +451,7 @@ Actors.Maze.prototype.update = function (delta) {
           style: 'decolonize',
           radius: 132,
           x: 0,
-          y: 0,
+          y: 2,
           color: '255,255,255',
           ttl: 20
         }
@@ -608,7 +463,7 @@ Actors.Maze.prototype.update = function (delta) {
           style: 'decolonize',
           radius: 82,
           x: 0,
-          y: 0,
+          y: 2,
           color: '255,255,255',
           ttl: 60
         }
@@ -620,6 +475,11 @@ Actors.Maze.prototype.update = function (delta) {
     }
   }
 
+
+  if(!this.savedRoute && this.human && this.human.attrs.route){
+    this.savedRoute = this.human.attrs.route.slice();
+  }
+  
   if(this.attrs.escape_done && !this.human.attrs.escaped){
     this.human.attrs.escaped = true;
     this.attrs.boom = true;;
@@ -630,8 +490,8 @@ Actors.Maze.prototype.update = function (delta) {
       }, {
         style: 'colonize',
         radius: 128,
-        x: 0,
-        y: 0,
+        x: 7,
+        y: 2,
         color: '0,255,255'
       }
     ))
@@ -641,8 +501,8 @@ Actors.Maze.prototype.update = function (delta) {
       }, {
         style: 'colonize',
         radius: 132,
-        x: 0,
-        y: 0,
+        x: 7,
+        y: 2,
         color: '255,255,255',
         ttl: 20
       }
@@ -653,27 +513,17 @@ Actors.Maze.prototype.update = function (delta) {
       }, {
         style: 'colonize',
         radius: 82,
-        x: 0,
-        y: 0,
+        x: 7,
+        y: 2,
         color: '255,255,255',
         ttl: 60
       }
     ))
   }
 
-  if(this.attrs.boom && this.attrs.boomCountdown === 15){
-    this.cells[this.attrs.reactor_cell].reactors[0].detonate();
-  }
-  
   if(this.attrs.boom && this.attrs.boomCountdown > 0){
     this.attrs.boomCountdown --;
     if(this.attrs.boomCountdown === 0){
-
-      var i, ii;
-      for (i = 0, ii = this.cells.length; i<ii; i++) {
-        this.cells[i].killAllActors();
-      }
-
       setTimeout(this.env.restart, 2500)
       //setTimeout(this.env.goNext, 2500)
     }
@@ -700,7 +550,7 @@ Actors.Maze.prototype.update = function (delta) {
 
 }
 
-Actors.Maze.prototype.paint = function (view) {
+Actors.TwistyMaze.prototype.paint = function (view, fx) {
 
   var x, y, i, ii;
   var cell;
@@ -741,20 +591,13 @@ Actors.Maze.prototype.paint = function (view) {
       view.ctx.restore();
     }
   }
-
-
   
   view.ctx.save()
-
-  // if(this.opts.fit){
-  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
-  //   view.ctx.scale(0.9, 0.9);
-  // }
 
   var max = Math.max(this.opts.max_x, this.opts.max_y);
   var min = Math.min(this.opts.max_x, this.opts.max_y);
   var rc = Math.max(this.attrs.rows, this.attrs.cols);
-
+  
   var w = (max/rc);
   var f = (w/this.opts.cell_w);
 
@@ -763,19 +606,30 @@ Actors.Maze.prototype.paint = function (view) {
     (this.opts.max_y - (this.attrs.rows * w))/2
   );
 
-  for (i = 0, ii = this.cells.length; i<ii; i++) {
-    x = i % this.attrs.cols;
-    y = Math.floor(i/this.attrs.rows);
+  if(this.savedRoute){
+    for (i = 0, ii = this.cells.length; i<ii; i++) {
+      cell = this.cells[i]
+      if(this.savedRoute.indexOf(i) === -1 && i !== this.attrs.exit_cell && i !== this.attrs.entry_cell){
+        view.ctx.fillStyle = 'rgba(0, 153, 0, ' + (0.25 + (Math.random() * 0.25))+  ')'
+        view.ctx.save()
+        view.ctx.beginPath();
+        view.ctx.rect(cell.attrs.x * w, cell.attrs.y * w, w, w);
+        view.ctx.fill();
+        view.ctx.restore()
+      }   
+    }
+  }
+  
 
+  for (i = 0, ii = this.cells.length; i<ii; i++) {
     cell = this.cells[i]
     view.ctx.save()
     view.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
     view.ctx.scale(f, f);
-
     cell.paint(view);
     view.ctx.restore()
   }
-
+  
   var routes, route, from, to, dx, dy;
 
   // show route
@@ -792,20 +646,6 @@ Actors.Maze.prototype.paint = function (view) {
 
     for(i = 0, ii<routes.length; i<ii; i++){
       route = routes[i];
-      // view.ctx.fillStyle = '#fff'
-      // view.ctx.font = '14pt ubuntu mono, monospace'
-      // view.ctx.textAlign='center';
-      // view.ctx.textBaseline='middle';
-      // view.ctx.fillText(routes[i], (w/2) + (i * w/4), w/8);
-
-      // view.ctx.fillStyle = 'rgba(255,255,255,0.25)'
-      // view.ctx.font = '12pt ubuntu mono, monospace'
-      // view.ctx.textAlign='center';
-      // view.ctx.textBaseline='middle';
-      // view.ctx.beginPath()
-      // view.ctx.arc((x * w) + (w/2), (y * w) + (w/2), w/12, 0, 2*Math.PI);
-      // view.ctx.fill()
-      // view.ctx.fillText(route, (x * w) + (w/4), (y * w) + (w/2));
 
       x = routes[i] % this.attrs.cols
       y = Math.floor(routes[i] / this.attrs.cols)
@@ -813,10 +653,6 @@ Actors.Maze.prototype.paint = function (view) {
       from = this.cells[routes[i]];
       to = this.cells[routes[i+1]];
 
-      if(from && from.breeders.length > 0){
-        continue;
-      }
-      
       if(from && to){
         if(Math.floor(this._routeIndex) === i){
           if(this.attrs.escape){
@@ -858,6 +694,7 @@ Actors.Maze.prototype.paint = function (view) {
     5;
   }
 
+
   var boom;
   for (i = 0, ii = this.booms.length; i < ii; i++) {
     boom = this.booms[i]
@@ -869,18 +706,18 @@ Actors.Maze.prototype.paint = function (view) {
     this.booms[i].paint(view)
     view.ctx.restore()
   }
-
+  
   if(!this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
     view.ctx.font = '12pt robotron'
     view.ctx.textAlign='center';
     view.ctx.textBaseline='middle';
-    view.ctx.fillText(Math.floor(this.attrs.humanCountdown/10), w * 0.5, w * 0.5);
+    view.ctx.translate(w/2 + 0 * w, w/2 + 2 * w);
+    view.ctx.fillText(Math.floor(this.attrs.humanCountdown/10), 0, 0);
     view.ctx.restore()
   }
- 
-
+  
   view.ctx.restore()
-
+  
 }
