@@ -37,9 +37,9 @@ Scenes.loading.prototype.init = function(){
     duration: 48,
     paint: this.ready2
   }, {
-    duration: 70,
-    paint: this.banner
-  }, {
+  //   duration: 70,
+  //   paint: this.banner
+  // }, {
     duration: 10,
     paint: this.download
   }, {

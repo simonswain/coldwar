@@ -929,6 +929,24 @@ Coldwar.prototype.scenes = [{
 //   title: 'Structure',
 //   slug: 'datastructure'
 }, {
+  title: 'Mazegen 1',
+  slug: 'mazegen1'
+}, {
+  title: 'Mazegen 2',
+  slug: 'mazegen2'
+}, {
+  title: 'Mazegen 3',
+  slug: 'mazegen3'
+}, {
+  title: 'Mazegen 4',
+  slug: 'mazegen4'
+}, {
+  title: 'Mazegen 5',
+  slug: 'mazegen5'
+}, {
+  title: 'Mazegen 6',
+  slug: 'mazegen6'
+}, {
   title: 'Mazegen',
   slug: 'mazegen'
 }, {
@@ -979,6 +997,9 @@ Coldwar.prototype.scenes = [{
 }, {
   title: 'Maze 2',
   slug: 'maze2'
+}, {
+  title: 'Maze 3',
+  slug: 'maze3'
 }, {
   title: 'Twisty',
   slug: 'twisty'

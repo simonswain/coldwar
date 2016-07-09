@@ -117,13 +117,27 @@ Actors.Demobreeder.prototype.paint = function (view) {
   view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
   view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
 
+  //view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
+  
+  var ww = this.opts.max_x;
+ 
+  view.ctx.save()
+  view.ctx.translate(this.opts.max_x/2, this.opts.max_y/2)
   view.ctx.beginPath()
-  view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-
+  view.ctx.moveTo(-ww, 0);
+  view.ctx.lineTo(-ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww, 0);
+  view.ctx.lineTo(ww * 0.5, ww * .8); 
+  view.ctx.lineTo(-ww * 0.5, ww * .8);
+  view.ctx.lineTo(-ww, 0);
+  view.ctx.closePath();
+ 
   if(this.env.ms % 20 < 10){
     view.ctx.fill()
   }
-
+ 
   view.ctx.stroke()
+  view.ctx.restore()
 
 }

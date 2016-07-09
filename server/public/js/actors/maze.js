@@ -674,8 +674,8 @@ Actors.Maze.prototype.update = function (delta) {
         this.cells[i].killAllActors();
       }
 
-      setTimeout(this.env.restart, 2500)
-      //setTimeout(this.env.goNext, 2500)
+      //setTimeout(this.env.restart, 2500)
+      setTimeout(this.env.goNext, 2500)
     }
   }
   
@@ -702,15 +702,33 @@ Actors.Maze.prototype.update = function (delta) {
 
 Actors.Maze.prototype.paint = function (view) {
 
+  var max = Math.max(this.opts.max_x, this.opts.max_y);
+  var min = Math.min(this.opts.max_x, this.opts.max_y);
+  var rc = Math.max(this.attrs.rows, this.attrs.cols);
+
+  var w = (max/rc);
+  var f = (w/this.opts.cell_w);
+  
+  view.ctx.save()
+
+  // if(this.opts.fit){
+  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
+  //   view.ctx.scale(0.9, 0.9);
+  // }
+
+  view.ctx.translate(
+    (this.opts.max_x - (this.attrs.cols * w))/2,
+    (this.opts.max_y - (this.attrs.rows * w))/2
+  );
+
+
   var x, y, i, ii;
   var cell;
 
   if(this.attrs.phase == 'gen'){
     var x, y, i, ii;
     var cell;
-    var ww = this.opts.max_x / this.attrs.cols
-    var hh = this.opts.max_y / this.attrs.rows
-    
+
     for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
       x = i % this.attrs.rows
       y = Math.floor(i / this.attrs.cols);
@@ -721,7 +739,7 @@ Actors.Maze.prototype.paint = function (view) {
         view.ctx.fillStyle = '#300';
         view.ctx.strokeStyle = '#300';
         view.ctx.beginPath();
-        view.ctx.rect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh); 
+        view.ctx.rect((cell.attrs.x * w), (cell.attrs.y * w), w, w); 
         view.ctx.fill();
         view.ctx.stroke();
       }
@@ -729,13 +747,13 @@ Actors.Maze.prototype.paint = function (view) {
       if(this._steps.other && this._steps.other.attrs.i === i){
         view.ctx.fillStyle = '#ff0';
         view.ctx.beginPath();
-        view.ctx.fillRect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh);
+        view.ctx.fillRect((cell.attrs.x * w), (cell.attrs.y * w), w, w);
       }      
 
       if(this._steps.cell && this._steps.cell !== -1 && this._steps.cell.attrs.i === i){
         view.ctx.fillStyle = '#f00';
         view.ctx.beginPath();
-        view.ctx.fillRect((cell.attrs.x * ww), (cell.attrs.y * hh), ww, hh);
+        view.ctx.fillRect((cell.attrs.x * w), (cell.attrs.y * w), w, w);
       }      
 
       view.ctx.restore();
@@ -743,25 +761,6 @@ Actors.Maze.prototype.paint = function (view) {
   }
 
 
-  
-  view.ctx.save()
-
-  // if(this.opts.fit){
-  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
-  //   view.ctx.scale(0.9, 0.9);
-  // }
-
-  var max = Math.max(this.opts.max_x, this.opts.max_y);
-  var min = Math.min(this.opts.max_x, this.opts.max_y);
-  var rc = Math.max(this.attrs.rows, this.attrs.cols);
-
-  var w = (max/rc);
-  var f = (w/this.opts.cell_w);
-
-  view.ctx.translate(
-    (this.opts.max_x - (this.attrs.cols * w))/2,
-    (this.opts.max_y - (this.attrs.rows * w))/2
-  );
 
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     x = i % this.attrs.cols;

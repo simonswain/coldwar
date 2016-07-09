@@ -3,27 +3,27 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.mazegen = function(env, opts){
+Scenes.mazegen6 = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.mazegen.prototype = Object.create(Scene.prototype);
+Scenes.mazegen6.prototype = Object.create(Scene.prototype);
 
-Scenes.mazegen.prototype.title = 'Mazegen';
+Scenes.mazegen6.prototype.title = 'Mazegen6';
 
-Scenes.mazegen.prototype.genAttrs = function(){
+Scenes.mazegen6.prototype.genAttrs = function(){
   return {
-    ttl: 4,
-    rows: 5,
-    cols: 5
+    ttl: 32,
+    rows: 4,
+    cols: 4
     
   };
 };
 
-Scenes.mazegen.prototype.init = function(){
+Scenes.mazegen6.prototype.init = function(){
   this.makeGrid();
   this._steps = {
     ttl: this.attrs.ttl,
@@ -35,10 +35,16 @@ Scenes.mazegen.prototype.init = function(){
     visited: 1,
     done: false
   };
+
+  this._steps.stack = [this.cells[6]];
+  this._steps.cell = this.cells[5];
+
+  this.cells[6].exits[3] = this.cells[5]
+  this.cells[5].exits[1] = this.cells[6]
   
 }
 
-Scenes.mazegen.prototype.defaults = [{
+Scenes.mazegen6.prototype.defaults = [{
   key: 'max_x',
   value: 480,
   min: 32,
@@ -58,34 +64,9 @@ Scenes.mazegen.prototype.defaults = [{
   value: 2,
   min: 8,
   max: 32
-}, {
-  key: 'step_delay',
-  value: 1,
-  min: 1,
-  max: 120
-}, {
-  key: 'step_hold',
-  value: 85,
-  min: 1,
-  max: 1000
-}, {
-  key: 'step_skip',
-  value: 1,
-  min: 1,
-  max: 20
-}, {
-  key: 'frame_hold',
-  value: 140,
-  min: 1,
-  max: 2400
-}, {
-  key: 'font-size',
-  value: 24,
-  min: 8,
-  max: 64
 }];
 
-Scenes.mazegen.prototype.makeGrid = function () {
+Scenes.mazegen6.prototype.makeGrid = function () {
   // init blank grid
   this.cells = new Array(this.attrs.rows * this.attrs.cols);
   x = 0;
@@ -126,7 +107,11 @@ Scenes.mazegen.prototype.makeGrid = function () {
   }
 }
 
-Scenes.mazegen.prototype.update = function(delta){
+Scenes.mazegen6.prototype.update = function(delta){
+
+  if(this._steps.done){
+    return
+  }
 
   if(this._steps.ttl >= 0){
     this._steps.ttl -= delta
@@ -156,6 +141,9 @@ Scenes.mazegen.prototype.update = function(delta){
   }
   
   cell = this._steps.cell;
+  if(!cell){
+    return;
+  }
   while(this._steps.visited < this._steps.total && !plucked){
     n = [];
     // find all neighbors of Cell with all walls intact
@@ -192,23 +180,6 @@ Scenes.mazegen.prototype.update = function(delta){
       return;
     }
 
-    if(this._steps.done){
-      if(!this.env.gameover){
-        this._steps.cell = false;
-        if(this.attrs.rows < 24){
-          this.attrs.rows ++;
-          this.attrs.cols ++;
-          this.attrs.ttl *= 0.25; 
-          if(this.attrs.ttl < 0.1){
-            this.attrs.ttl = 0
-          }
-         
-        }
-        this.init();
-      }
-      return;
-    }
-
     if(this._steps.stack.length === 0){
       this._steps.done = true;
       this._steps.cell = false;
@@ -216,10 +187,9 @@ Scenes.mazegen.prototype.update = function(delta){
     }
   }
 
-
 }
 
-Scenes.mazegen.prototype.paint = function(fx, gx, sx){
+Scenes.mazegen6.prototype.paint = function(fx, gx, sx){
 
   var ww = this.opts.max_x / this.attrs.cols
   var hh = this.opts.max_y / this.attrs.rows
@@ -244,7 +214,7 @@ Scenes.mazegen.prototype.paint = function(fx, gx, sx){
     gx.ctx.save();
 
     if(this._steps){
-      if(this._steps.stack.indexOf(this.cells[i]) > -1){
+      if(this._steps.stack.indexOf(cell) > -1){
         gx.ctx.fillStyle = '#033';
         gx.ctx.strokeStyle = '#033';
         gx.ctx.beginPath();
