@@ -168,7 +168,9 @@ var chars;
     //   view.ctx.lineWidth = 1;
     //   view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
     // }
-  
+
+    var ch = text[i] === ' ' ? ' ' : '|';
+    
     if(text[i] !== ' '){
       view.ctx.fillStyle = 'rgba(255, 192, 0, ' + (0.25 + (Math.random()*0.25)) + ')';
       view.ctx.fillStyle = 'rgba(0, 204, 0, 0.25)';
@@ -179,6 +181,7 @@ var chars;
       if(Math.random() < 0.025){
         view.ctx.fillStyle = 'rgba(255,255,0,0.5)';
         view.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
+        ch = '_';
       }
 
       // if(Math.random() < 0.025){
@@ -188,7 +191,7 @@ var chars;
       view.ctx.fillRect(xx + (x * dx), yy + (y * dy) - 26, 22, 28);
     }
 
-    view.ctx.fillStyle = '#fb0';
+    view.ctx.fillStyle = '#000';
     if(rowShift){
       view.ctx.fillStyle = 'rgba(0,255,0,' + (0.25+Math.random()*0.25) + ')';
     }
@@ -198,7 +201,9 @@ var chars;
     if(Math.random() < 0.05){
       view.ctx.fillStyle = '#222';
     }
-    view.ctx.fillText(text[i], xx + (x * dx), yy + (y * dy));
+    //view.ctx.textAlign='center';
+    view.ctx.fillText(ch, xx + (x * dx), yy + (y * dy));
+    //view.ctx.fillText(text[i], xx + (x * dx), yy + (y * dy));
 
     view.ctx.restore();
     x ++;

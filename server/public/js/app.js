@@ -950,6 +950,33 @@ Coldwar.prototype.scenes = [{
   title: 'Mazegen',
   slug: 'mazegen'
 }, {
+  title: 'Solver1',
+  slug: 'solver1'
+}, {
+  title: 'Solver2',
+  slug: 'solver2'
+}, {
+  title: 'Solver3',
+  slug: 'solver3'
+}, {
+  title: 'Solver4',
+  slug: 'solver4'
+}, {
+  title: 'Solver5',
+  slug: 'solver5'
+}, {
+  title: 'Solver6',
+  slug: 'solver6'
+}, {
+  title: 'Solver7',
+  slug: 'solver7'
+}, {
+  title: 'Solver8',
+  slug: 'solver8'
+}, {
+  title: 'Solver4x4',
+  slug: 'solver4x4'
+}, {
   title: 'Solver',
   slug: 'solver'
 }, {

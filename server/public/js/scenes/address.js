@@ -166,14 +166,14 @@ Scenes.address.prototype.paint = function(fx, gx, sx){
       gx.ctx.beginPath();
       gx.ctx.strokeStyle = '#ff0';
       gx.ctx.moveTo(this.opts.max_x * 0.3, this.opts.max_y * 0.4) 
-      gx.ctx.lineTo(this.opts.max_x * 0.4, this.opts.max_y * 0.4)
+      gx.ctx.lineTo(this.opts.max_x * 0.375, this.opts.max_y * 0.4)
       gx.ctx.stroke();
 
       gx.ctx.beginPath();
       gx.ctx.strokeStyle = '#ff0';
-      gx.ctx.moveTo(this.opts.max_x * 0.4, this.opts.max_y * 0.4)
+      gx.ctx.moveTo(this.opts.max_x * 0.375, this.opts.max_y * 0.4)
       gx.ctx.lineTo(
-        this.opts.max_x * 0.4,
+        this.opts.max_x * 0.375,
         this.opts.max_y * 0.02 + (this.opts.max_y * 0.05 * i) + (this.opts.max_y * 0.022)
       ) 
       gx.ctx.stroke();
@@ -181,7 +181,7 @@ Scenes.address.prototype.paint = function(fx, gx, sx){
       gx.ctx.beginPath();
       gx.ctx.strokeStyle = '#ff0';
       gx.ctx.moveTo(
-        this.opts.max_x * 0.4,
+        this.opts.max_x * 0.375,
         this.opts.max_y * 0.02 + (this.opts.max_y * 0.05 * i) + (this.opts.max_y * 0.022)
       ) 
       gx.ctx.lineTo(

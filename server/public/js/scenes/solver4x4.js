@@ -3,42 +3,34 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.solver = function(env, opts){
+Scenes.solver4x4 = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.solver.prototype = Object.create(Scene.prototype);
+Scenes.solver4x4.prototype = Object.create(Scene.prototype);
 
-Scenes.solver.prototype.title = 'Solver';
+Scenes.solver4x4.prototype.title = 'Solver4x4';
 
-Scenes.solver.prototype.genAttrs = function(){
+Scenes.solver4x4.prototype.genAttrs = function(){
   return {
-    ttl: 1,
+    ttl: this.opts.ttl,
     rows: this.opts.rows,
     cols: this.opts.cols,
     phase: 'gen'
   };
 };
 
-Scenes.solver.prototype.init = function(){
+Scenes.solver4x4.prototype.init = function(){
   this.makeGrid();
   this.attrs.ttl = this.opts.ttl;
-  // this._steps = {
-  //   cell: pickOne(this.cells),
-  //   other: false,
-  //   stack: [],
-  //   total: this.cells.length,
-  //   visited: 1,
-  //   hot: false,
-  // };
   this.generatePerfectMaze();
   this._solve = null;
 }
 
-Scenes.solver.prototype.defaults = [{
+Scenes.solver4x4.prototype.defaults = [{
   key: 'max_x',
   value: 480,
   min: 32,
@@ -50,22 +42,22 @@ Scenes.solver.prototype.defaults = [{
   max: 1024
 }, {
   key: 'rows',
-  value: 8,
+  value: 4,
   min: 2,
   max: 24
 }, {
   key: 'cols',
-  value: 8,
+  value: 4,
   min: 2,
   max: 32
 }, {
   key: 'ttl',
-  value: 1,
+  value: 8,
   min: 1,
   max: 32
 }];
 
-Scenes.solver.prototype.makeGrid = function () {
+Scenes.solver4x4.prototype.makeGrid = function () {
   // init blank grid
   this.cells = new Array(this.attrs.rows * this.attrs.cols);
   x = 0;
@@ -106,7 +98,7 @@ Scenes.solver.prototype.makeGrid = function () {
   }
 }
 
-Scenes.solver.prototype.update = function(delta){
+Scenes.solver4x4.prototype.update = function(delta){
   if(this.attrs.phase === 'gen'){
     this.makeGrid();
     this.generatePerfectMaze();
@@ -117,7 +109,7 @@ Scenes.solver.prototype.update = function(delta){
   }
 }
 
-Scenes.solver.prototype.solve = function(delta){
+Scenes.solver4x4.prototype.solve = function(delta){
 
   if(this.attrs.ttl >= 0){
     this.attrs.ttl -= delta / 10
@@ -200,7 +192,6 @@ Scenes.solver.prototype.solve = function(delta){
     }
 
     // grab the next node and remove it from open array
-    //console.log('open', open);
     x = open.splice(min, 1)[0];
     // is it the destination node?
     if(x === to_i) {
@@ -210,7 +201,6 @@ Scenes.solver.prototype.solve = function(delta){
         result.push(path.i);
       } while (path = path.parent);
       // we want to return start to finish
-      //result.unshift(to_i);
       result.reverse();
       this.attrs.phase = 'gen'
       this.init();
@@ -227,25 +217,32 @@ Scenes.solver.prototype.solve = function(delta){
       }
       gScore = nodes[x].g + 1; // 1 is the distance from a node to it's neighbor
       gScoreIsBest = false;
+      //console.log('node ', x, ' -> ', exits[i].i, gScore);
       path = nodes[exits[i].i];
       if (!astar[path.i]) {
+        //console.log('exit', i, '>>', path.i);
         astar[path.i] = true;
         gScoreIsBest = true;
         // estimated cost of this particular route so far
         nodes[path.i].h = distanceFunction(exits[i], other);
         nodes[path.i].g = nodes[x].g + 1;
+        //console.log('path', path.i, 'h =', nodes[path.i].h, 'g =', nodes[path.i].g);
         // estimated cost of entire guessed route to the destination
-        nodes[path.i].f = nodes[x].g + nodes[x].h
+        nodes[path.i].f = nodes[x].g + nodes[x].h;
+        //console.log(nodes[path.i].f, nodes[path.i].g, nodes[path.i].h);
         // remember this new path for testing above
         // mark this node in the world graph as visited
         open.push(path.i);
       } else if(gScore < nodes[path.i].g) {
+        //console.log('NODE ', x, ' => ', path.i, gScore);
         gScoreIsBest = true;
       }
 
       if(gScoreIsBest) {
         // Found an optimal (so far) path to this node.  Store info on how we got here and
         //	just how good it really is...
+        //console.log('PARENT', path.i, x);
+        //          console.log('BEST', path.i);
         nodes[path.i].parent = nodes[x];
         nodes[path.i].g = gScore;
         nodes[path.i].f = nodes[path.i].g + 1;
@@ -253,9 +250,12 @@ Scenes.solver.prototype.solve = function(delta){
     }
   } // keep iterating until until the open list is empty
   return result;
+  
+  // if(solved){
+  // }
 }
 
-Scenes.solver.prototype.generatePerfectMaze = function () {
+Scenes.solver4x4.prototype.generatePerfectMaze = function () {
 
   var stack = [];
   var cells = this.cells
@@ -301,7 +301,7 @@ Scenes.solver.prototype.generatePerfectMaze = function () {
 
 }
 
-Scenes.solver.prototype.gen = function(delta){
+Scenes.solver4x4.prototype.gen = function(delta){
 
   // if(this.attrs.ttl >= 0){
   //   this.attrs.ttl -= delta
@@ -361,7 +361,7 @@ Scenes.solver.prototype.gen = function(delta){
   }
 }
 
-Scenes.solver.prototype.paint = function(fx, gx, sx){
+Scenes.solver4x4.prototype.paint = function(fx, gx, sx){
   if(this.attrs.phase === 'gen'){
     this.paintGen(fx, gx, sx);
   } else {
@@ -369,7 +369,7 @@ Scenes.solver.prototype.paint = function(fx, gx, sx){
   }
 }
 
-Scenes.solver.prototype.paintGen = function(fx, gx, sx){
+Scenes.solver4x4.prototype.paintGen = function(fx, gx, sx){
 
   var ww = this.opts.max_x / this.attrs.rows;
   var hh = this.opts.max_y / this.attrs.cols;
@@ -474,7 +474,7 @@ Scenes.solver.prototype.paintGen = function(fx, gx, sx){
 }
 
 
-Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
+Scenes.solver4x4.prototype.paintSolve = function(fx, gx, sx){
 
   if(!this._solve){
     return;
