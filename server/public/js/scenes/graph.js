@@ -22,6 +22,13 @@ Scenes.graph.prototype.init = function(){
   for(var i = 0, ii=this.opts.rows * this.opts.cols; i < ii; i++){
     this.memory.push([true, true, true, true]);
   }
+
+  this.cage = new Actors.Cage(
+    this.env, {
+      scene: this
+    }, {
+    });
+
 }
 
 Scenes.graph.prototype.getCast = function(){
@@ -71,6 +78,13 @@ Scenes.graph.prototype.genAttrs = function(){
 };
 
 Scenes.graph.prototype.update = function(delta){
+
+  this.cage.update(delta)
+
+  if(this.cage.rats.length < 2 && Math.random() < 0.05){
+    this.cage.addRat();
+  }
+
   this.attrs.time += delta * 0.025;
   if(this.attrs.time > 1){
     this.attrs.time -= 1;
@@ -82,6 +96,8 @@ Scenes.graph.prototype.update = function(delta){
 }
 
 Scenes.graph.prototype.paint = function(fx, gx, sx){
+
+  this.cage.paint(gx)
 
   var ww = this.opts.max_x / this.opts.rows;
   var hh = this.opts.max_y / this.opts.cols;
@@ -128,7 +144,7 @@ Scenes.graph.prototype.paint = function(fx, gx, sx){
     y = Math.floor(i / this.opts.rows);
 
     gx.ctx.save();
-      
+    
     gx.ctx.lineWidth = 6;
 
     val = cells[i];
@@ -157,7 +173,7 @@ Scenes.graph.prototype.paint = function(fx, gx, sx){
       
     }
     
-      
+    
     gx.ctx.strokeStyle = '#0f0';
 
     if(val[0]){

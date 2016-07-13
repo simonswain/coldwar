@@ -123,7 +123,7 @@ Scenes.big_array.prototype.paint = function (fx, gx, sx) {
     gx.ctx.restore();
 
     gx.ctx.save();
-    gx.ctx.translate(0, this.opts.max_y * 0.7) 
+    gx.ctx.translate(0, this.opts.max_y * 0.8) 
     gx.ctx.fillStyle = (ix === i) ? '#0f0' : '#000';
     gx.ctx.strokeStyle = '#0f0'; 
     gx.ctx.beginPath();
@@ -158,7 +158,7 @@ Scenes.big_array.prototype.paint = function (fx, gx, sx) {
     '(' + y + ' * ' + this.opts.cols + ') + ' + x + ' = ' + ix, 
     //'ix = (y * w) + x',
     this.opts.max_x * 0.5,
-    this.opts.max_x * 0.8
+    this.opts.max_y * 0.68
   );
 
   

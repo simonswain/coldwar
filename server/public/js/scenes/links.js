@@ -22,6 +22,12 @@ Scenes.links.prototype.init = function(){
   for(var i = 0, ii=this.opts.rows * this.opts.cols; i < ii; i++){
     this.memory.push([true, true, true, true]);
   }
+  this.cage = new Actors.Cage(
+    this.env, {
+      scene: this
+    }, {
+    });
+    
 }
 
 Scenes.links.prototype.getCast = function(){
@@ -71,6 +77,13 @@ Scenes.links.prototype.genAttrs = function(){
 };
 
 Scenes.links.prototype.update = function(delta){
+
+  this.cage.update(delta)
+
+  if(this.cage.rats.length < 2 && Math.random() < 0.05){
+    this.cage.addRat();
+  }
+  
   this.attrs.time += delta * 0.05;
   if(this.attrs.time > 1){
     this.attrs.time -= 1;
@@ -79,9 +92,12 @@ Scenes.links.prototype.update = function(delta){
       this.ix = 0;
     }
   }
+
 }
 
 Scenes.links.prototype.paint = function(fx, gx, sx){
+
+  this.cage.paint(gx)
 
   var ww = this.opts.max_x / this.opts.rows;
   var hh = this.opts.max_y / this.opts.cols;
@@ -103,7 +119,7 @@ Scenes.links.prototype.paint = function(fx, gx, sx){
     y = Math.floor(i / this.opts.rows);
     var yy, xx;
     gx.ctx.save();
-      
+    
     gx.ctx.lineWidth = 6;
     ;    
     if(i === 4){
@@ -119,7 +135,6 @@ Scenes.links.prototype.paint = function(fx, gx, sx){
       gx.ctx.textAlign='center';
       gx.ctx.textBaseline='middle';
       gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
-
     } else if(points[this.ix] === i){
       gx.ctx.strokeStyle = '#ff0';
       gx.ctx.beginPath();

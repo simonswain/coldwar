@@ -924,7 +924,10 @@ Coldwar.prototype.scenes = [{
   slug: 'graph'
 }, {
   title: 'Cells',
-  slug: 'cells'
+  slug: 'cellsmaze'
+// }, {
+//   title: 'Cells',
+//   slug: 'cells'
 // }, {
 //   title: 'Structure',
 //   slug: 'datastructure'

@@ -198,10 +198,7 @@ Actors.Demorat.prototype.update = function (delta) {
     vec.add(this.chase().scale(1))
   }
 
-  // vec.add(this.separation().scale(this.opts.separation_force))
-  // vec.add(this.alignment().scale(this.opts.alignment_force))
-  // vec.add(this.cohesion().scale(this.opts.cohesion_force))
-  // vec.add(this.chase().scale(this.opts.chase_force))
+  vec.add(this.reflect())
 
   vec.scale(this.opts.velo_scale)
 
@@ -252,12 +249,41 @@ Actors.Demorat.prototype.update = function (delta) {
   
 }
 
+Actors.Demorat.prototype.reflect = function () {
+
+  var reflect = new Vec3()
+
+  var max = Math.min(this.refs.demo.opts.max_x, this.refs.demo.opts.max_y)
+
+  if (this.pos.y < this.refs.demo.opts.max_y * 0.1) {
+    reflect.y = ((this.refs.demo.opts.max_y * 0.1) - this.pos.y ) / (this.refs.demo.opts.max_y * 0.1);
+  }
+
+  if (this.pos.x > this.refs.demo.opts.max_x * 0.9) {
+    reflect.x = - (this.pos.x - (this.refs.demo.opts.max_x * 0.9) ) / (this.refs.demo.opts.max_x * 0.1);
+  }
+
+  if (this.pos.x < this.refs.demo.opts.max_x * 0.1) {
+    reflect.x = ((this.refs.demo.opts.max_x * 0.1) - this.pos.x ) / (this.refs.demo.opts.max_x * 0.1);
+  }
+
+  if (this.pos.y > this.refs.demo.opts.max_y * 0.9) {
+    reflect.y = - (this.pos.y - (this.refs.demo.opts.max_y * 0.9) ) / (this.refs.demo.opts.max_y * 0.1);
+  }
+
+  return reflect
+
+}
 
 Actors.Demorat.prototype.chase = function () {
   // determine center position of all boids
   var xx = 0
   var yy = 0
   var c = 0
+
+  if(!this.refs.demo){
+    return new Vec3();
+  }
 
   if(!this.refs.demo.humans){
     return new Vec3();
@@ -288,6 +314,10 @@ Actors.Demorat.prototype.separation = function () {
   var other
   var range
 
+  if(!this.refs.demo){
+    return new Vec3();
+  }
+  
   var vec = new Vec3()
 
   for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
@@ -323,6 +353,10 @@ Actors.Demorat.prototype.alignment = function () {
 
   var vec = new Vec3()
 
+  if(!this.refs.demo){
+    return new Vec3();
+  }
+  
   for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
     other = this.refs.demo.rats[i]
 
@@ -359,6 +393,10 @@ Actors.Demorat.prototype.cohesion = function () {
   var y = 0
   var c = 0
 
+  if(!this.refs.demo){
+    return new Vec3();
+  }
+  
   for (i = 0, ii = this.refs.demo.rats.length; i < ii; i++) {
 
     other = this.refs.demo.rats[i]
