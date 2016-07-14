@@ -16,7 +16,7 @@ Scenes.mazegen.prototype.title = 'Mazegen';
 
 Scenes.mazegen.prototype.genAttrs = function(){
   return {
-    ttl: 8,
+    ttl: 0,
     rows: 4,
     cols: 4
     
