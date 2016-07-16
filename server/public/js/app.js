@@ -977,9 +977,9 @@ Coldwar.prototype.scenes = [{
   title: 'Solver8',
   slug: 'solver8'
 }, {
-  title: 'Solver4x4',
-  slug: 'solver4x4'
-}, {
+//   title: 'Solver4x4',
+//   slug: 'solver4x4'
+// }, {
   title: 'Solver',
   slug: 'solver'
 }, {
