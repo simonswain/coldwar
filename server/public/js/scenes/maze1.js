@@ -19,7 +19,7 @@ Scenes.maze1.prototype.init = function () {
     }, {
       rows: 3,
       cols: 4,
-      breeders: 0,
+      breeders: 2,
     })
 }
 
