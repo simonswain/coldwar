@@ -1010,9 +1010,9 @@ Coldwar.prototype.scenes = [{
   title: 'Enemies',
   slug: 'enemies'
 }, {
-  title: 'Beware',
-  slug: 'beware'
-}, {
+  // title: 'Beware',
+  // slug: 'beware'
+// }, {
   title: 'Training',
   slug: 'training'
 }, {
@@ -1034,11 +1034,11 @@ Coldwar.prototype.scenes = [{
   title: 'Twisty',
   slug: 'twisty'
 }, {
-  title: 'King Rat',
-  slug: 'king_rat'
-}, {
+//   title: 'King Rat',
+//   slug: 'king_rat'
+// }, {
   title: 'Trap',
-  slug: 'traps'
+  slug: 'trap'
 }, {
   title: 'Boom',
   slug: 'boom'

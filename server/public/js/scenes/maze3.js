@@ -17,9 +17,9 @@ Scenes.maze3.prototype.init = function () {
       scene: this
     }, {
     }, {
-      rows: 6,
-      cols: 8,
-      breeders: 10,
+      rows: 5,
+      cols: 7,
+      breeders: 8,
     });
   this.target_zoom = 1;
   this.target_x = 0;

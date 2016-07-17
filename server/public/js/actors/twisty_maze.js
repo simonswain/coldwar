@@ -524,8 +524,8 @@ Actors.TwistyMaze.prototype.update = function (delta) {
   if(this.attrs.boom && this.attrs.boomCountdown > 0){
     this.attrs.boomCountdown --;
     if(this.attrs.boomCountdown === 0){
-      setTimeout(this.env.restart, 2500)
-      //setTimeout(this.env.goNext, 2500)
+      //setTimeout(this.env.restart, 2500)
+      setTimeout(this.env.goNext, 2500)
     }
   }
   

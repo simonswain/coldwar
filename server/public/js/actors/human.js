@@ -172,8 +172,13 @@ Actors.Human.prototype.update = function (delta) {
 
   if(this.refs.maze){
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.cell.reactors[0].attrs.primed ){
-      this.refs.maze.attrs.escape = true;
-      this.refs.cell.reactors[0].prime();
+      // close enough to reactor?
+      var dist = this.pos.rangeXY(this.refs.cell.reactors[0].pos);
+      console.log(dist);
+      if(dist < 100){
+        this.refs.maze.attrs.escape = true;
+        this.refs.cell.reactors[0].prime();
+      }
     }
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
       this.refs.maze.attrs.escape_done = true;

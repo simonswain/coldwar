@@ -63,4 +63,54 @@ Scenes.boom.prototype.paint = function (fx, gx, sx) {
   gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5);
   this.boom.paint(gx)
   gx.ctx.restore();
+
+  var yy = (this.opts.max_y * 0.2);
+  var dy = (this.opts.max_y * 0.1);
+  var xx = (this.opts.max_x * 0.2);
+  var dx = (this.opts.max_x * 0.06);
+  var y = 0;
+  var x = 0;
+  gx.ctx.save();
+  gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
+
+  var h = (Date.now()%360 * 0.22) - 10;
+  var c = 'hsl(' + h + ', 100%, 50%)';
+  
+  if(Math.random() < 0.025){
+    c = 'rgba(255,255,0,0.5)';
+  }
+
+  if(Math.random() < 0.025){
+    c = 'rgba(255,255,255,1)';
+  }
+
+  if(Date.now() % 1000 < 200){
+    c = 'rgba(0,0,0,1)';
+  }
+
+  if(Date.now() % 1000 > 950){
+    c = 'rgba(255,255,255,1)';
+  }     
+
+  gx.ctx.fillStyle = c;
+ 
+  gx.ctx.shadowColor = 'rgba(0,0,0,1)';
+  gx.ctx.shadowBlur = 40;
+  gx.ctx.shadowOffsetX = 0;
+  gx.ctx.shadowOffsetY = 0;
+  gx.ctx.shadowBlur = this.opts.max_x * 0.1;
+  
+  gx.ctx.font = '36pt robotron';
+  gx.ctx.textAlign = 'center';
+  gx.ctx.textBaseline = 'middle';
+
+  gx.ctx.fillText('simon_swain', this.opts.max_x/2, this.opts.max_y/2);
+
+  gx.ctx.font = '36pt monospace';
+  gx.ctx.textAlign = 'center';
+  gx.ctx.textBaseline = 'middle';
+
+  gx.ctx.fillText('@', this.opts.max_x * 0.18, this.opts.max_y/2);
+  gx.ctx.restore();
+  
 }

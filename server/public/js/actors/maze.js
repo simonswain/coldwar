@@ -674,8 +674,8 @@ Actors.Maze.prototype.update = function (delta) {
         this.cells[i].killAllActors();
       }
 
-      //setTimeout(this.env.restart, 2500)
-      setTimeout(this.env.goNext, 2500)
+      setTimeout(this.env.restart, 2500)
+      //setTimeout(this.env.goNext, 2500)
     }
   }
   
