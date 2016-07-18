@@ -60,7 +60,7 @@ Scenes.maze3.prototype.genAttrs = function () {
 
 Scenes.maze3.prototype.update = function (delta) {
   this.maze.update(delta);
-  var speed = 5.5;
+  var speed = 10;
   if(this.maze.human){
     var cell = this.maze.human.refs.cell;
     var gx = this.env.views.gx;
