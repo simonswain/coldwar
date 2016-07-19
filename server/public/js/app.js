@@ -1028,19 +1028,22 @@ Coldwar.prototype.scenes = [{
   title: 'Maze 2',
   slug: 'maze2'
 }, {
-  title: 'Maze 3',
-  slug: 'maze3'
-}, {
   title: 'Twisty',
   slug: 'twisty'
+}, {
+  title: 'Maze 3',
+  slug: 'maze3'
 }, {
 //   title: 'King Rat',
 //   slug: 'king_rat'
 // }, {
+  title: 'Tunnel',
+  slug: 'tunnel'
+}, {
   title: 'Trap',
   slug: 'trap'
-}, {
-  title: 'Boom',
+}, { 
+ title: 'Boom',
   slug: 'boom'
 }]
 

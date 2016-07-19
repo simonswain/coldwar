@@ -131,44 +131,6 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
   var view = gx;
 
-
-
-  var w = this.opts.max_x * 0.05;
-  var cx = 0;
-  var tt = Math.floor(this.attrs.tt);
-
-  for (var x = this.opts.max_x * 0.1; x < this.opts.max_x; x += this.opts.max_x * 0.2){
-    view.ctx.save();
-    view.ctx.lineWidth=2;
-    view.ctx.translate(x, this.opts.max_y * 0.5);
-    if(this.attrs.mode === 'attack' && x > this.attrs.x){
-      view.ctx.strokeStyle='rgba(0,255,255,0.75)';
-      if(cx === tt){
-        view.ctx.lineWidth=3;
-        view.ctx.strokeStyle='rgba(0,255,255,1)';
-      }
-      view.ctx.beginPath();
-      view.ctx.moveTo(-w/2, -w);
-      view.ctx.lineTo(w/2, 0);
-      view.ctx.lineTo(-w/2, w);
-      view.ctx.stroke();
-    } else if (this.attrs.mode === 'primed' && x < this.attrs.x) { 
-      view.ctx.strokeStyle='rgba(255,0,0,0.75)';
-      if(4-cx === tt){
-        view.ctx.lineWidth=3;
-        view.ctx.strokeStyle='rgba(255,0,0,1)';
-      }
-      view.ctx.beginPath();
-      view.ctx.moveTo(w/2, -w);
-      view.ctx.lineTo(-w/2, 0);
-      view.ctx.lineTo(w/2, w);
-      view.ctx.stroke();
-    }
-    view.ctx.restore();
-    cx ++;
-  }
-
-  
   if(this.attrs.mode === 'enter'){
     
     var rgb = '0, 153, 0';
@@ -199,20 +161,22 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
       view.ctx.save();
       view.ctx.lineWidth=2;
       view.ctx.translate(x, this.opts.max_y * 0.5);
-      view.ctx.strokeStyle='rgba(0,255,255,0.75)';
-      if(cx === tt){
-        view.ctx.lineWidth=3;
-        view.ctx.strokeStyle='rgba(0,255,255,1)';
+      if(x > this.attrs.x){
+        view.ctx.strokeStyle='rgba(0,255,255,0.75)';
+        if(cx === tt){
+          view.ctx.lineWidth=3;
+          view.ctx.strokeStyle='rgba(0,255,255,1)';
+        }
+        view.ctx.beginPath();
+        view.ctx.moveTo(-w/2, -w);
+        view.ctx.lineTo(w/2, 0);
+        view.ctx.lineTo(-w/2, w);
+        view.ctx.stroke();
       }
-      view.ctx.beginPath();
-      view.ctx.moveTo(-w/2, -w);
-      view.ctx.lineTo(w/2, 0);
-      view.ctx.lineTo(-w/2, w);
-      view.ctx.stroke();
       view.ctx.restore();
       cx ++;
     }
-
+ 
     view.ctx.lineWidth=2;
     if(Date.now() % 500 < 250){
       view.ctx.lineWidth=3;
@@ -392,7 +356,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
     gx.ctx.beginPath();
     gx.ctx.moveTo(this.opts.max_x * 0.5, yy) 
-    gx.ctx.lineTo(this.opts.max_x * 0.5, 0)
+    gx.ctx.lineTo(this.opts.max_x * 0.5, - this.opts.max_y)
     gx.ctx.stroke();
 
     gx.ctx.beginPath();
@@ -402,7 +366,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
     gx.ctx.beginPath();
     gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y - yy) 
-    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y)
+    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 2)
     gx.ctx.stroke();
     
   }
@@ -423,7 +387,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
     gx.ctx.beginPath();
     gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0.5 - yy) 
-    gx.ctx.lineTo(this.opts.max_x * 0.5, 0)
+    gx.ctx.lineTo(this.opts.max_x * 0.5, - this.opts.max_y)
     gx.ctx.stroke();
 
     gx.ctx.beginPath();
@@ -433,7 +397,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
     gx.ctx.beginPath();
     gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0.5 + yy) 
-    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y)
+    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 2)
     gx.ctx.stroke();
     
   }
@@ -453,7 +417,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
     )
 
     gx.ctx.beginPath();
-    gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0) 
+    gx.ctx.moveTo(this.opts.max_x * 0.5, - this.opts.max_y) 
     gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 0.25)
     gx.ctx.stroke();
 
@@ -469,7 +433,7 @@ Scenes.trap.prototype.paint = function(fx, gx, sx){
 
     gx.ctx.beginPath();
     gx.ctx.moveTo(this.opts.max_x * 0.5, this.opts.max_y * 0.75) 
-    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y)
+    gx.ctx.lineTo(this.opts.max_x * 0.5, this.opts.max_y * 2)
     gx.ctx.stroke();
   }
 
