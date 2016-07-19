@@ -1001,11 +1001,11 @@ Coldwar.prototype.scenes = [{
   title: 'Follow',
   slug: 'follow'
 }, {
-  title: 'Factory',
-  slug: 'factory'
-}, {
   title: 'Variants',
   slug: 'variants'
+}, {
+  title: 'Factory',
+  slug: 'factory'
 }, {
   title: 'Enemies',
   slug: 'enemies'
