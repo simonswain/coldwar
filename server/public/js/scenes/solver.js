@@ -393,7 +393,6 @@ Scenes.solver.prototype.paintGen = function(fx, gx, sx){
     gx.ctx.scale(0.9, 0.9);
 
     if(this._steps){
-
       if(this._steps.stack.indexOf(this.cells[i]) > -1){
         gx.ctx.fillStyle = '#033';
         gx.ctx.beginPath();
@@ -494,6 +493,28 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
       max_f = this._solve.nodes[i].f;
     }
   }
+
+  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.cols;
+    y = Math.floor(i / this.attrs.rows);
+    if(this._solve.from_i === i){
+      gx.ctx.fillStyle = '#f00';
+      if(Date.now() % 300 < 100){ 
+        gx.ctx.fillStyle = '#ff0';
+      }
+      gx.ctx.beginPath();
+      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+    }
+
+    if(this._solve.to_i === i){
+      gx.ctx.fillStyle = '#ff0';
+      if(Date.now() % 250 < 150){ 
+        gx.ctx.fillStyle = '#f00';
+      }
+      gx.ctx.beginPath();
+      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+    }
+  }
   
   for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
     x = i % this.attrs.cols;
@@ -514,24 +535,6 @@ Scenes.solver.prototype.paintSolve = function(fx, gx, sx){
 
     if(this._solve.open.indexOf(i) > -1){
       gx.ctx.fillStyle = '#f00';
-      gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
-    }
-
-    if(this._solve.from_i === i){
-      gx.ctx.fillStyle = '#f00';
-      if(Date.now() % 300 < 100){ 
-        gx.ctx.fillStyle = '#ff0';
-      }
-      gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
-    }
-
-    if(this._solve.to_i === i){
-      gx.ctx.fillStyle = '#ff0';
-      if(Date.now() % 250 < 150){ 
-        gx.ctx.fillStyle = '#f00';
-      }
       gx.ctx.beginPath();
       gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
     }

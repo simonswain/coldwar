@@ -31,7 +31,7 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 0,
 	  "x": 0,
 	  "y": 0,
-	  "exits": [null, 1, 4, null]
+	  "exits": [null, 1, 4, 1]
   }, {
 	  "i": 1,
 	  "x": 1,
@@ -61,7 +61,7 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 6,
 	  "x": 2,
 	  "y": 1,
-	  "exits": [null, null, 10, 5]
+	  "exits": [null, null, null, 5]
   }, {
 	  "i": 7,
 	  "x": 3,
@@ -81,7 +81,7 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 10,
 	  "x": 2,
 	  "y": 2,
-	  "exits": [6, null, null, null]
+	  "exits": [null, null, 14, null]
   }, {
 	  "i": 11,
 	  "x": 3,
@@ -101,12 +101,12 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 14,
 	  "x": 2,
 	  "y": 3,
-	  "exits": [null, 15, null, 13]
+	  "exits": [10, 15, null, 13]
   }, {
 	  "i": 15,
 	  "x": 3,
 	  "y": 3,
-	  "exits": [11, null, null, 14]
+	  "exits": [11, 1, null, 14]
   }];
   
 }
@@ -244,17 +244,11 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
   gx.ctx.scale(0.9, 0.9);
   
   var x, y;
-  
+
   for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
     x = i % this.attrs.cols;
     y = Math.floor(i / this.attrs.rows);
-
     var cell = this.cells[i];
-
-    gx.ctx.lineCap='round';
-    
-    gx.ctx.save();
-
     if(i === 0){
       gx.ctx.fillStyle = '#f00';
       if(Date.now() % 300 < 100){ 
@@ -272,6 +266,18 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
       gx.ctx.beginPath();
       gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
     }
+  }
+
+  
+  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.cols;
+    y = Math.floor(i / this.attrs.rows);
+
+    var cell = this.cells[i];
+
+    gx.ctx.lineCap='round';
+    
+    gx.ctx.save();
 
     gx.ctx.lineWidth = 4;
     gx.ctx.strokeStyle = 'rgba(0,255,0,1)';
@@ -331,6 +337,60 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
 
   }
 
+
+  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.cols;
+    y = Math.floor(i / this.attrs.rows);
+
+    var cell = this.cells[i];
+
+    if(i === 0){
+      gx.ctx.save();
+      gx.ctx.translate(x * ww, (y + 0.5) * hh);
+      gx.ctx.strokeStyle='#000';
+      gx.ctx.lineWidth=4;
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(0 * ww, 0);
+      gx.ctx.lineTo(0.2 * ww, 0);
+      gx.ctx.stroke();
+
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(0.2 * ww, 0);
+      gx.ctx.lineTo(0.1 * ww, -0.1 * hh);
+      gx.ctx.stroke();
+
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(0.2 * ww, 0);
+      gx.ctx.lineTo(0.1 * ww, 0.1 * hh);
+      gx.ctx.stroke();
+      gx.ctx.restore();
+    }
+
+    if(i === 15){
+      gx.ctx.save();
+      gx.ctx.translate(x * ww, (y + 0.5) * hh);
+      gx.ctx.strokeStyle='#000';
+      gx.ctx.lineWidth=4;
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(0.8 * ww, 0);
+      gx.ctx.lineTo(1.0 * ww, 0);
+      gx.ctx.stroke();
+
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(1.0 * ww, 0);
+      gx.ctx.lineTo(0.9 * ww, -0.1 * hh);
+      gx.ctx.stroke();
+
+      gx.ctx.beginPath(); 
+      gx.ctx.moveTo(1.0 * ww, 0);
+      gx.ctx.lineTo(0.9 * ww, 0.1 * hh);
+      gx.ctx.stroke();
+      gx.ctx.restore();
+    }
+
+  }
+
+  
   gx.ctx.restore();
  
 }

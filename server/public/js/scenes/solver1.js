@@ -60,7 +60,7 @@ Scenes.solver1.prototype.init = function(){
 	  "i": 6,
 	  "x": 2,
 	  "y": 1,
-	  "exits": [null, null, 10, 5]
+	  "exits": [null, null, null, 5]
   }, {
 	  "i": 7,
 	  "x": 3,
@@ -80,7 +80,7 @@ Scenes.solver1.prototype.init = function(){
 	  "i": 10,
 	  "x": 2,
 	  "y": 2,
-	  "exits": [6, null, null, null]
+	  "exits": [null, null, 14, null]
   }, {
 	  "i": 11,
 	  "x": 3,
@@ -100,14 +100,14 @@ Scenes.solver1.prototype.init = function(){
 	  "i": 14,
 	  "x": 2,
 	  "y": 3,
-	  "exits": [null, 15, null, 13]
+	  "exits": [10, 15, null, 13]
   }, {
 	  "i": 15,
 	  "x": 3,
 	  "y": 3,
 	  "exits": [11, null, null, 14]
   }];
-  
+ 
 }
 
 Scenes.solver1.prototype.defaults = [{

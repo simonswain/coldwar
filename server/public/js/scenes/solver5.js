@@ -58,7 +58,7 @@ Scenes.solver5.prototype.init = function(){
 	  "i": 6,
 	  "x": 2,
 	  "y": 1,
-	  "exits": [null, null, 10, 5]
+	  "exits": [null, null, null, 5]
   }, {
 	  "i": 7,
 	  "x": 3,
@@ -78,7 +78,7 @@ Scenes.solver5.prototype.init = function(){
 	  "i": 10,
 	  "x": 2,
 	  "y": 2,
-	  "exits": [6, null, null, null]
+	  "exits": [null, null, 14, null]
   }, {
 	  "i": 11,
 	  "x": 3,
@@ -98,7 +98,7 @@ Scenes.solver5.prototype.init = function(){
 	  "i": 14,
 	  "x": 2,
 	  "y": 3,
-	  "exits": [null, 15, null, 13]
+	  "exits": [10, 15, null, 13]
   }, {
 	  "i": 15,
 	  "x": 3,
@@ -241,7 +241,30 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
   gx.ctx.scale(0.9, 0.9);
   
   var x, y;
-  
+   
+  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+    x = i % this.attrs.cols;
+    y = Math.floor(i / this.attrs.rows);
+    var cell = this.cells[i];
+    if(i === 0){
+      gx.ctx.fillStyle = '#f00';
+      if(Date.now() % 300 < 100){ 
+        gx.ctx.fillStyle = '#ff0';
+      }
+      gx.ctx.beginPath();
+      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+    }
+
+    if(i === 15){
+      gx.ctx.fillStyle = '#ff0';
+      if(Date.now() % 250 < 150){ 
+        gx.ctx.fillStyle = '#f00';
+      }
+      gx.ctx.beginPath();
+      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+    }
+  }
+
   for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
     x = i % this.attrs.cols;
     y = Math.floor(i / this.attrs.rows);
@@ -252,15 +275,6 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     
     gx.ctx.save();
 
-    if(i === 0){
-      gx.ctx.fillStyle = '#f00';
-      if(Date.now() % 300 < 100){ 
-        gx.ctx.fillStyle = '#ff0';
-      }
-      gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
-    }
-
     if(i === 1){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
@@ -268,7 +282,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -287,10 +301,10 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.restore();
 
        
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('1', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
 
@@ -301,7 +315,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -320,10 +334,10 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.restore();
 
  
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('2', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
 
@@ -334,7 +348,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -353,10 +367,10 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.restore();
 
 
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('3', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
     
@@ -367,7 +381,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate((x + 0.5) * ww, y * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -385,10 +399,10 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.stroke();
       gx.ctx.restore();
 
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('1', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
 
@@ -399,7 +413,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -418,10 +432,10 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.restore();
 
        
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('2', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
     
@@ -432,7 +446,7 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='rgba(0, 0, 0, 0.5)';
+      gx.ctx.strokeStyle='#fff';
       gx.ctx.lineWidth=4;
       gx.ctx.beginPath(); 
       gx.ctx.moveTo(0, 0);
@@ -451,23 +465,14 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
       gx.ctx.restore();
 
       
-      gx.ctx.font = '18pt robotron';
+      gx.ctx.font = '22pt robotron';
       gx.ctx.textAlign = 'center';
       gx.ctx.textBaseline = 'middle';
-      gx.ctx.fillStyle = '#fff';
+      gx.ctx.fillStyle = '#000';
       gx.ctx.fillText('3', (x * ww) + ww/2, (y * hh) + hh*0.5);
     }
+
     
-
-    if(i === 15){
-      gx.ctx.fillStyle = '#ff0';
-      if(Date.now() % 250 < 150){ 
-        gx.ctx.fillStyle = '#f00';
-      }
-      gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
-    }
-
     gx.ctx.lineWidth = 4;
     gx.ctx.strokeStyle = 'rgba(0,255,0,1)';
 

@@ -84,33 +84,34 @@ Scenes.logo.prototype.paint = function(fx, gx, sx){
   
   //gx.ctx.scale(this.opts.scale, this.opts.scale);
   gx.ctx.fillStyle = 'rgba(255,0,0,' + alpha + ')';
+  //gx.ctx.fillStyle = '#f00';
   
   // if(Math.random() < 0.1){
   //   gx.ctx.fillStyle = '#000';
   // }
   
   gx.ctx.beginPath();
-  gx.ctx.arc(-0.2 * z, -0.5 * z, 0.1 * z, 0, 2*Math.PI);
+  gx.ctx.arc(-0.2 * z, -0.5 * z, 0.15 * z, 0, 2*Math.PI);
   gx.ctx.fill();
 
   gx.ctx.beginPath();
-  gx.ctx.arc(0.2 * z, -0.5 * z, 0.1 * z, 0, 2*Math.PI);
+  gx.ctx.arc(0.2 * z, -0.5 * z, 0.15 * z, 0, 2*Math.PI);
   gx.ctx.fill();
   
   gx.ctx.fillStyle = '#000';
   gx.ctx.beginPath();
-  gx.ctx.arc(-0.1 * z, -0.6 * z, 0.2 * z, 0, 2*Math.PI);
+  gx.ctx.arc(-0.1 * z, -0.6 * z, 0.24 * z, 0, 2*Math.PI);
   gx.ctx.fill();
 
   gx.ctx.fillStyle = '#000';
   gx.ctx.beginPath();
-  gx.ctx.arc(0.1 * z, -0.6 * z, 0.2 * z, 0, 2*Math.PI);
+  gx.ctx.arc(0.1 * z, -0.6 * z, 0.24 * z, 0, 2*Math.PI);
   gx.ctx.fill();
  
-  // \
   gx.ctx.strokeStyle = 'rgba(255,0,0,' + alpha + ')';
+  //gx.ctx.strokeStyle = '#f00';
   gx.ctx.lineCap='round';
-  gx.ctx.lineWidth = 2;
+  gx.ctx.lineWidth = 4
 
   gx.ctx.beginPath();
   gx.ctx.moveTo(-0.18*z, - 0.1 * z);
