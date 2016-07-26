@@ -24,8 +24,8 @@ Scenes.twisty.prototype.init = function () {
     }, {
       // rows: 3,
       // cols: 4
-      rows: 6,
-      cols: 8
+      rows: 4,
+      cols: 6
     })
 }
 
