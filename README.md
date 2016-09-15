@@ -10,8 +10,6 @@ Cold War is a simulation platform. Cold War comes with a set of scenes for you t
 
 ## Community
 
-Discuss in the Gitter [Cold War Room](https://gitter.im/simonswain/coldwar)
-
 Tag tweets and everything else with #coldwar
 
 ## Hacking
@@ -32,7 +30,7 @@ Talks have been given on Coldwar at:
 * [JSConf Asia November 2015](https://www.youtube.com/watch?v=zeKNXaM2fsA) (Singapore)
 * [JSConf Asia November 2014](https://www.youtube.com/watch?v=0HJPilemNns) (Singapore)
 
-See also[Rats of the Maze](https://ratsofthemaze.com)
+See also [Rats of the Maze](https://ratsofthemaze.com)
 
 ## Stickers
 
