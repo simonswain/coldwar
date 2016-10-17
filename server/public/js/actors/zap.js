@@ -134,6 +134,7 @@ Actors.Zap.prototype.update = function (delta) {
 
       if (range < this.opts.sensitivity) {
         this.attrs.dead = true;
+        this.env.play('softpod')
         enemy.kill();
         return;
       }    
@@ -146,16 +147,26 @@ Actors.Zap.prototype.paint = function (view) {
   view.ctx.save()
 
   var h = (Date.now()%360 * 0.22) - 10;
-  view.ctx.strokeStyle = 'hsl(' + h + ', 100%, 50%)';
+
+  var c;
+  c = 'hsl(' + h + ', 100%, 50%)';
   
   if(Math.random() < 0.025){
-    view.ctx.strokeStyle = 'rgba(255,255,0,0.5)';
+    c = 'rgba(255,255,0,1)';
   }
 
   if(Math.random() < 0.025){
-    view.ctx.strokeStyle = 'rgba(255,255,255,1)';
+    c = 'rgba(255,255,255,1)';
   }
   
+  view.ctx.strokeStyle = c;
+
+  view.ctx.shadowColor = c;
+  view.ctx.shadowBlur = 8;
+  view.ctx.shadowOffsetX = 0;
+  view.ctx.shadowOffsetY = 0;
+  view.ctx.shadowBlur = 8;
+
   view.ctx.lineWidth = 8
   view.ctx.lineCap='round';
   view.ctx.rotate(this.origin.angleXYto(this.target))

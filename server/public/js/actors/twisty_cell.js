@@ -17,7 +17,8 @@ Actors.TwistyCell.prototype.genAttrs = function (attrs) {
     i: attrs.i,
     x: attrs.x,
     y: attrs.y,
-    flash: 0
+    flash: 0,
+    title: ''
   }
 }
 
@@ -169,7 +170,7 @@ Actors.TwistyCell.prototype.paint = function (view) {
   // view.ctx.fillStyle = '#ffffff'
   // view.ctx.font = '28pt arial'
   // view.ctx.fillText(this.attrs.i, this.opts.max_x/2, this.opts.max_y/2)
-  
+
   var i, ii
   
   view.ctx.lineWidth = 16
@@ -181,6 +182,8 @@ Actors.TwistyCell.prototype.paint = function (view) {
     view.ctx.beginPath()
     view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
     view.ctx.fill()
+  
+
   }
 
   if(this.attrs.activeother){
@@ -189,6 +192,7 @@ Actors.TwistyCell.prototype.paint = function (view) {
     view.ctx.beginPath()
     view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
     view.ctx.fill()
+
   }
 
   view.ctx.save()

@@ -16,6 +16,7 @@ Actors.Demobreeder.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
     y: attrs.y,
+    spawn: 0,
     dead: false
   }
 }
@@ -55,6 +56,10 @@ Actors.Demobreeder.prototype.defaults = [{
 }]
 
 Actors.Demobreeder.prototype.update = function (delta) {
+
+  if(this.attrs.spawn > 0){
+    this.attrs.spawn --;
+  }
   
   if(this.rats.length < this.opts.rats_max){
     this.addRats();
@@ -84,6 +89,7 @@ Actors.Demobreeder.prototype.addRat = function () {
 
   this.refs.demo.rats.push(rat)
   this.rats.push(rat)
+  this.attrs.spawn += 2;
 
 }
 
@@ -103,6 +109,7 @@ Actors.Demobreeder.prototype.addRats = function () {
 
     this.refs.demo.rats.push(rat)
     this.rats.push(rat)
+    this.attrs.spawn += 2;
   }
 
 }
@@ -112,15 +119,8 @@ Actors.Demobreeder.prototype.paint = function (view) {
 
   view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
   view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
-  view.ctx.lineWidth = 8
-  
-  view.ctx.fillStyle = 'rgba(0, 0, 255, 1)'
-  view.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
 
-  //view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-  
   var ww = this.opts.max_x;
- 
   view.ctx.save()
   view.ctx.translate(this.opts.max_x/2, this.opts.max_y/2)
   view.ctx.beginPath()
@@ -133,11 +133,38 @@ Actors.Demobreeder.prototype.paint = function (view) {
   view.ctx.lineTo(-ww, 0);
   view.ctx.closePath();
  
-  if(this.env.ms % 20 < 10){
+  if(this.attrs.hit){
+    this.attrs.hit = false;
+    view.ctx.fillStyle = 'rgba(255, 255, 0, 1)'
+    view.ctx.fill()
+  } else if(this.env.ms % 20 < 10){
     view.ctx.fill()
   }
- 
+
+  
+  view.ctx.lineWidth=8
   view.ctx.stroke()
+
+  var ww = this.opts.max_x * 0.3;
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(-ww, 0);
+  view.ctx.lineTo(-ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww, 0);
+  view.ctx.lineTo(ww * 0.5, ww * .8); 
+  view.ctx.lineTo(-ww * 0.5, ww * .8);
+  view.ctx.lineTo(-ww, 0);
+  view.ctx.closePath();
+
+  view.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+  if(this.attrs.spawn>0){
+    view.ctx.fillStyle = '#fff'
+  }
+  view.ctx.fill()
+  view.ctx.lineWidth=4
+  view.ctx.stroke()
+
   view.ctx.restore()
 
 }

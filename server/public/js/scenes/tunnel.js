@@ -18,6 +18,7 @@ Scenes.tunnel.prototype.layout = '';
 
 Scenes.tunnel.prototype.genAttrs = function(){
   return {
+    alpha: 0,
     x: -150,
     y: 0,
     mode: 'enter',
@@ -67,6 +68,15 @@ Scenes.tunnel.prototype.flash = function(fx, gx){
 }
 
 Scenes.tunnel.prototype.update = function(delta){
+
+  this.attrs.alpha += delta * 0.5 
+  if(this.attrs.alpha > 2 * Math.PI){
+    this.attrs.alpha -= 2 * Math.PI;
+    this.env.play('heartbeat');
+    
+    this.init();
+  }
+
 
   this.attrs.tt += delta/5;
   if(this.attrs.tt > 5){

@@ -177,10 +177,6 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
   var view = gx;
   var z = 24
 
-  view.ctx.fillStyle = '#fff'
-  view.ctx.strokeStyle = '#fff'
-  view.ctx.lineWidth = 1
-
   // for tails
   var q1 = (Math.sin((Date.now()/125) % (2*Math.PI)));
   var q2 = (Math.sin((Date.now()/333) % (2*Math.PI)));
@@ -190,8 +186,8 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     // white rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -204,7 +200,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
@@ -217,7 +213,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
 
     view.ctx.beginPath()
     view.ctx.moveTo(z*0.8, 0)
@@ -240,7 +236,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -270,8 +266,8 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     // momma rat
 
     // tail
-    view.ctx.fillStyle = '#ccc'
-    view.ctx.strokeStyle = '#ccc'
+    view.ctx.fillStyle = '#090'
+    view.ctx.strokeStyle = '#090'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -284,7 +280,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.4, z * 1.8, 0, 2*Math.PI, 0);
@@ -297,7 +293,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#666'
+    view.ctx.strokeStyle = '#090'
 
     view.ctx.beginPath()
     view.ctx.moveTo(z*0.8, 0)
@@ -320,7 +316,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -350,8 +346,8 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     // baby rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.save()
     view.ctx.translate(-0.8*z, 0)
     view.ctx.beginPath()
@@ -364,7 +360,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.1, z * 0.8, 0, 2*Math.PI, 0);
@@ -377,7 +373,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
 
     view.ctx.beginPath()
     view.ctx.moveTo(z*0.2, 0)
@@ -400,7 +396,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 0.4, z * 0.4, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -410,7 +406,7 @@ Scenes.variants.prototype.paint = function(fx, gx, sx){
     view.ctx.fillStyle = '#f00'
     // blink
     if(Math.random() < 0.1){
-      view.ctx.fillStyle = '#fff'
+      view.ctx.fillStyle = '#000'
     }
     view.ctx.beginPath()
     view.ctx.ellipse(z * 0.2, -z*0.1, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);

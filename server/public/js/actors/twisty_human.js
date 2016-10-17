@@ -16,6 +16,7 @@ Actors.TwistyHuman.prototype.genAttrs = function (attrs) {
   var energy = 10 + random0to(10)
 
   return {
+    alpha: 0,
     face_enemy: false,
     face_angle: 0,
     speed: this.opts.speed_base + (Math.random() * this.opts.speed_flux),
@@ -32,6 +33,7 @@ Actors.TwistyHuman.prototype.genAttrs = function (attrs) {
 
 Actors.TwistyHuman.prototype.init = function (attrs) {
 
+ 
   this.pos = new Vec3(
     attrs.x,
     attrs.y,
@@ -159,6 +161,18 @@ Actors.TwistyHuman.prototype.defaults = [{
 
 
 Actors.TwistyHuman.prototype.update = function (delta) {
+
+
+  this.attrs.alpha = Math.sin(Math.PI *((Date.now()%500)/1000));
+
+  if(this.attrs.alpha < 0.1 && this.attrs.flag){
+    this.attrs.flag = false;
+    this.env.play('heartbeat');
+  }
+  if(this.attrs.alpha > 0.9 && !this.attrs.flag){
+    this.attrs.flag = true;
+    this.env.play('heartbeat');
+  }
 
   var vec = new Vec3()
   var route

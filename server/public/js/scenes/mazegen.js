@@ -24,6 +24,7 @@ Scenes.mazegen.prototype.genAttrs = function(){
 };
 
 Scenes.mazegen.prototype.init = function(){
+  this.env.play('computer')
   this.makeGrid();
   this._steps = {
     ttl: this.attrs.ttl,
@@ -195,16 +196,15 @@ Scenes.mazegen.prototype.update = function(delta){
     if(this._steps.done){
       if(!this.env.gameover){
         this._steps.cell = false;
-        if(this.attrs.rows < 24){
+        if(this.attrs.rows < 7){
           this.attrs.rows ++;
           this.attrs.cols ++;
           this.attrs.ttl *= 0.25; 
           if(this.attrs.ttl < 0.1){
             this.attrs.ttl = 0
-          }
-         
-        }
-        this.init();
+          }        
+          this.init();
+        } 
       }
       return;
     }

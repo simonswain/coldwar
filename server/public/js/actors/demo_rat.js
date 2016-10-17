@@ -597,7 +597,7 @@ Actors.Demorat.prototype.paint = function (view) {
 
   view.ctx.save()
   view.ctx.rotate(this.velo.angleXY())
-  
+
   view.ctx.fillStyle = '#fff'
   view.ctx.strokeStyle = '#fff'
   view.ctx.lineWidth = 1
@@ -613,8 +613,8 @@ Actors.Demorat.prototype.paint = function (view) {
     // white rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#090'
+    view.ctx.strokeStyle = '#090'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -627,7 +627,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
@@ -640,7 +640,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -664,7 +664,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -694,8 +694,8 @@ Actors.Demorat.prototype.paint = function (view) {
     // momma rat
 
     // tail
-    view.ctx.fillStyle = '#ccc'
-    view.ctx.strokeStyle = '#ccc'
+    view.ctx.fillStyle = '#090'
+    view.ctx.strokeStyle = '#090'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -708,7 +708,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.4, z * 1.8, 0, 2*Math.PI, 0);
@@ -721,7 +721,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#666'
+    view.ctx.strokeStyle = '#090'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -745,7 +745,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -775,8 +775,8 @@ Actors.Demorat.prototype.paint = function (view) {
     // baby rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.save()
     view.ctx.translate(-0.8*z, 0)
     view.ctx.beginPath()
@@ -789,7 +789,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.1, z * 0.8, 0, 2*Math.PI, 0);
@@ -802,7 +802,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -826,7 +826,7 @@ Actors.Demorat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 0.4, z * 0.4, 0, 2*Math.PI, 0);
     view.ctx.closePath()

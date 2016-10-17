@@ -26,13 +26,17 @@ Actors.Human.prototype.genAttrs = function (attrs) {
     energy_max: energy,
     energy: energy,
     damage: 0,
-    escaped: false
-
+    escaped: false,
+    shotfired: false,
+    alpha: 0,
+    flag: true
   }
 }
 
 Actors.Human.prototype.init = function (attrs) {
 
+  this.env.play('heartbeat');
+  
   this.pos = new Vec3(
     attrs.x,
     attrs.y,
@@ -161,6 +165,20 @@ Actors.Human.prototype.defaults = [{
 
 Actors.Human.prototype.update = function (delta) {
 
+  //if(!this.attrs.shotfired){
+  this.attrs.alpha = Math.sin(Math.PI *((Date.now()%500)/1000));
+
+  //if(this.refs.cell.rats.length === 0){
+  if(this.attrs.alpha < 0.1 && this.attrs.flag){
+    this.attrs.flag = false;
+    this.env.play('heartbeat');
+  }
+  if(this.attrs.alpha > 0.9 && !this.attrs.flag){
+    this.attrs.flag = true;
+    this.env.play('heartbeat');
+  }
+    //}
+
   var vec = new Vec3()
   var route
 
@@ -174,7 +192,6 @@ Actors.Human.prototype.update = function (delta) {
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.cell.reactors[0].attrs.primed ){
       // close enough to reactor?
       var dist = this.pos.rangeXY(this.refs.cell.reactors[0].pos);
-      console.log(dist);
       if(dist < 100){
         this.refs.maze.attrs.escape = true;
         this.refs.cell.reactors[0].prime();
@@ -322,7 +339,7 @@ Actors.Human.prototype.shootRats = function () {
   if(this.attrs.escaped){
     return;
   }
-
+  
   var enemy
   var closest = Infinity
 
@@ -356,6 +373,8 @@ Actors.Human.prototype.shootRats = function () {
       enemy.pos.x,
       enemy.pos.y
     )
+
+    this.attrs.shotfired = true;   
   }
 
 }
@@ -364,6 +383,7 @@ Actors.Human.prototype.flashbang = function () {
 
   if(this.refs.cell.rats.length > this.opts.flashbang_rats){
     if(Math.random() < this.opts.flashbang_probability){
+      this.env.play('superzap')
       this.refs.cell.attrs.flash = 4;
       this.refs.cell.rats.forEach(function (other) {
         if(!other){

@@ -617,6 +617,18 @@ Actors.TwistyMaze.prototype.paint = function (view, fx) {
         view.ctx.beginPath();
         view.ctx.rect(cell.attrs.x * w, cell.attrs.y * w, w, w);
         view.ctx.fill();
+
+        if(Math.random() < 0.6){          
+          view.ctx.fillStyle = '#0f0'
+          }
+        if(Math.random() < 0.1){
+          view.ctx.fillStyle = '#fff'
+        }
+        view.ctx.font = '18pt robotron';
+        view.ctx.textAlign='center';
+        view.ctx.textBaseline='middle';
+        view.ctx.fillText(cell.attrs.title, (cell.attrs.x * w) + w/2, (cell.attrs.y * w) + w/2)
+        
         view.ctx.restore()
       }   
     }

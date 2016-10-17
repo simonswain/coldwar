@@ -13,6 +13,7 @@ Scenes.twisty.prototype.title = 'Twisty'
 
 Scenes.twisty.prototype.genAttrs = function () {
   return {
+    index: 0
   }
 }
 
@@ -26,7 +27,9 @@ Scenes.twisty.prototype.init = function () {
       // cols: 4
       rows: 4,
       cols: 6
-    })
+    });
+
+  this.string = 'R A T S   O F   T H E   M A Z E ';
 }
 
 Scenes.twisty.prototype.getCast = function () {
@@ -54,7 +57,21 @@ Scenes.twisty.prototype.defaults = [{
 }]
 
 Scenes.twisty.prototype.update = function (delta) {
+ 
   this.maze.update(delta);
+  var len = this.string.length;
+  var ix = Math.floor(this.attrs.index)
+  if(this.maze.cells) {
+    for(var i=0, ii=this.maze.cells.length; i<ii; i++ ) {
+      this.maze.cells[i].attrs.title = this.string[(ix + i) % len];
+    }
+  }
+   
+  this.attrs.index += delta * 0.05;
+  if(this.attrs.index >= this.string.length){
+    this.attrs.index = 0;
+  }      
+ 
 }
 
 Scenes.twisty.prototype.paint = function (fx, gx, sx) { 

@@ -17,7 +17,7 @@ Scenes.ready.prototype.title = 'Ready';
 Scenes.ready.prototype.layout = '';
 
 Scenes.ready.prototype.init = function(){
-
+  this.env.play('ready')
 }
 
 Scenes.ready.prototype.getCast = function(){
@@ -78,6 +78,10 @@ Scenes.ready.prototype.genAttrs = function(){
 
 Scenes.ready.prototype.update = function(delta){
 
+  if(this.env.at > 9500) {
+    this.env.goNext()
+  }
+  
   if(this.attrs.hold > 0){
     this.attrs.hold -= delta;
     // if(this.attrs.hold <= 0){

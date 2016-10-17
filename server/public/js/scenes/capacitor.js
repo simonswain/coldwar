@@ -58,8 +58,7 @@ Scenes.capacitor.prototype.update = function(delta){
   this.attrs.time += this.env.diff / 50
   if (this.attrs.time > this.attrs.duration) {
     this.attrs.time = 0;
-  }
-  
+  } 
 }
 
 Scenes.capacitor.prototype.paint = function(fx, gx, sx){

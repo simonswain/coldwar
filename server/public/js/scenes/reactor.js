@@ -95,9 +95,18 @@ Scenes.reactor.prototype.update = function(delta){
   }
 
   if(this.attrs.mode === 'boom'){
-    this.attrs.x -= delta * 1.5;
     if(this.attrs.x < -150){
-      this.attrs.mode = 'attack';
+      this.env.goNext();
+      this.attrs.mode = 'done';
+      //setTimeout(this.env.goNext, 100)     
+      //this.attrs.mode = 'attack';
+    } else {
+      this.attrs.x -= delta * 1.5;
+    }
+    if(this.attrs.x < -150){
+      setTimeout(this.env.goNext, 100)
+      
+      //this.attrs.mode = 'attack';
     }
   }
 

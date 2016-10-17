@@ -54,6 +54,8 @@ Actors.Breeder.prototype.defaults = [{
 
 Actors.Breeder.prototype.damage = function (hp) {
 
+  this.env.play('kill')
+
   if (!hp) {
     hp = 1
   }
@@ -119,7 +121,8 @@ Actors.Breeder.prototype.addRat = function () {
 
   this.refs.cell.rats.push(rat)
   this.rats.push(rat)
-
+  this.spawn += 2;
+  
 }
 
 Actors.Breeder.prototype.update = function (delta) {
@@ -141,9 +144,11 @@ Actors.Breeder.prototype.update = function (delta) {
   if(this.rats.length < this.opts.rats_max){
     if(this.refs.cell.refs.maze){
       if( !this.refs.cell.refs.maze.attrs.escape){
+        this.attrs.spawn += 2;
         this.addRat();
       }
     } else {
+      this.attrs.spawn += 2;
       this.addRat();
     }
   }
@@ -194,10 +199,7 @@ Actors.Breeder.prototype.paint = function (view) {
     view.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)'
   }
 
-  //view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
-  
   var ww = this.opts.max_x;
- 
   view.ctx.save()
   view.ctx.translate(this.opts.max_x/2, this.opts.max_y/2)
   view.ctx.beginPath()
@@ -210,23 +212,38 @@ Actors.Breeder.prototype.paint = function (view) {
   view.ctx.lineTo(-ww, 0);
   view.ctx.closePath();
  
-  if(this.env.ms % 20 < 10){
-    view.ctx.fill()
-  }
- 
-  view.ctx.stroke()
-  view.ctx.restore()
-
-  // view.ctx.font='20pt robotron';
-  // view.ctx.textAlign='center';
-  // view.ctx.textBaseline='middle';
-  // view.ctx.fillText(this.attrs.hp, this.opts.max_x/2, this.opts.max_y/2)
-
   if(this.attrs.hit){
     this.attrs.hit = false;
-    view.ctx.strokeStyle = 'rgba(255, 0, 0, 1)'
-    view.ctx.beginPath()
-    view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
+    view.ctx.fillStyle = 'rgba(255, 255, 0, 1)'
+    view.ctx.fill()
+  } else if(this.env.ms % 20 < 10){
+    view.ctx.fill()
   }
+
+  
+  view.ctx.lineWidth=8
+  view.ctx.stroke()
+
+  var ww = this.opts.max_x * 0.3;
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(-ww, 0);
+  view.ctx.lineTo(-ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww * 0.5, - ww * .8);
+  view.ctx.lineTo(ww, 0);
+  view.ctx.lineTo(ww * 0.5, ww * .8); 
+  view.ctx.lineTo(-ww * 0.5, ww * .8);
+  view.ctx.lineTo(-ww, 0);
+  view.ctx.closePath();
+
+  view.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+  if(this.attrs.spawn>0){
+    view.ctx.fillStyle = '#fff'
+  }
+  view.ctx.fill()
+  view.ctx.lineWidth=4
+  view.ctx.stroke()
+
+  view.ctx.restore()
   
 }

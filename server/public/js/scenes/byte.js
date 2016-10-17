@@ -17,12 +17,10 @@ Scenes.byte.prototype.title = 'Byte';
 Scenes.byte.prototype.layout = '';
 
 Scenes.byte.prototype.init = function(){
-
   this.caps = [];
   for(var i = 0; i < 8; i++){
     this.caps.push(0);
-  }
-  
+  } 
 }
 
 Scenes.byte.prototype.getCast = function(){

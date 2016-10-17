@@ -17,6 +17,7 @@ Scenes.loading.prototype.title = 'Loading';
 Scenes.loading.prototype.genAttrs = function(){
   return {
     at: Date.now(),
+    alpha: 0,
     time: 0,
     frame_index: 0,
     step_index: 0,
@@ -117,10 +118,13 @@ Scenes.loading.prototype.flash = function(fx, gx){
   ii = gx.h;
 
   var view = gx
-  
+
   for(i=0; i<ii; i+= this.attrs.row_h){
     view.ctx.beginPath();
     view.ctx.strokeStyle= 'rgba(255, 255, 255, 0.15)';
+    if(Math.random() < 0.1){
+      view.ctx.strokeStyle= 'rgba(255, 255, 255, 0.15)';
+    }
     view.ctx.lineWidth = 2;
     view.ctx.moveTo(0, i - this.attrs.offset);
     view.ctx.lineTo(gx.w, i-2 - this.attrs.offset);
@@ -131,6 +135,8 @@ Scenes.loading.prototype.flash = function(fx, gx){
 
 
 Scenes.loading.prototype.paint = function(fx, gx){
+
+  //this.attrs.frame_index = 3;  
   var frame = this.frames[this.attrs.frame_index];
   var paint = frame.paint.bind(this)
   paint(fx);
@@ -198,7 +204,7 @@ Scenes.loading.prototype.ready2 = function(fx) {
     '> SYSTEM' + CR,
     '*? PKTM' + CR,
     '*? /' + CR,
-    '*** PSURKITERM 3.15',
+    '*** PSURKITERM 8.24',
     'ATDT 00116421859394' + CR,
     'DIAL ..............',
     'CNCT               ',
@@ -352,6 +358,20 @@ Scenes.loading.prototype.download = function(fx) {
 Scenes.loading.prototype.grid = function(fx) {
   var i, j, ii, jj;
 
+
+  //this.attrs.alpha += delta * 0.05;
+  this.attrs.alpha = (0.5-(Math.sin(Math.PI * (Date.now()%4000)/2000)/2));
+
+  if(this.attrs.alpha < 0.01 && this.attrs.flag){
+    this.attrs.flag = false;
+    this.env.play('computer');
+  }
+  if(this.attrs.alpha > 0.99 && !this.attrs.flag){
+    this.attrs.flag = true;
+    //this.env.play('heartbeat');
+  }
+
+  
   var max = Math.min(this.opts.max_x, this.opts.max_y);
 
   fx.ctx.save();
@@ -364,25 +384,34 @@ Scenes.loading.prototype.grid = function(fx) {
     limit = this.attrs.time * steps;
   }
 
-  fx.ctx.strokeStyle = 'rgba(0, 255, 255, 1)';
-  fx.ctx.lineWidth = 2;
-  fx.ctx.beginPath();
-  fx.ctx.rect(0, 0, max, max);
-  fx.ctx.stroke();
+  if(Date.now() % 1100 < 200){
+    fx.ctx.strokeStyle = 'rgba(0, 255, 255, 1)';
+    fx.ctx.lineWidth = 2;
+    fx.ctx.beginPath();
+    fx.ctx.rect(0, 0, max, max);
+    fx.ctx.stroke();
 
-  for (i = 0; i <= limit; i++) {
-    for (j = 0; j <= limit; j++) {
-      fx.ctx.beginPath();
-      fx.ctx.moveTo(0, i * step);
-      fx.ctx.lineTo(steps * step, i * step);
-      fx.ctx.stroke();
+    for (i = 0; i <= limit; i++) {
+      for (j = 0; j <= limit; j++) {
+        fx.ctx.beginPath();
+        fx.ctx.moveTo(0, i * step);
+        fx.ctx.lineTo(steps * step, i * step);
+        fx.ctx.stroke();
 
-      fx.ctx.beginPath();
-      fx.ctx.moveTo(i * step, 0);
-      fx.ctx.lineTo(i * step, steps * step);
-      fx.ctx.stroke();
+        fx.ctx.beginPath();
+        fx.ctx.moveTo(i * step, 0);
+        fx.ctx.lineTo(i * step, steps * step);
+        fx.ctx.stroke();
+      }
     }
   }
+    
+  if(Date.now() % 1000 < 300){
+    fx.ctx.font = '28pt ubuntu mono';
+    fx.ctx.fillStyle = 'rgba(0, 255, 255, 1)';
+    fx.ctx.fillText('#SYNTAXERROR', this.opts.max_x * 0.01, this.opts.max_y * 0.99);
+  }
 
-  fx.ctx.restore();
+    fx.ctx.restore();
+
 }

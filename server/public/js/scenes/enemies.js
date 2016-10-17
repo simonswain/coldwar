@@ -152,7 +152,7 @@ Scenes.enemies.prototype.paint = function(fx, gx, sx){
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.8);
   gx.ctx.translate(Math.random(), Math.random());
-  gx.ctx.fillText('no mercy', 0, 0);
+  gx.ctx.fillText('have no mercy', 0, 0);
   gx.ctx.restore();
 
 

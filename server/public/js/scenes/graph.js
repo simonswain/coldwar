@@ -162,11 +162,11 @@ Scenes.graph.prototype.paint = function(fx, gx, sx){
       gx.ctx.rect((x * ww), (y * hh), ww, hh);
       gx.ctx.fill();
 
-      gx.ctx.fillStyle = '#000';
-      gx.ctx.font = '48pt robotron';
-      gx.ctx.textAlign='center';
-      gx.ctx.textBaseline='middle';
-      gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
+      // gx.ctx.fillStyle = '#000';
+      // gx.ctx.font = '48pt robotron';
+      // gx.ctx.textAlign='center';
+      // gx.ctx.textBaseline='middle';
+      // gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
 
       xx = x;
       yy = y;
@@ -235,19 +235,19 @@ Scenes.graph.prototype.paint = function(fx, gx, sx){
       gx.ctx.rect((x * ww), (y * hh), ww, hh);
       gx.ctx.stroke();
 
-      gx.ctx.fillStyle = '#ff0';
-      gx.ctx.font = '48pt robotron';
-      gx.ctx.textAlign='center';
-      gx.ctx.textBaseline='middle';
-      gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
+      // gx.ctx.fillStyle = '#ff0';
+      // gx.ctx.font = '48pt robotron';
+      // gx.ctx.textAlign='center';
+      // gx.ctx.textBaseline='middle';
+      // gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
       
 
     } else { 
-      gx.ctx.fillStyle = '#fff';
-      gx.ctx.font = '48pt robotron';
-      gx.ctx.textAlign='center';
-      gx.ctx.textBaseline='middle';
-      gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
+      // gx.ctx.fillStyle = '#fff';
+      // gx.ctx.font = '48pt robotron';
+      // gx.ctx.textAlign='center';
+      // gx.ctx.textBaseline='middle';
+      // gx.ctx.fillText(i, ww/2 + x * ww, hh/2 + y * hh);
     }
 
     gx.ctx.restore();
@@ -272,11 +272,12 @@ Scenes.graph.prototype.paint = function(fx, gx, sx){
     gx.ctx.lineTo(ww * 0.75, 0)
     gx.ctx.stroke();      
 
-    gx.ctx.fillStyle = '#fff';
-    gx.ctx.font = '24pt robotron';
-    gx.ctx.textAlign='center';
-    gx.ctx.textBaseline='middle';
-    gx.ctx.fillText(points[this.ix][5], ww/3, - hh/5);
+    // gx.ctx.fillStyle = '#fff';
+    // gx.ctx.font = '24pt robotron';
+    // gx.ctx.textAlign='center';
+    // gx.ctx.textBaseline='middle';
+    // gx.ctx.fillText(points[this.ix][5], ww/3, - hh/5);
+
     gx.ctx.restore();
   }
   

@@ -59,22 +59,32 @@ Scenes.logo.prototype.defaults = [{
 
 Scenes.logo.prototype.genAttrs = function(){
   return {
-    time: 0,
-    index: 0,
-    value: 0,
-    duration: this.opts.duration,
+    alpha: 0,
+    flag: true
   };
 };
 
 Scenes.logo.prototype.update = function(delta){
+  //this.attrs.alpha += delta * 0.05;
+  this.attrs.alpha = (0.5-(Math.sin(Math.PI * (Date.now()%4000)/2000)/2));
+
+  if(this.attrs.alpha < 0.01 && this.attrs.flag){
+    this.attrs.flag = false;
+    this.env.play('heartbeat');
+  }
+  if(this.attrs.alpha > 0.99 && !this.attrs.flag){
+    this.attrs.flag = true;
+    //this.env.play('heartbeat');
+  }
+  
 }
 
 Scenes.logo.prototype.paint = function(fx, gx, sx){
 
   var z = this.opts.scale;
 
-  var alpha = (0.5-(Math.sin(Math.PI * (Date.now()%4000)/2000)/2));
-
+  var alpha = this.attrs.alpha
+  
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x/2, this.opts.max_y/2)
 
@@ -84,29 +94,40 @@ Scenes.logo.prototype.paint = function(fx, gx, sx){
   
   //gx.ctx.scale(this.opts.scale, this.opts.scale);
   gx.ctx.fillStyle = 'rgba(255,0,0,' + alpha + ')';
-  //gx.ctx.fillStyle = '#f00';
+
+  var ctx = gx.ctx
+  var h = (Date.now()%360 * 0.22) - 10;
+  var c;
+  c = 'hsl(' + h + ', 100%, 50%)';
   
-  // if(Math.random() < 0.1){
-  //   gx.ctx.fillStyle = '#000';
-  // }
-  
+  if(Math.random() < 0.025){
+    c = 'rgba(255,255,0,0.5)';
+  }
+
+  if(Math.random() < 0.15){
+    c = 'rgba(255,255,255,1)';
+  }
+
+  ctx.shadowColor = c;
+  ctx.shadowBlur = 40;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  ctx.shadowBlur = 16;
+
   gx.ctx.beginPath();
-  gx.ctx.arc(-0.2 * z, -0.5 * z, 0.15 * z, 0, 2*Math.PI);
+  gx.ctx.moveTo(-0.339 * z, -0.56 * z);
+  gx.ctx.quadraticCurveTo(-0.29 * z, -0.40 * z, -0.140 * z, -0.365 * z);
+  gx.ctx.quadraticCurveTo(-0.38 * z, -0.32 * z, -0.339 * z, -0.56 * z);
   gx.ctx.fill();
 
   gx.ctx.beginPath();
-  gx.ctx.arc(0.2 * z, -0.5 * z, 0.15 * z, 0, 2*Math.PI);
+  gx.ctx.moveTo(0.339 * z, -0.56 * z);
+  gx.ctx.quadraticCurveTo(0.29 * z, -0.40 * z, 0.140 * z, -0.365 * z);
+  gx.ctx.quadraticCurveTo(0.38 * z, -0.32 * z, 0.339 * z, -0.56 * z);
   gx.ctx.fill();
   
-  gx.ctx.fillStyle = '#000';
-  gx.ctx.beginPath();
-  gx.ctx.arc(-0.1 * z, -0.6 * z, 0.24 * z, 0, 2*Math.PI);
-  gx.ctx.fill();
+  // - whiskers
 
-  gx.ctx.fillStyle = '#000';
-  gx.ctx.beginPath();
-  gx.ctx.arc(0.1 * z, -0.6 * z, 0.24 * z, 0, 2*Math.PI);
-  gx.ctx.fill();
  
   gx.ctx.strokeStyle = 'rgba(255,0,0,' + alpha + ')';
   //gx.ctx.strokeStyle = '#f00';

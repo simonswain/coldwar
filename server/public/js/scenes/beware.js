@@ -110,7 +110,7 @@ Scenes.beware.prototype.paint = function(fx, gx, sx){
     ix = frame.text.length;
   }
   
-  var yy = (this.opts.max_y * 0.2);
+  var yy = (this.opts.max_y * 0.4);
   var dy = (this.opts.max_y * 0.1);
   var xx = (this.opts.max_x * 0.2);
   var dx = (this.opts.max_x * 0.06);

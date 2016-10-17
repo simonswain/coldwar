@@ -416,47 +416,47 @@ Scenes.king_rat.prototype.paint = function(fx, gx, sx){
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
   gx.ctx.scale(0.9, 0.9);
   
-  var x, y;
-  for(let i = 0, ii=this.opts.rows * this.opts.cols; i < ii; i++){
-    x = i % this.opts.cols;
-    y = Math.floor(i/this.opts.rows);
+  // var x, y;
+  // for(var i = 0, ii=this.opts.rows * this.opts.cols; i < ii; i++){
+  //   x = i % this.opts.cols;
+  //   y = Math.floor(i/this.opts.rows);
 
-    gx.ctx.fillStyle = '#222';
-    gx.ctx.strokeStyle = '#222';
+  //   gx.ctx.fillStyle = '#222';
+  //   gx.ctx.strokeStyle = '#222';
 
-    if(this.memory[i] === 'w'){
-      gx.ctx.fillStyle = '#090';
-      gx.ctx.beginPath();
-      gx.ctx.lineWidth = 2;
-      gx.ctx.rect(
-        x * ww,
-        y * hh,
-        ww,
-        hh
-      )
-      gx.ctx.fill();
-      gx.ctx.stroke();
-    } else {
-      gx.ctx.fillStyle = '#090';
-      gx.ctx.beginPath();
-      gx.ctx.lineWidth = 2;
-      gx.ctx.rect(
-        x * ww,
-        y * hh,
-        ww,
-        hh
-      )
-      gx.ctx.stroke();
-    }
-  }  
+  //   if(this.memory[i] === 'w'){
+  //     gx.ctx.fillStyle = '#090';
+  //     gx.ctx.beginPath();
+  //     gx.ctx.lineWidth = 2;
+  //     gx.ctx.rect(
+  //       x * ww,
+  //       y * hh,
+  //       ww,
+  //       hh
+  //     )
+  //     gx.ctx.fill();
+  //     gx.ctx.stroke();
+  //   } else {
+  //     gx.ctx.fillStyle = '#090';
+  //     gx.ctx.beginPath();
+  //     gx.ctx.lineWidth = 2;
+  //     gx.ctx.rect(
+  //       x * ww,
+  //       y * hh,
+  //       ww,
+  //       hh
+  //     )
+  //     gx.ctx.stroke();
+  //   }
+  // }  
   
   // snake
   var step = 1 / this.snake.length;
-  for(let i = 0, ii=this.snake.length; i < ii; i++){
+  for(var i = 0, ii=this.snake.length; i < ii; i++){
     x = this.snake[i] % this.opts.cols;
     y = Math.floor(this.snake[i]/this.opts.rows);
 
-    gx.ctx.fillStyle = 'rgba(255, 0, 0,' + (((ii-i) * step)) + ')';
+    gx.ctx.fillStyle = 'rgba(0, 255, 0,' + (((ii-i) * step)) + ')';
     gx.ctx.beginPath();
     gx.ctx.lineWidth = 2;
     gx.ctx.rect(
@@ -470,41 +470,41 @@ Scenes.king_rat.prototype.paint = function(fx, gx, sx){
   }
 
   // food
-  if(this.food){
-    x = this.food % this.opts.cols;
-    y = Math.floor(this.food/this.opts.rows);
-    var h = (Date.now()%360 * 0.22) - 10;
-    var c;
-    c = 'hsl(' + h + ', 100%, 50%)';
+  // if(this.food){
+  //   x = this.food % this.opts.cols;
+  //   y = Math.floor(this.food/this.opts.rows);
+  //   var h = (Date.now()%360 * 0.22) - 10;
+  //   var c;
+  //   c = 'hsl(' + h + ', 100%, 50%)';
     
-    if(Math.random() < 0.025){
-      c = 'rgba(255,255,0,0.5)';
-    }
+  //   if(Math.random() < 0.025){
+  //     c = 'rgba(255,255,0,0.5)';
+  //   }
 
-    if(Math.random() < 0.15){
-      c = 'rgba(255,255,255,1)';
-    }
+  //   if(Math.random() < 0.15){
+  //     c = 'rgba(255,255,255,1)';
+  //   }
 
-    gx.ctx.shadowColor = c;
-    gx.ctx.shadowBlur = 40;
-    gx.ctx.shadowOffsetX = 0;
-    gx.ctx.shadowOffsetY = 0;
-    gx.ctx.shadowBlur = ww * 5;
+  //   gx.ctx.shadowColor = c;
+  //   gx.ctx.shadowBlur = 40;
+  //   gx.ctx.shadowOffsetX = 0;
+  //   gx.ctx.shadowOffsetY = 0;
+  //   gx.ctx.shadowBlur = ww * 5;
 
-    gx.ctx.fillStyle = c;
-    gx.ctx.stroketyle = c;
-    gx.ctx.beginPath();
-    gx.ctx.lineWidth = 2;
-    gx.ctx.rect(
-      x * ww,
-      y * hh,
-      ww,
-      hh
-    )
-    gx.ctx.fill();
-    gx.ctx.stroke();
-    gx.ctx.shadowBlur = 0;
-  }
+  //   gx.ctx.fillStyle = c;
+  //   gx.ctx.stroketyle = c;
+  //   gx.ctx.beginPath();
+  //   gx.ctx.lineWidth = 2;
+  //   gx.ctx.rect(
+  //     x * ww,
+  //     y * hh,
+  //     ww,
+  //     hh
+  //   )
+  //   gx.ctx.fill();
+  //   gx.ctx.stroke();
+  //   gx.ctx.shadowBlur = 0;
+  // }
   
   
   var view = gx;

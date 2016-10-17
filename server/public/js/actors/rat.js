@@ -13,7 +13,6 @@ Actors.Rat.prototype = Object.create(Actor.prototype)
 Actors.Rat.prototype.title = 'Rat'
 
 Actors.Rat.prototype.init = function (attrs) {
-
   this.pos = new Vec3(
     attrs.x,
     attrs.y,
@@ -24,7 +23,6 @@ Actors.Rat.prototype.init = function (attrs) {
     Math.PI * 2 * Math.random(),
     this.attrs.speed
   ).vec3()
-
 }
 
 Actors.Rat.prototype.genAttrs = function (attrs) {
@@ -117,7 +115,7 @@ Actors.Rat.prototype.defaults = [{
 }, {
   key: 'separation_range',
   info: '',
-  value: 128,
+  value: 64,
   min: 10,
   max: 500
 }, {
@@ -179,7 +177,7 @@ Actors.Rat.prototype.defaults = [{
   max: 1.0
 }, {
   key: 'intent_scale',
-  value: 35,
+  value: 0.5,
   min: 0,
   max: 100,
 }, {
@@ -193,32 +191,44 @@ Actors.Rat.prototype.defaults = [{
 Actors.Rat.prototype.update = function (delta, intent) {
   var vec = new Vec3()
 
+  if(this.refs.cell.pong) {
+    if(this.refs.cell.pong.pos.rangeXY(this.pos) < 64) {
+      this.kill();
+    }
+  }
+
+  if(this.refs.cell.snake) {
+    var pos = this.refs.cell.snake.vec();
+    if(pos.rangeXY(this.pos) < 64) {
+      this.kill();
+    }
+  }
+
   // white rats
   if(this.attrs.type === 0){
-    //vec.add(this.cohesion().scale(2))
-    vec.add(this.separation().scale(5)) 
-    //vec.add(this.alignment().scale(this.opts.alignment_force))
-    vec.add(this.chase().scale(3))
-    vec.add(this.reflect())
+    vec.add(this.separation().scale(1))
+    vec.add(this.chase().scale(0.1))
+    vec.add(this.reflect(0.01))
   }
 
   // grey rats stick together
   if(this.attrs.type === 1){
     vec.add(this.cohesion().scale(0.25))
-    vec.add(this.separation().scale(0.5)) 
+    vec.add(this.separation().scale(1))
     vec.add(this.alignment())
-    vec.add(this.avoid().scale(1))
-    vec.add(this.reflect().scale(2))
+    vec.add(this.avoidHuman().scale(1))
+    vec.add(this.awayFromCenter().scale(1))
+    vec.add(this.reflect(0.5))
   }
 
   // baby rats
   if(this.attrs.type === 2){
-    vec.add(this.cohesion().scale(3))
-    vec.add(this.separation().scale(1)) 
-    vec.add(this.alignment().scale(2))
-    vec.add(this.chase().scale(1))
-    vec.add(this.reflect())
-  } 
+    vec.add(this.cohesion().scale(0.25))
+    vec.add(this.separation().scale(0.05))
+    vec.add(this.alignment())
+    vec.add(this.chase().scale(0.1))
+    vec.add(this.reflect(0.01))
+  }
 
   var intents = [[0,-1],[1,0],[0,1],[-1,0]];
 
@@ -228,11 +238,8 @@ Actors.Rat.prototype.update = function (delta, intent) {
     if(this.refs.cell.refs.maze && this.refs.cell.refs.maze.attrs.escape){
       scale *= 2;
     }
-    
-    if(typeof intent!== 'undefined' && intent !== null){
 
-      
-      
+    if(typeof intent !== 'undefined' && intent !== null){
       vec.add(new Vec3(intents[intent][0], intents[intent][1]).scale(scale))
 
       if(intent === 1 || intent === 3){
@@ -255,15 +262,23 @@ Actors.Rat.prototype.update = function (delta, intent) {
     }
   }
 
-  if(this.attrs.type === 0){
-    vec.scale(1.25)
-  } else {
-    vec.scale(this.opts.velo_scale)
+  vec.scale(this.opts.velo_scale)
+
+  var speed = this.attrs.speed;
+  switch(this.attrs.type){
+  case 0:
+    break;
+  case 1:
+    //speed *= 0.5
+    break;
+  case 2:
+    speed *= 0.75
+    break;
   }
-  
+
   this.velo.add(vec)
-  //this.velo.scale(0.8 + (Math.random()*0.5))
-  this.velo.limit(this.attrs.speed)
+  this.velo.limit(speed)
+  this.velo.add(this.avoidSnake().scale(0.5));
   this.pos.add(this.velo)
 
   // exit
@@ -316,8 +331,9 @@ Actors.Rat.prototype.update = function (delta, intent) {
     other.rats.push(this);
   }
 
+
   // momma maturity
-  
+
   if(this.attrs.type === 1){
     if(this.attrs.ttl>0){
       this.attrs.ttl --;
@@ -328,7 +344,7 @@ Actors.Rat.prototype.update = function (delta, intent) {
   }
 
   // baby maturity
-  
+
   if(this.attrs.type === 2){
     if(this.attrs.ttl>0){
       this.attrs.ttl --;
@@ -337,8 +353,13 @@ Actors.Rat.prototype.update = function (delta, intent) {
       this.attrs.type = 0;
     }
   }
-
   
+}
+
+Actors.Rat.prototype.awayFromCenter = function () {
+  var vec = new Vec3(this.refs.cell.opts.max_x /2, this.refs.cell.opts.max_y /2)
+  vec.sub(vec.minus(this.pos).normalize())
+  return vec.normalize()
 }
 
 Actors.Rat.prototype.reflect = function () {
@@ -372,7 +393,6 @@ Actors.Rat.prototype.chase = function () {
   var xx = 0
   var yy = 0
   var c = 0
-
 
   if(this.refs.cell.humans.length === 0){
     return new Vec3();
@@ -418,6 +438,39 @@ Actors.Rat.prototype.avoid = function () {
 
   var target = new Vec3(xx / c, yy / c)
   return this.pos.minus(target).normalize()
+}
+
+Actors.Rat.prototype.avoidHuman = function () {
+  var xx = 0
+  var yy = 0
+  var c = 0
+
+
+  if(this.refs.cell.humans.length === 0){
+    return new Vec3();
+  }
+
+  var human;
+
+  for (var i = 0, ii = this.refs.cell.humans.length; i < ii; i++) {
+    human = this.refs.cell.humans[i];
+    if(!human){
+      continue;
+    }
+    xx += human.pos.x
+    yy += human.pos.y
+    c++
+  }
+
+  var target = new Vec3(xx / c, yy / c)
+  return this.pos.minus(target).normalize()
+}
+
+Actors.Rat.prototype.avoidSnake = function () {
+  if(!this.refs.cell.snake){
+    return new Vec3();
+  }
+  return this.pos.minus(this.refs.cell.snake.vec()).normalize()
 }
 
 Actors.Rat.prototype.separation = function () {
@@ -716,8 +769,8 @@ Actors.Rat.prototype.paint = function (view) {
     // white rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#090'
+    view.ctx.strokeStyle = '#090'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -730,7 +783,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
@@ -743,7 +796,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -767,7 +820,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -797,8 +850,8 @@ Actors.Rat.prototype.paint = function (view) {
     // momma rat
 
     // tail
-    view.ctx.fillStyle = '#ccc'
-    view.ctx.strokeStyle = '#ccc'
+    view.ctx.fillStyle = '#090'
+    view.ctx.strokeStyle = '#090'
     view.ctx.save()
     view.ctx.translate(-1.5*z, 0)
     view.ctx.beginPath()
@@ -811,7 +864,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 2.4, z * 1.8, 0, 2*Math.PI, 0);
@@ -824,7 +877,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#666'
+    view.ctx.strokeStyle = '#090'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -848,7 +901,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#666'
+    view.ctx.fillStyle = '#090'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
     view.ctx.closePath()
@@ -878,8 +931,8 @@ Actors.Rat.prototype.paint = function (view) {
     // baby rat
 
     // tail
-    view.ctx.fillStyle = '#fff'
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.save()
     view.ctx.translate(-0.8*z, 0)
     view.ctx.beginPath()
@@ -892,7 +945,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.restore()
 
     // body
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.lineWidth = 1
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 1.1, z * 0.8, 0, 2*Math.PI, 0);
@@ -905,7 +958,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.rotate(q2 * 0.3)
 
     // whiskers
-    view.ctx.strokeStyle = '#fff'
+    view.ctx.strokeStyle = '#0f0'
     view.ctx.lineWidth=0.5
 
     view.ctx.beginPath()
@@ -929,7 +982,7 @@ Actors.Rat.prototype.paint = function (view) {
     view.ctx.stroke()
 
     // skull
-    view.ctx.fillStyle = '#fff'
+    view.ctx.fillStyle = '#0f0'
     view.ctx.beginPath()
     view.ctx.ellipse(0, 0, z * 0.4, z * 0.4, 0, 2*Math.PI, 0);
     view.ctx.closePath()

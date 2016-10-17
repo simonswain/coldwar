@@ -155,7 +155,14 @@ Vec3.prototype = {
     this.y = 0
     this.z = 0
     return this
-  }
+  },
+
+  vecr: function () {
+    return new VecR(
+      Math.atan2(this.y, this.x),
+      Math.sqrt(this.x * this.x + this.y * this.y)
+    );
+  }  
 }
 
 var VecR = function (a, r) {

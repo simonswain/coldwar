@@ -36,6 +36,7 @@ Actors.Reactor.prototype.defaults = [{
 
 
 Actors.Reactor.prototype.prime = function () {
+  this.env.play('inception')
   this.attrs.primed = true;
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
@@ -49,6 +50,17 @@ Actors.Reactor.prototype.prime = function () {
 }
 
 Actors.Reactor.prototype.detonate = function () {
+  this.env.play('boom')
+  this.attrs.primed = true;
+  this.refs.cell.booms.push(new Actors.Boom(
+    this.env, {
+    }, {
+      style: 'laser',
+      radius: 240,
+      x: this.pos.x,
+      y: this.pos.y
+    }
+  ))
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
     }, {

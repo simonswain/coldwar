@@ -156,12 +156,12 @@ Actors.Demohuman.prototype.shoot = function () {
       enemy.pos.y
     )
   }
-
 }
 
 Actors.Demohuman.prototype.flashbang = function () {
 
   if(this.refs.demo.rats.length > this.opts.flashbang_rats){
+    this.env.play('superzap')
     if(Math.random() < this.opts.flashbang_probability){
       this.refs.demo.attrs.flash = 4;
       this.refs.demo.rats.forEach(function (other) {
@@ -171,9 +171,7 @@ Actors.Demohuman.prototype.flashbang = function () {
         other.kill();
       }, this);
     }
-  };
-  
-
+  }; 
 }
 
 

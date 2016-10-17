@@ -175,7 +175,6 @@ Actors.Maze.prototype.randomJoins = function (max) {
 }
 
 Actors.Maze.prototype.generatePerfectMaze = function (max) {
-
   var stack = [];
   var cells = this.cells
   var total = cells.length
@@ -204,6 +203,7 @@ Actors.Maze.prototype.generatePerfectMaze = function (max) {
         }
       }
     }
+
     if(n.length > 0){
       pick = pickOne(n)
       dir = pick[0]
@@ -475,6 +475,8 @@ Actors.Maze.prototype.doGenPhase = function (delta) {
     this._steps.ttl -= delta
     return
   }
+
+  this.env.play('computer')
   
   this._steps.ttl += this.attrs.ttl
 
@@ -576,9 +578,13 @@ Actors.Maze.prototype.update = function (delta) {
   } 
   
   if(this.attrs.humanCountdown > 0){
+    if(this.attrs.humanCountdown%10 === 0){
+      this.env.play('rad-short')
+    }
+    
     this.attrs.humanCountdown --;
-
     if(this.attrs.humanCountdown === 15){
+      this.env.play('entry')
       this.booms.push(new Actors.Boom(
         this.env, {
         }, {
@@ -624,6 +630,7 @@ Actors.Maze.prototype.update = function (delta) {
     this.human.attrs.escaped = true;
     this.attrs.boom = true;;
     this.attrs.boomCountdown = 60;
+      this.env.play('warpout')
     
     this.booms.push(new Actors.Boom(
       this.env, {

@@ -21,6 +21,8 @@ Actors.Cell.prototype.genAttrs = function (attrs) {
     rats: 0,
     rats_max: this.opts.rats_max || 0,
     rats_per_tick: this.opts.rats_per_tick || 1,
+    title: null,
+    hideWalls: attrs.hideWalls || false
   }
 }
 
@@ -35,15 +37,26 @@ Actors.Cell.prototype.init = function () {
     null, null, null, null
   ];
 
+  this.oneups = [];
   this.humans = [];
   this.breeders = [];
   this.rats = [];
+  this.kings = [];
+  this.snake = false;
+  this.reactors = [];
+  this.portals = [];
 
   this.booms = [];
   this.zaps = [];
   this.robots = [];
-  this.reactors = [];
-  this.portals = [];
+  this.reactor = false;
+  this.portal = false;
+  this.logo = false;
+  this.capacitor = false;
+  this.capacitors = false; 
+  this.machine = false;
+  this.pong = false;
+  this.powerup = false;
 
 }
 
@@ -106,6 +119,61 @@ Actors.Cell.prototype.addReactor = function () {
   return reactor
 }
 
+Actors.Cell.prototype.addLogo = function () {
+  this.logo = new Actors.Logo(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addCapacitor = function () {
+  this.capacitor = new Actors.Capacitor(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addCapacitors = function () {
+  this.capacitors = new Actors.Capacitors(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addMachine = function () {
+  this.machine = new Actors.Machine(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addPong = function () {
+  this.pong = new Actors.Pong(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addPowerup = function () {
+  this.powerup = new Actors.Powerup(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addSnake = function () {
+  this.snake = new Actors.Snake(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
 
 Actors.Cell.prototype.addHuman = function () {
 
@@ -152,10 +220,69 @@ Actors.Cell.prototype.killAllActors = function () {
       this.rats[i].kill(true);
     }
   }
+
+  for (i = 0, ii = this.kings.length; i<ii; i++) {
+    if(this.kings[i]){
+      this.kings[i].kill(true);
+    }
+  }
+
+  if(this.snake){
+    this.snake.kill(true);
+  }
+
+  if(this.logo){
+    this.logo.kill();
+  }
+
+  if(this.capacitor){
+    this.capacitor.kill();
+  }
+
+  if(this.capacitors){
+    this.capacitors.kill();
+  }
+
+  if(this.machine){
+    this.machine.kill();
+  }
+  
+  if(this.pong){
+    this.pong.kill();
+  }
+  
+  if(this.powerup){
+    this.powerup.kill();
+  }
+  
 }
 
+
+Actors.Cell.prototype.disableAllEnergyActors = function () {
+
+  if(this.capacitor){
+    this.capacitor.disable();
+  }
+
+  // if(this.capacitors){
+  //   this.capacitors.disable();
+  // }
+
+  // if(this.machine){
+  //   this.machine.disable();
+  // }
+  
+  if(this.pong){
+    this.pong.angry();
+  }
+  
+}
+
+
 Actors.Cell.prototype.update = function (delta) {
+
   var intentToHuman = null;
+
   if(this.refs.maze && this.refs.maze.human){
     this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
 
@@ -168,6 +295,54 @@ Actors.Cell.prototype.update = function (delta) {
     }
   }
   
+  if(this.logo){
+    this.logo.update(delta);
+  }
+ 
+  if(this.capacitor){
+    this.capacitor.update(delta);
+  }
+
+  if(this.capacitors){
+    this.capacitors.update(delta);
+  }
+  
+  if(this.machine){
+    this.machine.update(delta);
+  }
+  
+  if(this.pong){
+    this.pong.update(delta);
+  }
+ 
+  if(this.powerup){
+    this.powerup.update(delta);
+  }
+
+  if(this.snake){
+    this.snake.update(delta);
+  }
+
+  if(this.snake && this.snake.attrs.dead){
+    this.snake = null;
+  }
+  
+  var i, ii;
+
+  for (i = 0, ii = this.oneups.length; i<ii; i++) {
+    if(this.oneups[i]){
+      this.oneups[i].update(delta);
+    }
+  }
+
+  for (i = 0, ii = this.oneups.length; i<ii; i++) {
+    if(!this.oneups[i] || this.oneups[i].attrs.dead){
+      this.oneups.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+   
   var i, ii;
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     if(this.breeders[i]){
@@ -189,6 +364,20 @@ Actors.Cell.prototype.update = function (delta) {
     }
   }
   
+  for (i = 0, ii = this.kings.length; i<ii; i++) {
+    if(this.kings[i]){
+      this.kings[i].update(delta, intentToHuman);
+    }
+  }
+
+  for (i = 0, ii = this.kings.length; i<ii; i++) {
+    if(!this.kings[i] || this.kings[i].attrs.dead){
+      this.kings.splice(i, 1);
+      i--
+      ii--
+    }
+  }
+
   for (i = 0, ii = this.humans.length; i<ii; i++) {
     if(this.humans[i]){
       this.humans[i].update(delta);
@@ -224,11 +413,34 @@ Actors.Cell.prototype.update = function (delta) {
     }
   }
 
+  if(this.logo && this.logo.attrs.dead){
+    this.logo = null;
+  }
+
+  if(this.capacitor && this.capacitor.attrs.dead){
+    this.capacitor = null;
+  }
+
+  if(this.capacitors && this.capacitors.attrs.dead){
+    this.capacitors = null;
+  }
+  
+  if(this.machine && this.machine.attrs.dead){
+    this.machine = null;
+  }
+  
+  if(this.pong && this.pong.attrs.dead){
+    this.pong = null;
+  }
+  
+  if(this.powerup && this.powerup.attrs.dead){
+    this.powerup = null;
+  }
 
   
 }
 
-Actors.Cell.prototype.paint = function (view) {
+Actors.Cell.prototype.paint = function (view, fx) {
   
   // view.ctx.strokeStyle = '#666'
   // view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
@@ -313,28 +525,71 @@ Actors.Cell.prototype.paint = function (view) {
   if(this.refs.maze && this.refs.maze.attrs.escape){
     rgb = '153, 0, 0';
   }
-  
-  for(var exit = 0; exit < 4; exit ++){
 
-    if(this.exits[exit]){
-    }
+  if(this.attrs.hideWalls) {
+    // nop
+  } else {
+    for(var exit = 0; exit < 4; exit ++){
 
-    if(!this.exits[exit]){
-
-      view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
-      if(!this.gridmates[exit]){
-        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
+      if(this.exits[exit]){
       }
-   
-      view.ctx.lineCap = 'round'
-      view.ctx.beginPath()
-      view.ctx.moveTo(this.opts.max_x * vecs[exit][0], this.opts.max_y * vecs[exit][1])
-      view.ctx.lineTo(this.opts.max_x * vecs[exit][2], this.opts.max_y * vecs[exit][3])
-      view.ctx.stroke()
+
+      if(!this.exits[exit]){
+
+        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
+        if(!this.gridmates[exit]){
+          view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
+        }
+        
+        view.ctx.lineCap = 'round'
+        view.ctx.beginPath()
+        view.ctx.moveTo(this.opts.max_x * vecs[exit][0], this.opts.max_y * vecs[exit][1])
+        view.ctx.lineTo(this.opts.max_x * vecs[exit][2], this.opts.max_y * vecs[exit][3])
+        view.ctx.stroke()
+      }
     }
   }
 
   view.ctx.restore()
+
+  if(this.snake){
+    view.ctx.save()
+    this.snake.paint(view)
+    view.ctx.restore()
+  }
+
+  if(this.logo){
+    this.logo.paint(view);
+  }
+
+  if(this.capacitor){
+    view.ctx.save()
+    this.capacitor.paint(view);
+    view.ctx.restore()
+  }
+
+  if(this.capacitors){
+    this.capacitors.paint(view);
+  }
+  
+  if(this.machine){
+    this.machine.paint(view);
+  }
+  
+  if(this.pong){
+    var w32 = this.opts.max_x/16;
+    var h32 = this.opts.max_y/16;
+    view.ctx.save()
+    //view.ctx.translate(this.pong.pos.x, this.pong.pos.y);
+    view.ctx.translate(1 + Math.floor(this.pong.pos.x/32) * w32, 1 + Math.floor(this.pong.pos.y/32) * h32);
+
+    fx.ctx.save()
+    fx.ctx.translate(1 + Math.floor(this.pong.pos.x/32) * w32, 1+ Math.floor(this.pong.pos.y/32) * h32);
+    //fx.ctx.translate(this.pong.pos.x, this.pong.pos.y);
+    this.pong.paint(view, fx)
+    view.ctx.restore()
+    fx.ctx.restore()
+  }
 
   var reactor
   for (i = 0, ii = this.reactors.length; i<ii; i++) {

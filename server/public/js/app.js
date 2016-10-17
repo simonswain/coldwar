@@ -12,6 +12,47 @@ document.addEventListener('DOMContentLoaded', function (event) {
 })
 
 Coldwar.prototype.boot = function () {
+
+  // first load
+  this.sounds = {}
+  var sounds = [
+    'heartbeat',
+    'baiter',
+    'boom',
+    'computer',
+    'humm',
+    'inception',
+    'rad-long',
+    'rad-short',
+    'softpod',
+    'swarmer',
+    'ready',
+    'ch',
+    'defstart',
+    'chink',
+    'ding',
+    'kill',
+    'warpout',
+    'superzapper',
+    'superzap',
+    'entry',
+    'fall'
+  ];
+
+  var self = this;
+  sounds.forEach(function(k){
+    self.sounds[k] = new Audio('/sounds/' + k + '.wav')
+  });
+
+  this.play = function (k) {
+    //return;
+    if(this.sounds[k]){
+      this.sounds[k].play();
+    }
+  }.bind(this);
+
+
+  
   // first load
   var opts = {}
   var path = window.location.pathname.split('/')
@@ -434,6 +475,7 @@ Coldwar.prototype.genEnv = function () {
       fx: null,
       gx: null
     },
+    play: this.play,
     fx_alpha: 0.15,
     last: Date.now(),
     at: 0,
@@ -485,7 +527,6 @@ Coldwar.prototype.goPrev = function(){
 };
 
 Coldwar.prototype.goNext = function(){
-  console.log('xx');
   var next = null;
   if(!this.scene){
     this.render(this.scenes[0].slug);
@@ -856,10 +897,11 @@ Coldwar.prototype.onKey = function (e) {
     }
     break
   }
-
 }
 
-Coldwar.prototype.scenes = [{
+
+
+Coldwar.prototype.scenesCode = [{
   title: 'Index',
   slug: 'index'
 }, {
@@ -871,9 +913,6 @@ Coldwar.prototype.scenes = [{
 }, {
   title: 'Title',
   slug: 'title'
-}, {
-  title: 'Understand',
-  slug: 'understand'
 }, {
   title: 'Capacitor',
   slug: 'capacitor'
@@ -908,9 +947,6 @@ Coldwar.prototype.scenes = [{
   title: 'Dungeon',
   slug: 'dungeon'
 }, {
-//   title: 'Drunken',
-//   slug: 'drunken'
-// }, {
   title: 'Snake',
   slug: 'snake'
 }, {
@@ -1010,9 +1046,6 @@ Coldwar.prototype.scenes = [{
   title: 'Enemies',
   slug: 'enemies'
 }, {
-  // title: 'Beware',
-  // slug: 'beware'
-// }, {
   title: 'Training',
   slug: 'training'
 }, {
@@ -1034,14 +1067,191 @@ Coldwar.prototype.scenes = [{
   title: 'Maze 3',
   slug: 'maze3'
 }, {
-//   title: 'King Rat',
-//   slug: 'king_rat'
-// }, {
   title: 'Tunnel',
   slug: 'tunnel'
 }, {
   title: 'Trap',
   slug: 'trap'
+}, { 
+ title: 'Boom',
+  slug: 'boom'
+}]
+
+//Coldwar.prototype.scenesJSconfAsia = [{
+Coldwar.prototype.scenes = [{
+  title: 'Index',
+  slug: 'index'
+}, {
+  title: 'Logo',
+  slug: 'logo'
+}, {
+  title: 'Story',
+  slug: 'story'
+}, {
+  title: 'Title',
+  slug: 'title'
+}, {
+  title: 'Loading',
+  slug: 'loading'
+}, {
+  title: 'Briefing',
+  slug: 'briefing'
+}, {
+  title: 'Machines',
+  slug: 'machines'
+}, {
+  title: 'Reactor',
+  slug: 'reactor'
+}, {
+  title: 'Follow',
+  slug: 'follow'
+}, {
+  title: 'Variants',
+  slug: 'variants'
+}, {
+  title: 'Factory',
+  slug: 'factory'
+}, {
+  title: 'Beware',
+  slug: 'beware'
+}, {
+  title: 'Enemies',
+  slug: 'enemies'
+}, {
+  title: 'Training',
+  slug: 'training'
+}, {
+  title: 'Simulation',
+  slug: 'cell'
+}, {
+  title: 'Ready?',
+  slug: 'ready'
+}, {
+  title: 'Entry',
+  slug: 'entry'
+}, {
+  title: 'Maze 1',
+  slug: 'maze1'
+}, {
+  title: 'Maze 2',
+  slug: 'maze2'
+}, {
+  title: 'Maze 3',
+  slug: 'maze3'
+}, {
+  title: 'Cells',
+  slug: 'cellsmaze'
+}, {
+  title: 'Small Array',
+  slug: 'small_array'
+}, {
+  title: 'Sim Cell',
+  slug: 'simcell'
+}, {
+  title: 'Links',
+  slug: 'links'
+}, {
+  title: 'Graph',
+  slug: 'graph'
+// }, {
+//   title: 'Cells',
+//   slug: 'cells'
+// }, {
+//   title: 'Structure',
+//   slug: 'datastructure'
+}, {
+  title: 'Mazegen 1',
+  slug: 'mazegen1'
+}, {
+  title: 'Mazegen 2',
+  slug: 'mazegen2'
+}, {
+  title: 'Mazegen 3',
+  slug: 'mazegen3'
+}, {
+  title: 'Mazegen 4',
+  slug: 'mazegen4'
+}, {
+  title: 'Mazegen 5',
+  slug: 'mazegen5'
+}, {
+  title: 'Mazegen 6',
+  slug: 'mazegen6'
+}, {
+  title: 'Mazegen',
+  slug: 'mazegen'
+}, {
+  title: 'Four Cells',
+  slug: 'four_cells'
+}, {
+  title: 'Cell Hopping',
+  slug: 'cell_hopping'
+}, {
+  title: 'Solver0',
+  slug: 'solver0'
+}, {
+  title: 'Solver1',
+  slug: 'solver1'
+}, {
+  title: 'Solver2',
+  slug: 'solver2'
+}, {
+  title: 'Solver3',
+  slug: 'solver3'
+}, {
+  title: 'Solver4',
+  slug: 'solver4'
+}, {
+  title: 'Solver5',
+  slug: 'solver5'
+}, {
+  title: 'Solver6',
+  slug: 'solver6'
+}, {
+  title: 'Solver7',
+  slug: 'solver7'
+}, {
+  title: 'Solver8',
+  slug: 'solver8'
+}, {
+//   title: 'Solver4x4',
+//   slug: 'solver4x4'
+// }, {
+  title: 'Solver',
+  slug: 'solver'
+}, {
+  title: 'Rat Mischief',
+  slug: 'rat_logic'
+}, {
+  title: 'Rat Logic',
+  slug: 'rat_logic_seek'
+}, {
+  title: 'Seeding Maze',
+  slug: 'seeding_maze'
+}, {
+  title: 'Linear Path',
+  slug: 'linear_path'
+}, {
+  title: 'Modulus',
+  slug: 'modulus'
+}, {
+  title: 'Twisty',
+  slug: 'twisty'
+}, {
+  title: 'Maze 4',
+  slug: 'maze4'
+}, {
+  title: 'Tunnel',
+  slug: 'tunnel'
+}, {
+  title: 'Gateway',
+  slug: 'gateway'
+}, {
+  title: 'King Rat',
+  slug: 'king_rat'
+// }, {
+//   title: 'Trap',
+//   slug: 'trap'
 }, { 
  title: 'Boom',
   slug: 'boom'
