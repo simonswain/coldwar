@@ -14,6 +14,11 @@ Scenes.modulus.prototype.title = 'Big Array'
 Scenes.modulus.prototype.init = function () {
   this.index = 0;
 
+  this.caps = [];
+  for(var i = 0; i < 8; i++){
+    this.caps.push(0);
+  }
+
   this.snakeCell = new Actors.Cell(
     this.env, {
       scene: this
@@ -56,6 +61,10 @@ Scenes.modulus.prototype.defaults = [{
 
 Scenes.modulus.prototype.genAttrs = function () {
   return {
+    time: 0,
+    index: 0,
+    value: 0,
+    duration: 60,
     alpha: 0,
     level: 1,
     rows: 3,
@@ -197,6 +206,20 @@ Scenes.modulus.prototype.generatePerfectMaze = function () {
 
 Scenes.modulus.prototype.update = function (delta) {
 
+  this.attrs.time += this.env.diff
+
+  if (this.attrs.time > this.attrs.duration) {
+    this.attrs.time = 0;
+
+    this.attrs.value --;
+    if(this.attrs.value < 0){
+      this.attrs.value = 255;
+    }
+    for(var i = 0; i < 8; i++){
+      this.caps[i] = (this.attrs.value & Math.pow(2, i));
+    }
+  }
+  
   if(!this.cells){
     this.makeGrid();
     this.generatePerfectMaze();
@@ -540,40 +563,220 @@ Scenes.modulus.prototype.paintReactor = function(gx, fx){
 
 }
 
+Scenes.modulus.prototype.drawCap = function(gx, charge){
+
+  var ww = 250;
+  
+  gx.ctx.strokeStyle = '#0ff';
+  gx.ctx.lineWidth = 8;
+
+  gx.ctx.fillStyle = 'rgba(255,0,255,' + charge + ')';
+  gx.ctx.beginPath();
+  gx.ctx.fillRect(
+    ww * 0.3,
+    ww * 0.4,    
+    ww * 0.4,
+    ww * 0.2    
+  )
+
+  gx.ctx.beginPath();
+  gx.ctx.moveTo(ww * 0.5, ww * 0.2) 
+  gx.ctx.lineTo(ww * 0.5, ww * 0.4)
+  gx.ctx.stroke();
+
+  gx.ctx.beginPath();
+  gx.ctx.moveTo(ww * 0.3, ww * 0.4) 
+  gx.ctx.lineTo(ww * 0.7, ww * 0.4)
+  gx.ctx.stroke();
+
+  gx.ctx.beginPath();
+  gx.ctx.moveTo(ww * 0.3, ww * 0.6) 
+  gx.ctx.lineTo(ww * 0.7, ww * 0.6)
+  gx.ctx.stroke();
+
+  gx.ctx.beginPath();
+  gx.ctx.moveTo(ww * 0.5, ww * 0.6) 
+  gx.ctx.lineTo(ww * 0.5, ww * 0.8)
+  gx.ctx.stroke();
+  
+}
+
+Scenes.modulus.prototype.paintCaps = function (gx) {
+
+  for(var i = 0; i < 4; i++){
+    gx.ctx.save();
+    gx.ctx.translate(150 * i, 0);
+    this.drawCap(gx, this.caps[i]);
+    gx.ctx.restore()
+  }
+  
+}
 
 
+Scenes.modulus.prototype.paintKing = function (view) {
+
+  view.ctx.save()
+  view.ctx.rotate(this.velo.angleXY())
+
+  var ccc = '#c00'
+
+  if(this.attrs.hit){
+    this.attrs.hit = false;
+    ccc = '#ff0';
+  }
+  
+  view.ctx.fillStyle = '#c00'
+  view.ctx.strokeStyle = '#c00'
+  view.ctx.lineWidth = 1
+
+  
+  var z = 8
+
+  // for tails
+  var q1 = (Math.sin(this.attrs.phase/2) % (2*Math.PI));
+  var q2 = (Math.sin(this.attrs.phase/3) % (2*Math.PI));
+
+  // tail
+  view.ctx.fillStyle = ccc
+  view.ctx.strokeStyle = ccc
+  view.ctx.save()
+  view.ctx.translate(-1.5*z, 0)
+  view.ctx.beginPath()
+  view.ctx.moveTo(0, 0.5*z)
+  view.ctx.quadraticCurveTo(-5*z, z * q1, -5 * z, 0)
+  view.ctx.quadraticCurveTo(-5*z, z * q1, 0, -0.5*z)
+  view.ctx.closePath()
+  view.ctx.stroke()
+  view.ctx.fill()
+  view.ctx.restore()
+
+  // body
+  view.ctx.fillStyle = ccc
+  view.ctx.lineWidth = 1
+  view.ctx.beginPath()
+  view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
+  view.ctx.closePath()
+  view.ctx.fill()
+
+  // head
+  view.ctx.save()
+  view.ctx.translate(2.2*z, 0)
+  view.ctx.rotate(q2 * 0.3)
+
+  // whiskers
+  view.ctx.strokeStyle = ccc
+  view.ctx.lineWidth=0.5
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(z*0.8, 0)
+  view.ctx.lineTo(z*0.7, -z)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(z*0.8, 0)
+  view.ctx.lineTo(z*0.9, -z)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(z*0.8, 0)
+  view.ctx.lineTo(z*0.7, z)
+  view.ctx.stroke()
+
+  view.ctx.beginPath()
+  view.ctx.moveTo(z*0.8, 0)
+  view.ctx.lineTo(z*0.9, z)
+  view.ctx.stroke()
+
+  // skull
+  view.ctx.fillStyle = ccc
+  view.ctx.beginPath()
+  view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
+  view.ctx.closePath()
+  view.ctx.fill()
+
+  //eyes
+  view.ctx.fillStyle = '#ff0'
+  // blink
+  if(Math.random() < 0.1){
+    view.ctx.fillStyle = '#000'
+  }
+  view.ctx.beginPath()
+  view.ctx.ellipse(z * 0.8, -z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
+  view.ctx.closePath()
+
+  view.ctx.fill()
+  view.ctx.beginPath()
+  view.ctx.ellipse(z * 0.8, z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
+  view.ctx.closePath()
+  view.ctx.fill()
+
+  view.ctx.restore()
+  // end head
+
+
+  view.ctx.restore()
+}
 
 Scenes.modulus.prototype.paint = function (fx, gx, sx) {
 
   gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5)
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.55)
   this.paintLevel(gx);
   gx.ctx.restore();
 
   // maze
   this.paintGrid(gx, fx);
 
+  if(this.attrs.level % 4 === 0 ) {
+    gx.ctx.save();
+    gx.ctx.translate(this.opts.max_x * 0, this.opts.max_y * 0.25)
+    gx.ctx.rotate(-Math.PI * 0.25);
+    gx.ctx.scale(0.17, 0.17);
+    this.paintCaps(gx, fx);
+    gx.ctx.restore();
+  }
+
+  if(this.attrs.level % 7 === 0 ) {
+    gx.ctx.save();
+    gx.ctx.translate(this.opts.max_x * 0, this.opts.max_y * 0.25)
+    gx.ctx.rotate(-Math.PI * 0.25);
+    gx.ctx.scale(0.2, 0.2);
+    this.paintCaps(gx, fx);
+    gx.ctx.restore();
+  }
+  
   // reactor
   gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.9, this.opts.max_y * 0.85)
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.85)
   gx.ctx.scale(0.45, 0.45);
   this.paintReactor(gx, fx);
   gx.ctx.restore();
 
   // breeder
-  gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.4, this.opts.max_y * 0.75);
-  gx.ctx.scale(0.2, 0.2);
-  this.breederCell.paint(gx)
-  gx.ctx.restore();
-
+  
+  if(this.attrs.level !== 12) {
+    fx.ctx.save();
+    fx.ctx.translate(this.opts.max_x * 0.8, this.opts.max_y * 0.75);
+    fx.ctx.scale(0.2, 0.2);
+    gx.ctx.save();
+    gx.ctx.translate(this.opts.max_x * 0.8, this.opts.max_y * 0.75);
+    gx.ctx.scale(0.2, 0.2);
+    this.breederCell.paint(gx, gx)
+    gx.ctx.restore();
+    fx.ctx.restore();
+  }
+  
   // snake
   if(this.attrs.level > 2 ) {
+    fx.ctx.save();
+    fx.ctx.translate(this.opts.max_x * 0.4, this.opts.max_y * 0.75);
+    fx.ctx.scale(0.2, 0.2);
     gx.ctx.save();
     gx.ctx.translate(this.opts.max_x * 0.8, this.opts.max_y * 0.4);
     gx.ctx.scale(0.2, 0.2);
-    this.snakeCell.paint(gx)
+    this.snakeCell.paint(gx, fx)
     gx.ctx.restore();
+    fx.ctx.restore();
   }
 
   // pong
@@ -594,12 +797,115 @@ Scenes.modulus.prototype.paint = function (fx, gx, sx) {
   // pow
   if(this.attrs.level > 6) {
     gx.ctx.save();
-    gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.75);
+    gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.85);
     gx.ctx.scale(0.3, 0.3);
     this.paintPowerup(gx)
     gx.ctx.restore();
   }
 
+  // king
+  if(this.attrs.level %7 === 0) {
+
+    var view = gx;
+    
+    var ccc = '#c00'
+    view.ctx.fillStyle = '#c00'
+    view.ctx.strokeStyle = '#c00'
+    view.ctx.lineWidth = 1
+    
+    gx.ctx.save()
+    gx.ctx.translate(this.opts.max_x * 0.9, this.opts.max_y * 0.2);
+    gx.ctx.scale(0.4, 0.4);
+
+    gx.ctx.rotate(Math.sin((Date.now()/1000) % (2*Math.PI)) - Math.PI*0.5)
+
+    var view = gx;
+    var z = 24
+
+    // for tails
+    var q1 = (Math.sin((Date.now()/125) % (2*Math.PI)));
+    var q2 = (Math.sin((Date.now()/333) % (2*Math.PI)));
+
+    // tail
+    view.ctx.fillStyle = ccc
+    view.ctx.strokeStyle = ccc
+    view.ctx.save()
+    view.ctx.translate(-1.5*z, 0)
+    view.ctx.beginPath()
+    view.ctx.moveTo(0, 0.5*z)
+    view.ctx.quadraticCurveTo(-5*z, z * q1, -5 * z, 0)
+    view.ctx.quadraticCurveTo(-5*z, z * q1, 0, -0.5*z)
+    view.ctx.closePath()
+    view.ctx.stroke()
+    view.ctx.fill()
+    view.ctx.restore()
+
+    // body
+    view.ctx.fillStyle = ccc
+    view.ctx.lineWidth = 1
+    view.ctx.beginPath()
+    view.ctx.ellipse(0, 0, z * 2.5, z * 1.2, 0, 2*Math.PI, 0);
+    view.ctx.closePath()
+    view.ctx.fill()
+
+    // head
+    view.ctx.save()
+    view.ctx.translate(2.2*z, 0)
+    view.ctx.rotate(q2 * 0.3)
+
+    // whiskers
+    view.ctx.strokeStyle = ccc
+    view.ctx.lineWidth=0.5
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, -z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.7, z)
+    view.ctx.stroke()
+
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*0.8, 0)
+    view.ctx.lineTo(z*0.9, z)
+    view.ctx.stroke()
+
+    // skull
+    view.ctx.fillStyle = ccc
+    view.ctx.beginPath()
+    view.ctx.ellipse(0, 0, z * 1.2, z * 0.7, 0, 2*Math.PI, 0);
+    view.ctx.closePath()
+    view.ctx.fill()
+
+    //eyes
+    view.ctx.fillStyle = '#ff0'
+    // blink
+    if(Math.random() < 0.1){
+      view.ctx.fillStyle = '#000'
+    }
+    view.ctx.beginPath()
+    view.ctx.ellipse(z * 0.8, -z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
+    view.ctx.closePath()
+
+    view.ctx.fill()
+    view.ctx.beginPath()
+    view.ctx.ellipse(z * 0.8, z*0.2, z * 0.1, z * 0.05, 0, 2*Math.PI, 0);
+    view.ctx.closePath()
+    view.ctx.fill()
+
+    view.ctx.restore()
+    // end head
+
+
+    view.ctx.restore()
+  }
 
   // // human
 

@@ -36,7 +36,13 @@ Actors.Reactor.prototype.defaults = [{
 
 
 Actors.Reactor.prototype.prime = function () {
+
+  if(this.attrs.primed){
+    return;
+  }
+
   this.env.play('inception')
+
   this.attrs.primed = true;
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
@@ -47,11 +53,29 @@ Actors.Reactor.prototype.prime = function () {
       y: this.pos.y
     }
   ))
+
+  this.refs.cell.oneups.push(new Actors.Oneup(
+    this.env, {
+      cell: this.refs.cell
+    }, {
+      text: 'PRIMED',
+      style: 'oneup',
+      x: this.pos.x,
+      y: this.pos.y
+    }
+  ))
+
+  var cells = this.refs.cell.refs.maze.cells
+  var i, ii;
+  for (i = 0, ii = cells.length; i<ii; i++) {
+    cells[i].disableAllEnergyActors();
+  }  
+  
 }
 
 Actors.Reactor.prototype.detonate = function () {
   this.env.play('boom')
-  this.attrs.primed = true;
+
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
     }, {
@@ -61,6 +85,7 @@ Actors.Reactor.prototype.detonate = function () {
       y: this.pos.y
     }
   ))
+
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
     }, {
@@ -70,6 +95,13 @@ Actors.Reactor.prototype.detonate = function () {
       y: this.pos.y
     }
   )) 
+
+  var cells = this.refs.cell.refs.maze.cells
+  var i, ii;
+  for (i = 0, ii = cells.length; i<ii; i++) {
+    cells[i].killAllActors();
+  }  
+
 }
 
 

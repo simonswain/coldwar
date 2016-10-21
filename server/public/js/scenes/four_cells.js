@@ -96,23 +96,37 @@ Scenes.four_cells.prototype.update = function (delta) {
 
 Scenes.four_cells.prototype.paint = function (fx, gx, sx) {
 
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
+  fx.ctx.scale(0.3, 0.3);
+
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.1);
   gx.ctx.scale(0.3, 0.3);
-  this.cell1.paint(gx)
+  this.cell1.paint(gx, fx)
   gx.ctx.restore();
+  fx.ctx.restore();
+
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.6);
+  fx.ctx.scale(0.3, 0.3);
 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.6);
   gx.ctx.scale(0.3, 0.3);
-  this.cell2.paint(gx)
+  this.cell2.paint(gx, fx)
   gx.ctx.restore();
+  fx.ctx.restore();
 
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.6, this.opts.max_y * 0.1);
+  fx.ctx.scale(0.3, 0.3);
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.6, this.opts.max_y * 0.1);
   gx.ctx.scale(0.3, 0.3);
-  this.cell3.paint(gx)
+  this.cell3.paint(gx, fx)
   gx.ctx.restore();
+  fx.ctx.restore();
 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.6, this.opts.max_y * 0.6);

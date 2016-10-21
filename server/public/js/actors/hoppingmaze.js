@@ -714,7 +714,7 @@ Actors.Hoppingmaze.prototype.update = function (delta) {
 
 }
 
-Actors.Hoppingmaze.prototype.paint = function (view) {
+Actors.Hoppingmaze.prototype.paint = function (view, fx) {
 
   var max = Math.max(this.opts.max_x, this.opts.max_y);
   var min = Math.min(this.opts.max_x, this.opts.max_y);
@@ -781,12 +781,17 @@ Actors.Hoppingmaze.prototype.paint = function (view) {
     y = Math.floor(i/this.attrs.rows);
 
     cell = this.cells[i]
+    fx.ctx.save()
+    fx.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
+    fx.ctx.scale(f, f);
+
     view.ctx.save()
     view.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
     view.ctx.scale(f, f);
 
-    cell.paint(view);
+    cell.paint(view, fx); 
     view.ctx.restore()
+    fx.ctx.restore()
   }
 
   var routes, route, from, to, dx, dy;
@@ -894,7 +899,6 @@ Actors.Hoppingmaze.prototype.paint = function (view) {
     view.ctx.restore()
   }
  
-
   view.ctx.restore()
 
 }

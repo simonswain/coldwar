@@ -301,7 +301,7 @@ Actors.Seedingmaze.prototype.randomBreeder = function (max) {
       x --;
       continue;
     }
-    if(this.cells[ix].reactors.length > 0){
+    if(!this.cells[ix].reactor){
       x --;
       continue;
     }
@@ -676,7 +676,7 @@ Actors.Seedingmaze.prototype.update = function (delta) {
   }
 
   if(this.attrs.boom && this.attrs.boomCountdown === 15){
-    this.cells[this.attrs.reactor_cell].reactors[0].detonate();
+    this.cells[this.attrs.reactor_cell].reactor.detonate();
   }
   
   if(this.attrs.boom && this.attrs.boomCountdown > 0){
@@ -714,7 +714,7 @@ Actors.Seedingmaze.prototype.update = function (delta) {
 
 }
 
-Actors.Seedingmaze.prototype.paint = function (view) {
+Actors.Seedingmaze.prototype.paint = function (view, fx) {
 
   var max = Math.max(this.opts.max_x, this.opts.max_y);
   var min = Math.min(this.opts.max_x, this.opts.max_y);
@@ -781,12 +781,17 @@ Actors.Seedingmaze.prototype.paint = function (view) {
     y = Math.floor(i/this.attrs.rows);
 
     cell = this.cells[i]
+    fx.ctx.save()
+    fx.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
+    fx.ctx.scale(f, f);
+
     view.ctx.save()
     view.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
     view.ctx.scale(f, f);
 
-    cell.paint(view);
+    cell.paint(view, fx); 
     view.ctx.restore()
+    fx.ctx.restore()
   }
 
   var routes, route, from, to, dx, dy;

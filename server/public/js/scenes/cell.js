@@ -17,6 +17,7 @@ Scenes.cell.prototype.init = function () {
     this.env, {
       scene: this
     }, {
+      training: true
     })
 
   this.cell.addHuman();
@@ -72,7 +73,14 @@ Scenes.cell.prototype.paint = function (fx, gx, sx) {
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
   gx.ctx.scale(0.9, 0.9);
 
-  this.cell.paint(gx)
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
+  fx.ctx.scale(0.9, 0.9);
+
+  this.cell.paint(gx, fx)
+
+  fx.ctx.restore();
+  gx.ctx.restore();
 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.2);
@@ -101,8 +109,6 @@ Scenes.cell.prototype.paint = function (fx, gx, sx) {
   gx.ctx.textBaseline='middle'
   gx.ctx.fillText('SIMULATION', 0, 0);
   gx.ctx.restore();
-
   
-  gx.ctx.restore();
 
 }

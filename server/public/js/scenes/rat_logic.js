@@ -79,8 +79,12 @@ Scenes.rat_logic.prototype.flash = function(fx, gx, sx){
 
 Scenes.rat_logic.prototype.paint = function (fx, gx, sx) { 
   gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
-  gx.ctx.scale(0.9, 0.9);
-  this.maze.paint(gx)
+  gx.ctx.translate(this.opts.max_x * 0.15, this.opts.max_y * 0.15);
+  gx.ctx.scale(0.7, 0.7);
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.15, this.opts.max_y * 0.15);
+  fx.ctx.scale(0.7, 0.7);
+  this.maze.paint(gx, fx)
   gx.ctx.restore();
+  fx.ctx.restore();
 }

@@ -70,7 +70,7 @@ Scenes.entry.prototype.paint = function(fx, gx, sx){
     gx.ctx.fill()
 
     gx.ctx.strokeStyle = 'rgba(255, 255, 255, 1)'
-    gx.ctx.lineWidth = 8
+    gx.ctx.lineWidth = 2
     gx.ctx.beginPath()
     gx.ctx.rect(-this.opts.max_x * p/2, -this.opts.max_y * p/2, this.opts.max_x * p, this.opts.max_y * p)
     gx.ctx.stroke()
@@ -123,7 +123,7 @@ Scenes.entry.prototype.paint = function(fx, gx, sx){
   gx.ctx.font = '36pt robotron';
   gx.ctx.textAlign='center'
   gx.ctx.textBaseline='middle'
-  gx.ctx.fillText('enter the maze', this.opts.max_x / 2, this.opts.max_y / 2);
+  gx.ctx.fillText('ingress', this.opts.max_x / 2, this.opts.max_y / 2);
   gx.ctx.restore();
   
 }

@@ -160,9 +160,15 @@ Scenes.title.prototype.flash = function(fx, gx){
 }
 
 Scenes.title.prototype.paint = function(fx, gx, sx){
+  gx.ctx.save();
+  gx.ctx.translate(-this.opts.max_x * 0.6, -this.opts.max_y * 0.5);
+  gx.ctx.scale(2, 2);
   this.paintTitle(gx);
+  gx.ctx.restore();
   fx.ctx.save();
+  fx.ctx.translate(-this.opts.max_x * 0.6, -this.opts.max_y * 0.5);
   fx.ctx.translate(this.opts.wiggle_size*(Math.random() - 0.5), this.opts.wiggle_size*(Math.random() - 0.5));
+  fx.ctx.scale(2, 2);
   this.paintTitle(fx);
   fx.ctx.restore();
 }
@@ -334,45 +340,45 @@ Scenes.title.prototype.frames[1] = {
 
 Scenes.title.prototype.frames[2] = {
   text:[
-    '     xxx   xxxx    ',
-    '    x  xx  x       ',
-    '    x  xx  x       ',
-    '    x  xx  xx      ',
-    '    x  xx  xx      ',
-    '     xxx   x       ',
+    '        xxx   xxxx     ',
+    '       x  xx  x        ',
+    '       x  xx  x        ',
+    '       x  xx  xx       ',
+    '       x  xx  xx       ',
+    '        xxx   x        ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[3] = {
   text:[
-    ' xxxxxx x   x  xxxx  ',
-    '   xx   x   x  xx    ',
-    '   xx   x   x  xx    ',
-    '   xx   xxxxx  xxx   ',
-    '   xx   xxxxx  xx    ',
-    '   xx   x   x  xxxx  ',
+    '  xxxxxx x   x  xxxx   ',
+    '    xx   x   x  xx     ',
+    '    xx   x   x  xx     ',
+    '    xx   xxxxx  xxx    ',
+    '    xx   xxxxx  xx     ',
+    '    xx   x   x  xxxx   ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[4] = {
   text:[
-    'xxx    xx  xxxxxx xxxx',
+    'xxx    xx  xxxxxx xxxx ',
     'x xx  xxxx   xx   xx   ',
-    'x xx  x  x   xx   xx  ',
-    'xxx   xxxx   xx   xxxx',
-    'x  x  x  x   xx     xx',
-    'x  x  x  x   xx   xxxx',
+    'x xx  x  x   xx   xx   ',
+    'xxx   xxxx   xx   xxxx ',
+    'x  x  x  x   xx     xx ',
+    'x  x  x  x   xx   xxxx ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[5] = {
   text:[
-    '     xxx   xxxx    ',
-    '    x  xx  x       ',
-    '    x  xx  x       ',
-    '    x  xx  xx      ',
-    '    x  xx  xx      ',
-    '     xxx   x       ',
+    '       xxx   xxxx      ',
+    '      x  xx  x         ',
+    '      x  xx  xx        ',
+    '      x  xx  xx        ',
+    '      x  xx  x         ',
+    '       xxx   x         ',
   ].join("\n")
 };
 

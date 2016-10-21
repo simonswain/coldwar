@@ -81,6 +81,6 @@ Scenes.maze1.prototype.paint = function (fx, gx, sx) {
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
   gx.ctx.scale(0.9, 0.9);
-  this.maze.paint(gx)
+  this.maze.paint(gx, fx)
   gx.ctx.restore();
 }

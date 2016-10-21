@@ -15,8 +15,13 @@ Actors.Human.prototype.title = 'Human'
 Actors.Human.prototype.genAttrs = function (attrs) {
 
   var energy = 10 + random0to(10)
+  var pow = (this.env.level > 4) ? 60 : 0;
+  if(this.env.level % 13 === 0){
+    pow = 1000
+  }
 
   return {
+    powerup: pow,
     face_enemy: false,
     face_angle: 0,
     speed: this.opts.speed_base + (Math.random() * this.opts.speed_flux),
@@ -165,10 +170,8 @@ Actors.Human.prototype.defaults = [{
 
 Actors.Human.prototype.update = function (delta) {
 
-  //if(!this.attrs.shotfired){
   this.attrs.alpha = Math.sin(Math.PI *((Date.now()%500)/1000));
 
-  //if(this.refs.cell.rats.length === 0){
   if(this.attrs.alpha < 0.1 && this.attrs.flag){
     this.attrs.flag = false;
     this.env.play('heartbeat');
@@ -177,24 +180,35 @@ Actors.Human.prototype.update = function (delta) {
     this.attrs.flag = true;
     this.env.play('heartbeat');
   }
-    //}
+
+  this.recharge()
+  this.shootKings()
+  this.shootRats()
+  this.shootBreeder()
+  this.flashbang()
 
   var vec = new Vec3()
   var route
-
-  this.recharge()
-  this.shootRats()
-  this.shootBreeder()
-
-  this.flashbang()
   
-  if(this.refs.maze){
-    if(this.refs.cell.reactors.length > 0) {
-      vec.add(this.toReactor())
-    }
-    if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
+  if(this.refs.cell.reactor) {
+    vec.add(this.toReactor())
+  }
+
+  if(this.attrs.powerup > 0){
+    this.attrs.powerup -= delta;
+  }
+
+  if(this.attrs.powerup < 0){
+    this.attrs.powerup = 0;
+  }
+  
+  if(this.refs.cell.powerup) {
+    vec.add(this.toPowerup().scale(4))
+  } else if(this.refs.maze) {
+
+    if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover) {
       this.refs.maze.attrs.escape_done = true;
-    } else{
+    } else {
 
       if(this.refs.maze.attrs.escape){
         // escaping from countdown
@@ -205,7 +219,7 @@ Actors.Human.prototype.update = function (delta) {
         //
         route.push(this.refs.maze.attrs.reactor_cell)
       }
-
+      
       if(route[0] === this.refs.cell.attrs.i){
         route.shift();
       }
@@ -238,24 +252,22 @@ Actors.Human.prototype.update = function (delta) {
             vec.add(new Vec3(-1, 0).scale(this.opts.intent_scale))
           }
         }
-
       }
-
-
     }
+    this.attrs.intent = intent
+    this.attrs.route = route;
   }
 
-  this.attrs.intent = intent
-  this.attrs.route = route;
-
-  //vec.add(this.separation().scale(this.opts.separation_force))
-  //vec.add(this.alignment().scale(this.opts.alignment_force))
-  //vec.add(this.cohesion().scale(this.opts.cohesion_force))
-
-  vec.add(this.flee().scale(this.opts.predator_force))
+  if(!this.refs.cell.attrs.training){
+    vec.add(this.flee().scale(this.opts.predator_force))
+  }
+  
   vec.add(this.reflect().scale(this.opts.reflect_force))
 
   vec.scale(this.opts.velo_scale)
+
+  vec.add(this.avoidPong().scale(7))
+  vec.add(this.avoidSnake().scale(3))
 
   this.velo.add(vec)
   this.velo.limit(this.attrs.speed)
@@ -319,35 +331,6 @@ Actors.Human.prototype.update = function (delta) {
 
 }
 
-Actors.Human.prototype.toReactor = function () {
-
-  if(this.refs.cell.reactor.length === 0){
-    return new Vec3();
-  }
-
-  var reactor = this.refs.cell.reactors[0];
-
-  if (reactor.attrs.primed ){
-    return new Vec3();
-  }
-  
-  var i, ii
-  var other
-  var range
-
-  var vec = new Vec3()
-
-  // close enough to reactor?
-  var range = this.pos.rangeXY(reactor.pos);
-  if(range < 128){
-    this.refs.maze.attrs.escape = true;
-    reactor.prime();
-  }
-
-  vec.add(reactor.pos.minus(this.pos).normalize())
-  return vec.normalize().scale(3)
-}
-
 Actors.Human.prototype.recharge = function () {
   // basics
   this.attrs.energy = this.attrs.energy + (this.attrs.recharge * (1 - (1 / this.attrs.energy_max) * this.attrs.damage))
@@ -361,22 +344,18 @@ Actors.Human.prototype.recharge = function () {
   }
 }
 
-Actors.Human.prototype.shootRats = function () {
+Actors.Human.prototype.shootKings = function () {
 
-  if(this.attrs.escaped){
-    return;
-  }
-  
   var enemy
   var closest = Infinity
 
   this.attrs.face_enemy = false;
 
-  if(this.refs.cell.rats.length === 0){
+  if(this.refs.cell.kings.length === 0){
     return;
   };
 
-  this.refs.cell.rats.forEach(function (other) {
+  this.refs.cell.kings.forEach(function (other) {
     if(!other){
       return;
     }
@@ -398,19 +377,86 @@ Actors.Human.prototype.shootRats = function () {
       this.pos.x,
       this.pos.y,
       enemy.pos.x,
-      enemy.pos.y
+      enemy.pos.y,
+      'big'
     )
-
-    this.attrs.shotfired = true;   
   }
 
 }
 
+Actors.Human.prototype.shootRats = function () {
+
+  if(this.attrs.escaped){
+    return;
+  }
+  
+  var enemy
+  var closest = Infinity
+
+  this.attrs.face_enemy = false;
+
+  if(!this.refs.cell.attrs.training){
+  var rats = [];
+  for(var i = 0; i < 4; i ++) {
+    if(!this.refs.cell.exits[i]){
+      continue;
+    }
+    rats = rats.concat(rats, this.refs.cell.exits[i].rats);
+  }
+  if(rats.length === 0){
+    return;
+  };
+  }
+
+  if(this.refs.cell.rats.length === 0){
+    return;
+  };
+
+  this.refs.cell.rats.forEach(function (other) {
+    if(!other){
+      return;
+    }
+    var range = this.pos.rangeXY(other.pos)
+    if(this.attrs.powerup > 0 && range < 128){
+      this.attrs.powerup -=10;
+      if(this.attrs.powerup<0){
+        this.attrs.powerup = 0;
+      }
+      other.kill();
+      return;
+    }
+    
+    if (range < closest) {
+      enemy = other
+      closest = range
+    }
+  }, this)
+
+  if(enemy){
+    this.attrs.face_angle = enemy.pos.angleXYto(this.pos)
+    this.attrs.face_enemy = true;
+  }
+
+  if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
+    this.attrs.energy = this.attrs.energy - 1
+    this.refs.cell.addZap(
+      this.pos.x,
+      this.pos.y,
+      enemy.pos.x,
+      enemy.pos.y,
+      this.attrs.powerup > 0 ? 'big' : null
+    )
+  }
+}
+
 Actors.Human.prototype.flashbang = function () {
 
+  if(this.attrs.powerup > 0){
+    return;
+  }
+  
   if(this.refs.cell.rats.length > this.opts.flashbang_rats){
     if(Math.random() < this.opts.flashbang_probability){
-      this.env.play('superzap')
       this.refs.cell.attrs.flash = 4;
       this.refs.cell.rats.forEach(function (other) {
         if(!other){
@@ -464,7 +510,8 @@ Actors.Human.prototype.shootBreeder = function () {
       this.pos.x,
       this.pos.y,
       enemy.pos.x,
-      enemy.pos.y
+      enemy.pos.y,
+      'big'
     )
   }
 
@@ -496,7 +543,6 @@ Actors.Human.prototype.reflect = function () {
   return reflect
 
 }
-
 
 Actors.Human.prototype.separation = function () {
   var i, ii
@@ -628,6 +674,97 @@ Actors.Human.prototype.flee = function () {
   return vec.normalize()
 }
 
+Actors.Human.prototype.avoidSnake = function () {
+  if(!this.refs.cell.snake){
+    return new Vec3();
+  }
+  return this.pos.minus(this.refs.cell.snake.vec()).normalize()
+}
+
+
+Actors.Human.prototype.avoidPong = function () {
+
+  var i, ii
+  var other
+  var range
+
+  var vec = new Vec3()
+
+  if(!this.refs.cell.pong){
+    return vec;
+  }
+
+  range = this.pos.rangeXY(this.refs.cell.pong.pos)
+
+  vec.sub(this.refs.cell.pong.pos.minus(this.pos).normalize())
+  return vec.normalize()
+}
+
+Actors.Human.prototype.toReactor = function () {
+
+  var i, ii
+  var other
+  var range
+
+  var vec = new Vec3()
+
+  if(!this.refs.cell.reactor){
+    return vec;
+  }
+
+  range = this.pos.rangeXY(this.refs.cell.reactor.pos)
+
+  if(range < 128){
+    this.refs.maze.attrs.escape = true;
+    this.refs.cell.reactor.prime();
+  }
+
+  vec.add(this.refs.cell.reactor.pos.minus(this.pos).normalize())
+  return vec.normalize().scale(3)
+}
+
+Actors.Human.prototype.toPowerup = function () {
+
+  var i, ii
+  var other
+  var range
+
+  var vec = new Vec3()
+
+  if(!this.refs.cell.powerup){
+    return vec;
+  }
+  
+  if(!this.attrs.powerup > 100){
+    return vec;
+  }
+
+  pos = new Vec3(this.refs.cell.opts.max_x / 2, this.refs.cell.opts.max_y / 2);
+  range = this.pos.rangeXY(pos)
+  if (range < 64) {
+    this.attrs.powerup = 3000
+    this.refs.cell.powerup.kill();
+    this.env.play('computer');
+
+
+    this.refs.cell.oneups.push(new Actors.Oneup(
+      this.env, {
+        cell: this.refs.cell
+      }, {
+        text: 'POW',
+        style: 'pow',
+        x: this.refs.cell.opts.max_x / 2,
+        y: this.refs.cell.opts.max_y / 2,
+      }
+    ))
+
+  }
+
+  vec.add(pos.minus(this.pos).normalize())
+  return vec.normalize()
+}
+
+
 Actors.Human.prototype.steer = function () {
   var i, ii
 
@@ -695,24 +832,52 @@ Actors.Human.prototype.steer = function () {
   return vector
 }
 
-Actors.Human.prototype.paint = function (view) {
+Actors.Human.prototype.paint = function (view, fx) {
 
   if(this.attrs.escaped){
     return;
   }
 
   view.ctx.save()
+
+  var z = 32
+
   if(this.attrs.face_enemy){
     view.ctx.rotate(this.attrs.face_angle)
   } else {
     view.ctx.rotate(this.velo.angleXY())
   }
 
+  if(this.attrs.powerup){
+    var h = (Date.now()%160 * 0.2) - 160;
+    c = 'hsl(' + h + ', 100%, 50%)';
+    
+    if(Math.random() < 0.025){
+      c = 'rgba(255,255,0,0.5)';
+    }
+
+    if(Math.random() < 0.025){
+      c = 'rgba(255,255,255,1)';
+    }
+
+    view.ctx.lineWidth = 8
+    view.ctx.strokeStyle = c;
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, 3 * z + (Math.random() * z), 0, 2 * Math.PI)
+    view.ctx.fillStyle = 'rgba(0,0,0,0.75)';
+    view.ctx.fill()    
+
+    view.ctx.stroke()    
+  }
+
   view.ctx.fillStyle = '#022'
   view.ctx.strokeStyle = '#0ff'
-  view.ctx.lineWidth = 1
 
-  var z = 32
+  if(this.attrs.powerup && Date.now() % 500 < 250){
+    view.ctx.fillStyle = '#000'
+    view.ctx.strokeStyle = '#fff'
+  }
+
   view.ctx.lineWidth = 8
 
   view.ctx.beginPath()

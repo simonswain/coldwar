@@ -19,10 +19,12 @@ Actors.Cell.prototype.genAttrs = function (attrs) {
     y: attrs.y,
     flash: 0,
     rats: 0,
+    kings: 0,
     rats_max: this.opts.rats_max || 0,
     rats_per_tick: this.opts.rats_per_tick || 1,
     title: null,
-    hideWalls: attrs.hideWalls || false
+    hideWalls: attrs.hideWalls || false,
+    training: attrs.training || false
   }
 }
 
@@ -43,8 +45,6 @@ Actors.Cell.prototype.init = function () {
   this.rats = [];
   this.kings = [];
   this.snake = false;
-  this.reactors = [];
-  this.portals = [];
 
   this.booms = [];
   this.zaps = [];
@@ -57,6 +57,27 @@ Actors.Cell.prototype.init = function () {
   this.machine = false;
   this.pong = false;
   this.powerup = false;
+
+  // this.oneups = [];
+  // this.humans = [];
+  // this.breeders = [];
+  // this.rats = [];
+  // this.kings = [];
+  // this.snake = false;
+  // this.reactors = [];
+  // this.portals = [];
+
+  // this.booms = [];
+  // this.zaps = [];
+  // this.robots = [];
+  // this.reactor = false;
+  // this.portal = false;
+  // this.logo = false;
+  // this.capacitor = false;
+  // this.capacitors = false; 
+  // this.machine = false;
+  // this.pong = false;
+  // this.powerup = false;
 
 }
 
@@ -85,38 +106,17 @@ Actors.Cell.prototype.colors = [
   '#fff'
 ]
 
-Actors.Cell.prototype.addZap = function (x, y, target_x, target_y) {
+Actors.Cell.prototype.addZap = function (x, y, target_x, target_y, style) {
   this.zaps.push(new Actors.Zap(
     this.env, {
       cell: this,
     }, {
+      style: style,
       x: x,
       y: y,
       target_x: target_x,
       target_y: target_y
     }));
-}
-
-Actors.Cell.prototype.addBreeder = function () {
-  this.breeders.push(new Actors.Breeder(
-    this.env, {
-      cell: this,
-    }, {
-      x: this.opts.max_x * 0.5,
-      y: this.opts.max_y * 0.5
-    }));
-}
-
-Actors.Cell.prototype.addReactor = function () {
-  var reactor = new Actors.Reactor(
-    this.env, {
-      cell: this,
-    }, {
-      x: this.opts.max_x * 0.5,
-      y: this.opts.max_y * 0.5
-    })
-  this.reactors.push(reactor)
-  return reactor
 }
 
 Actors.Cell.prototype.addLogo = function () {
@@ -175,6 +175,37 @@ Actors.Cell.prototype.addSnake = function () {
     });
 }
 
+Actors.Cell.prototype.addStory = function () {
+  this.story = new Actors.Story(
+    this.env, {
+      cell: this,
+    }, {
+    });
+}
+
+Actors.Cell.prototype.addBreeder = function () {
+  this.breeders.push(new Actors.Breeder(
+    this.env, {
+      cell: this,
+    }, {
+      x: this.opts.max_x * 0.5,
+      y: this.opts.max_y * 0.5
+    }));
+}
+
+Actors.Cell.prototype.addReactor = function () {
+  var reactor = new Actors.Reactor(
+    this.env, {
+      cell: this,
+    }, {
+      x: this.opts.max_x * 0.5,
+      y: this.opts.max_y * 0.5
+    })
+  this.reactor = reactor
+  return reactor
+}
+
+
 Actors.Cell.prototype.addHuman = function () {
 
   var human
@@ -189,6 +220,21 @@ Actors.Cell.prototype.addHuman = function () {
     })
 
   this.humans.push(human)
+
+  if(!this.attrs.training){
+    this.oneups.push(new Actors.Oneup(
+      this.env, {
+        cell: this.refs.cell
+      }, {
+        text: 'INGRESS',
+        ttl: 120,
+        style: 'static',
+        x: this.opts.max_x / 2,
+        y: this.opts.max_y / 2
+      }
+    ));
+  }
+  
   return human;
   
 }
@@ -203,7 +249,7 @@ Actors.Cell.prototype.addPortal = function () {
       x: this.opts.max_x * 0.5,
       y: this.opts.max_y * 0.5,
     })
-  this.portals.push(portal)
+  this.portal = portal;
   return portal;
 }
 
@@ -281,20 +327,10 @@ Actors.Cell.prototype.disableAllEnergyActors = function () {
 
 Actors.Cell.prototype.update = function (delta) {
 
-  var intentToHuman = null;
-
-  if(this.refs.maze && this.refs.maze.human){
-    this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
-
-    var qq=[];
-    for(var i=0; i<4; i++){
-      if(this.exits[i] && this.exits[i].attrs.i == this.routeToHuman[1]){
-        intentToHuman = i;
-        break;
-      }
-    }
+  if(this.story){
+    this.story.update(delta);
   }
-  
+
   if(this.logo){
     this.logo.update(delta);
   }
@@ -318,7 +354,7 @@ Actors.Cell.prototype.update = function (delta) {
   if(this.powerup){
     this.powerup.update(delta);
   }
-
+  
   if(this.snake){
     this.snake.update(delta);
   }
@@ -342,14 +378,27 @@ Actors.Cell.prototype.update = function (delta) {
       ii--
     }
   }
-   
-  var i, ii;
+ 
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     if(this.breeders[i]){
       this.breeders[i].update(delta);
     }
   }
 
+  var intentToHuman = null;
+
+  if(this.refs.maze && this.refs.maze.human){
+    this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
+
+    var qq=[];
+    for(var i=0; i<4; i++){
+      if(this.exits[i] && this.exits[i].attrs.i == this.routeToHuman[1]){
+        intentToHuman = i;
+        break;
+      }
+    }
+  }
+  
   for (i = 0, ii = this.rats.length; i<ii; i++) {
     if(this.rats[i]){
       this.rats[i].update(delta, intentToHuman);
@@ -398,7 +447,6 @@ Actors.Cell.prototype.update = function (delta) {
     }
   }
 
-  
   for (i = 0, ii = this.booms.length; i<ii; i++) {
     if(this.booms[i]){
       this.booms[i].update(delta);
@@ -506,10 +554,14 @@ Actors.Cell.prototype.paint = function (view, fx) {
   }
 
   view.ctx.save()
+  fx.ctx.save()
 
   if(this.opts.reduce){
     view.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05) 
     view.ctx.scale(0.9, 0.9)
+
+    fx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05) 
+    fx.ctx.scale(0.9, 0.9)
   }
   
   //trbl
@@ -524,6 +576,8 @@ Actors.Cell.prototype.paint = function (view, fx) {
   var rgb = '0, 153, 0';
   if(this.refs.maze && this.refs.maze.attrs.escape){
     rgb = '153, 0, 0';
+  } else if (this.refs.maze && this.refs.maze.attrs.color) {
+    rgb = this.refs.maze.attrs.color;
   }
 
   if(this.attrs.hideWalls) {
@@ -531,14 +585,18 @@ Actors.Cell.prototype.paint = function (view, fx) {
   } else {
     for(var exit = 0; exit < 4; exit ++){
 
+      if(exit === 3 && this.portal){
+        continue;
+      }
+
       if(this.exits[exit]){
       }
 
       if(!this.exits[exit]){
 
-        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.25 + (Math.random() * 0.25))+  ')'
+        view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
         if(!this.gridmates[exit]){
-          view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.5 + (Math.random() * 0.25))+  ')'
+          view.ctx.strokeStyle = 'rgba(' + rgb + ', ' + (0.75 + (Math.random() * 0.25))+  ')'
         }
         
         view.ctx.lineCap = 'round'
@@ -551,12 +609,7 @@ Actors.Cell.prototype.paint = function (view, fx) {
   }
 
   view.ctx.restore()
-
-  if(this.snake){
-    view.ctx.save()
-    this.snake.paint(view)
-    view.ctx.restore()
-  }
+  fx.ctx.restore()
 
   if(this.logo){
     this.logo.paint(view);
@@ -591,26 +644,34 @@ Actors.Cell.prototype.paint = function (view, fx) {
     fx.ctx.restore()
   }
 
-  var reactor
-  for (i = 0, ii = this.reactors.length; i<ii; i++) {
-    reactor = this.reactors[i];
+  if(this.reactor){
     view.ctx.save()
-    view.ctx.translate(reactor.pos.x, reactor.pos.y);
-    this.reactors[i].paint(view)
+    view.ctx.translate(this.reactor.pos.x, this.reactor.pos.y);
+    this.reactor.paint(view)
     view.ctx.restore()
   }
 
-  if(this.refs.maze && this.refs.maze.human && !this.refs.maze.human.attrs.escaped){
-    var portal
-    for (i = 0, ii = this.portals.length; i<ii; i++) {
-      portal = this.portals[i];
+  if(this.portal){
+    if(this.refs.maze && this.refs.maze.human && !this.refs.maze.human.attrs.escaped){
       view.ctx.save()
-      view.ctx.translate(portal.pos.x, portal.pos.y);
-      this.portals[i].paint(view)
+      view.ctx.translate(this.portal.pos.x, this.portal.pos.y);
+      this.portal.paint(view)
       view.ctx.restore()
-    }
-  }  
+    }  
+  }
  
+  var rat;
+  for (i = 0, ii = this.rats.length; i < ii; i++) {
+    rat = this.rats[i]
+    if(!rat){
+      continue
+    }
+    view.ctx.save()
+    view.ctx.translate(rat.pos.x, rat.pos.y);
+    this.rats[i].paint(view)
+    view.ctx.restore()
+  }
+
   var breeder;
   for (i = 0, ii = this.breeders.length; i<ii; i++) {
     breeder = this.breeders[i];
@@ -624,18 +685,28 @@ Actors.Cell.prototype.paint = function (view, fx) {
     view.ctx.restore()
   }
 
-  var rat;
-  for (i = 0, ii = this.rats.length; i < ii; i++) {
-    rat = this.rats[i]
-    if(!rat){
+  var king;
+  for (i = 0, ii = this.kings.length; i < ii; i++) {
+    king = this.kings[i]
+    if(!king){
       continue
     }
     view.ctx.save()
-    view.ctx.translate(rat.pos.x, rat.pos.y);
-    this.rats[i].paint(view)
+    view.ctx.translate(king.pos.x, king.pos.y);
+    this.kings[i].paint(view)
     view.ctx.restore()
   }
 
+  if(this.powerup){
+    this.powerup.paint(view);
+  }
+  
+  if(this.snake){
+    view.ctx.save()
+    this.snake.paint(view)
+    view.ctx.restore()
+  }
+  
   var human;
   for (i = 0, ii = this.humans.length; i < ii; i++) {
     human = this.humans[i]
@@ -672,5 +743,16 @@ Actors.Cell.prototype.paint = function (view, fx) {
     view.ctx.restore()
   }
  
+  var oneup;
+  for (i = 0, ii = this.oneups.length; i < ii; i++) {
+    oneup = this.oneups[i]
+    if(!oneup){
+      continue
+    }      
+    view.ctx.save() 
+    view.ctx.translate(oneup.pos.x, oneup.pos.y);
+    this.oneups[i].paint(view)
+    view.ctx.restore()
+  }
   
 }
