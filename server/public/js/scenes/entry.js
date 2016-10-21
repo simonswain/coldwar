@@ -70,7 +70,7 @@ Scenes.entry.prototype.paint = function(fx, gx, sx){
     gx.ctx.fill()
 
     gx.ctx.strokeStyle = 'rgba(255, 255, 255, 1)'
-    gx.ctx.lineWidth = 12
+    gx.ctx.lineWidth = 8
     gx.ctx.beginPath()
     gx.ctx.rect(-this.opts.max_x * p/2, -this.opts.max_y * p/2, this.opts.max_x * p, this.opts.max_y * p)
     gx.ctx.stroke()
@@ -84,7 +84,7 @@ Scenes.entry.prototype.paint = function(fx, gx, sx){
     fx.ctx.fill()
 
     fx.ctx.strokeStyle = 'rgba(0, 255, 255, 1)'
-    fx.ctx.lineWidth = 12
+    fx.ctx.lineWidth = 8
     fx.ctx.beginPath()
     fx.ctx.rect(-this.opts.max_x * p/2, -this.opts.max_y * p/2, this.opts.max_x * p, this.opts.max_y * p)
     fx.ctx.stroke()
@@ -115,7 +115,6 @@ Scenes.entry.prototype.paint = function(fx, gx, sx){
   gx.ctx.fillStyle = c;
 
   gx.ctx.shadowColor = c;
-  gx.ctx.shadowBlur = 8;
   gx.ctx.shadowOffsetX = 0;
   gx.ctx.shadowOffsetY = 0;
   gx.ctx.shadowBlur = 8;

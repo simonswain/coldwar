@@ -19,10 +19,13 @@ Scenes.variants.prototype.genAttrs = function(){
     frame_index: 0,
     time: 0,
     hold: 0,
-    tail: 0
+    tail: 0,
+    plays: 0
   };
 };
 Scenes.variants.prototype.init = function(){
+  this.env.play('baiter')
+  this.attrs.plays ++;
   this.frames = [{
     title:'Killer Rat'
   }, {
@@ -84,6 +87,11 @@ Scenes.variants.prototype.update = function(delta){
   if (this.attrs.time > this.opts.hold) {
     this.attrs.time = 0;
     this.attrs.frame_index ++;
+    if(this.attrs.plays < 3){
+      this.env.play('baiter')
+    }
+    this.attrs.plays ++;
+
     if (this.attrs.frame_index >= this.frames.length) {
       this.attrs.frame_index = 0;
     }

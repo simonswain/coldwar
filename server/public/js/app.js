@@ -45,7 +45,7 @@ Coldwar.prototype.boot = function () {
   });
 
   this.play = function (k) {
-    //return;
+    return;
     if(this.sounds[k]){
       this.sounds[k].play();
     }

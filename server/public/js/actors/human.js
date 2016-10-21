@@ -187,15 +187,10 @@ Actors.Human.prototype.update = function (delta) {
   this.shootBreeder()
 
   this.flashbang()
-
+  
   if(this.refs.maze){
-    if(this.refs.cell.attrs.i === this.refs.maze.attrs.reactor_cell && !this.refs.cell.reactors[0].attrs.primed ){
-      // close enough to reactor?
-      var dist = this.pos.rangeXY(this.refs.cell.reactors[0].pos);
-      if(dist < 100){
-        this.refs.maze.attrs.escape = true;
-        this.refs.cell.reactors[0].prime();
-      }
+    if(this.refs.cell.reactors.length > 0) {
+      vec.add(this.toReactor())
     }
     if(this.refs.cell.attrs.i === this.refs.maze.attrs.entry_cell && this.refs.maze.attrs.escape && !this.env.gameover){
       this.refs.maze.attrs.escape_done = true;
@@ -253,7 +248,6 @@ Actors.Human.prototype.update = function (delta) {
   this.attrs.intent = intent
   this.attrs.route = route;
 
-  //console.log(this.refs.cell.i, this.refs.maze.attrs.reactor_cell);
   //vec.add(this.separation().scale(this.opts.separation_force))
   //vec.add(this.alignment().scale(this.opts.alignment_force))
   //vec.add(this.cohesion().scale(this.opts.cohesion_force))
@@ -265,6 +259,10 @@ Actors.Human.prototype.update = function (delta) {
 
   this.velo.add(vec)
   this.velo.limit(this.attrs.speed)
+  if(this.refs.maze && this.refs.maze.attrs.escape){
+    this.velo.scale(1.5)
+  }
+
   this.pos.add(this.velo)
 
   var other, cell;
@@ -319,6 +317,35 @@ Actors.Human.prototype.update = function (delta) {
     other.humans.push(this);
   }
 
+}
+
+Actors.Human.prototype.toReactor = function () {
+
+  if(this.refs.cell.reactor.length === 0){
+    return new Vec3();
+  }
+
+  var reactor = this.refs.cell.reactors[0];
+
+  if (reactor.attrs.primed ){
+    return new Vec3();
+  }
+  
+  var i, ii
+  var other
+  var range
+
+  var vec = new Vec3()
+
+  // close enough to reactor?
+  var range = this.pos.rangeXY(reactor.pos);
+  if(range < 128){
+    this.refs.maze.attrs.escape = true;
+    reactor.prime();
+  }
+
+  vec.add(reactor.pos.minus(this.pos).normalize())
+  return vec.normalize().scale(3)
 }
 
 Actors.Human.prototype.recharge = function () {

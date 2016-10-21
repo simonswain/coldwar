@@ -167,7 +167,6 @@ Actors.Hume.prototype.update = function (delta) {
   this.recharge()
   this.shootKings()
 
-
   vec.add(this.flee().scale(this.opts.predator_force))
   vec.add(this.reflect().scale(this.opts.reflect_force))
 

@@ -718,15 +718,10 @@ Actors.Maze.prototype.paint = function (view) {
   
   view.ctx.save()
 
-  // if(this.opts.fit){
-  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
-  //   view.ctx.scale(0.9, 0.9);
-  // }
-
-  view.ctx.translate(
-    (this.opts.max_x - (this.attrs.cols * w))/2,
-    (this.opts.max_y - (this.attrs.rows * w))/2
-  );
+  // view.ctx.translate(
+  //   (this.opts.max_x - (this.attrs.cols * w))/2,
+  //   (this.opts.max_y - (this.attrs.rows * w))/2
+  // );
 
 
   var x, y, i, ii;
@@ -743,8 +738,8 @@ Actors.Maze.prototype.paint = function (view) {
       cell = this.cells[i];
       view.ctx.save();
       if(this._steps.stack.indexOf(cell) > -1){
-        view.ctx.fillStyle = '#300';
-        view.ctx.strokeStyle = '#300';
+        view.ctx.fillStyle = '#c00';
+        view.ctx.strokeStyle = '#c00';
         view.ctx.beginPath();
         view.ctx.rect((cell.attrs.x * w), (cell.attrs.y * w), w, w); 
         view.ctx.fill();
@@ -826,15 +821,15 @@ Actors.Maze.prototype.paint = function (view) {
       if(from && to){
         if(Math.floor(this._routeIndex) === i){
           if(this.attrs.escape){
-            view.ctx.strokeStyle='rgba(255,0,0,0.75)';
+            view.ctx.strokeStyle='rgba(255,0,0,1)';
           } else { 
-            view.ctx.strokeStyle='rgba(0,255,255,0.75)';
+            view.ctx.strokeStyle='rgba(0,255,255,1)';
           }
         } else {
           if(this.attrs.escape){
-            view.ctx.strokeStyle='rgba(255,0,0,0.25)';
+            view.ctx.strokeStyle='rgba(255,0,0,0.75)';
           } else { 
-            view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+            view.ctx.strokeStyle='rgba(0,255,255,0.5)';
           }
         }
         view.ctx.lineWidth = 1

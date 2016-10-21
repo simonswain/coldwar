@@ -24,6 +24,9 @@ Scenes.maze3.prototype.init = function () {
   this.target_zoom = 1;
   this.target_x = 0;
   this.target_y = 0;
+  this.x = 0;
+  this.y = 0;
+  this.zoom = 1;
 }
 
 Scenes.maze3.prototype.getCast = function () {
@@ -61,6 +64,15 @@ Scenes.maze3.prototype.genAttrs = function () {
 Scenes.maze3.prototype.update = function (delta) {
   this.maze.update(delta);
   var speed = 10;
+
+  var max = Math.max(this.maze.opts.max_x, this.maze.opts.max_y);
+  var min = Math.min(this.maze.opts.max_x, this.maze.opts.max_y);
+  var rc = Math.max(this.maze.attrs.rows, this.maze.attrs.cols);
+
+  var w = (max/rc);
+  this.w = w;
+ 
+  
   if(this.maze.human){
     var cell = this.maze.human.refs.cell;
     var gx = this.env.views.gx;
@@ -69,43 +81,43 @@ Scenes.maze3.prototype.update = function (delta) {
     var w = this.maze.opts.max_x / this.maze.attrs.cols;
     var h = this.maze.opts.max_y / this.maze.attrs.rows;
 
-    this.target_x = (gx.w / 2) - (((w * cell.attrs.x * this.target_zoom)) * gx.scale);
-    this.target_y = (gx.h / 2) - (((h * cell.attrs.y * this.target_zoom)) * gx.scale);
-    
     this.target_zoom = 2.5;
+    w *= this.target_zoom;
+    this.target_x = 0 - (cell.attrs.x * w) - (this.w/2) + (this.maze.attrs.cols/2 * this.w);
+    this.target_y = 0 - (cell.attrs.y * w) - (this.w/2) + (this.maze.attrs.rows/2 * this.w);
   }
-
+  
   if(this.maze.attrs.boom){
     this.target_zoom = 1;
     this.target_x = 0;
     this.target_y = 0;
     speed = 15;
   }
-  
-  if(this.env.zoom < this.target_zoom){
-    this.env.zoom += 0.01;
+ 
+  if(this.zoom < this.target_zoom){
+    this.zoom += 0.01;
   }
 
-  if(this.env.zoom > this.target_zoom){
-    this.env.zoom -= 0.01;
+  if(this.zoom > this.target_zoom){
+    this.zoom -= 0.01;
   }
 
-  if(this.env.page_x < this.target_x){
-    this.env.page_x += speed;
+  if(this.x < this.target_x){
+    this.x += speed;
   }
 
-  if(this.env.page_x > this.target_x){
-    this.env.page_x -= speed;
+  if(this.x > this.target_x){
+    this.x -= speed;
   }
 
-  if(this.env.page_y < this.target_y){
-    this.env.page_y += speed;
+  if(this.y < this.target_y){
+    this.y += speed;
   }
 
-  if(this.env.page_y > this.target_y){
-    this.env.page_y -= speed;
+  if(this.y > this.target_y){
+    this.y -= speed;
   }  
-
+  
 }
 
 
@@ -127,5 +139,13 @@ Scenes.maze3.prototype.flash = function(fx, gx, sx){
 }
 
 Scenes.maze3.prototype.paint = function (fx, gx, sx) {
-  this.maze.paint(gx)
+  fx.ctx.save();
+  fx.ctx.translate(this.x, this.y);
+  fx.ctx.scale(this.zoom, this.zoom); 
+  gx.ctx.save();
+  gx.ctx.translate(this.x, this.y);
+  gx.ctx.scale(this.zoom, this.zoom);
+  this.maze.paint(gx, fx)
+  gx.ctx.restore();
+  fx.ctx.restore();
 }
