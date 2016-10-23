@@ -45,7 +45,7 @@ Scenes.boom.prototype.update = function (delta) {
       this.env, {
       }, {
         style: 'nuke',
-        radius: 240,
+        radius: 420,
         x: this.opts.max_x * 0.5,
         y: this.opts.max_y * 0.5,
         color: '255,0,255'
@@ -147,11 +147,6 @@ Scenes.boom.prototype.paint = function (fx, gx, sx) {
 
   gx.ctx.fillText('ratsofthemaze.com', this.opts.max_x/2, this.opts.max_y * 0.7);
   
-
-
-
-
-
   gx.ctx.restore();
   
 }

@@ -332,6 +332,7 @@ Actors.Logicmaze.prototype.randomReactor = function (max) {
 
 Actors.Logicmaze.prototype.addHuman = function (ix) {
   var human = this.cells[ix].addHuman();
+  human.attrs.passive = true;
   return human
 }
 
@@ -892,14 +893,11 @@ Actors.Logicmaze.prototype.paint = function (view, fx) {
   if(this.attrs.human && !this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
-    view.ctx.font = '12pt robotron'
+    view.ctx.font = '24pt robotron'
     view.ctx.textAlign='center';
     view.ctx.textBaseline='middle';
     view.ctx.fillText(Math.floor(this.attrs.humanCountdown/10), w * 0.5, w * 0.5);
     view.ctx.restore()
   }
- 
-
   view.ctx.restore()
-
 }

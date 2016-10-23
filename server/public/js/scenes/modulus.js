@@ -66,6 +66,7 @@ Scenes.modulus.prototype.genAttrs = function () {
     value: 0,
     duration: 60,
     alpha: 0,
+    beta: 0, 
     level: 1,
     rows: 3,
     cols: 4
@@ -236,6 +237,11 @@ Scenes.modulus.prototype.update = function (delta) {
     this.generatePerfectMaze();
   }
 
+  this.attrs.beta += delta * 0.7;
+  if(this.attrs.beta > 2 * Math.PI){
+    this.attrs.beta -= 2 * Math.PI;
+  }
+  
 
   // this.index += delta * 0.02;
   // this.attrs.level =  Math.floor(this.index) + 1;
@@ -351,24 +357,14 @@ Scenes.modulus.prototype.paintGrid = function(gx, fx){
   ww = Math.min(ww, hh);
   hh = ww;
 
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.15)
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5)
   gx.ctx.scale(0.4, 0.4);
 
-  if(cols > rows) {
-    gx.ctx.translate(0, ww * (cols - rows) / 2)
-  }
-
-  if(rows > cols) {
-    gx.ctx.translate(ww * (rows - cols) / 2, 0)
-  }
-
-  gx.ctx.translate(- ww * cols / 2,  - hh * rows / 2)
-
-  //var hh = this.opts.max_y / rows;
+  gx.ctx.translate(-ww * (cols / 2), -ww * (rows / 2))
 
   gx.ctx.lineWidth = 6;
   gx.ctx.lineCap='round';
-  gx.ctx.strokeStyle = 'rgba(' + color + ',' + ((Math.sin(this.attrs.alpha))) + ')';
+  gx.ctx.strokeStyle = 'rgba(' + color + ',' + ((Math.sin(this.attrs.beta))) + ')';
 
   var x, y;
 
@@ -377,11 +373,6 @@ Scenes.modulus.prototype.paintGrid = function(gx, fx){
     y = Math.floor(i / cols);
 
     var cell = this.cells[i];
-
-    // gx.ctx.fillStyle = 'rgba(' + color + ',1)';
-    // gx.ctx.font = '32pt robotron';
-    // gx.ctx.textAlign='center'
-    // gx.ctx.textBaseline='middle'
     // gx.ctx.fillText(i, x * ww + (ww/2), y * hh + (hh/2));
 
     gx.ctx.save();
@@ -602,14 +593,12 @@ Scenes.modulus.prototype.drawCap = function(gx, charge){
 }
 
 Scenes.modulus.prototype.paintCaps = function (gx) {
-
   for(var i = 0; i < 4; i++){
     gx.ctx.save();
     gx.ctx.translate(150 * i, 0);
     this.drawCap(gx, this.caps[i]);
     gx.ctx.restore()
   }
-  
 }
 
 
@@ -719,32 +708,25 @@ Scenes.modulus.prototype.paintKing = function (view) {
 
 Scenes.modulus.prototype.paint = function (fx, gx, sx) {
 
-  gx.ctx.save();
-  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.55)
-  this.paintLevel(gx);
-  gx.ctx.restore();
-
   // maze
   this.paintGrid(gx, fx);
 
-  if(this.attrs.level % 4 === 0 ) {
+  // level number
+  gx.ctx.save();
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.5)
+  this.paintLevel(gx);
+  gx.ctx.restore();
+
+  
+  if(this.attrs.level % 4 === 0 || this.attrs.level % 7 === 0 ) {
     gx.ctx.save();
-    gx.ctx.translate(this.opts.max_x * 0, this.opts.max_y * 0.25)
+    gx.ctx.translate(this.opts.max_x * 0, this.opts.max_y * 0.2)
     gx.ctx.rotate(-Math.PI * 0.25);
-    gx.ctx.scale(0.17, 0.17);
+    gx.ctx.scale(0.13, 0.13);
     this.paintCaps(gx, fx);
     gx.ctx.restore();
   }
 
-  if(this.attrs.level % 7 === 0 ) {
-    gx.ctx.save();
-    gx.ctx.translate(this.opts.max_x * 0, this.opts.max_y * 0.25)
-    gx.ctx.rotate(-Math.PI * 0.25);
-    gx.ctx.scale(0.2, 0.2);
-    this.paintCaps(gx, fx);
-    gx.ctx.restore();
-  }
-  
   // reactor
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.85)
@@ -767,9 +749,9 @@ Scenes.modulus.prototype.paint = function (fx, gx, sx) {
   }
   
   // snake
-  if(this.attrs.level > 2 ) {
+  if(this.attrs.level > 2 && this.attrs.level % 5 !== 0) {
     fx.ctx.save();
-    fx.ctx.translate(this.opts.max_x * 0.4, this.opts.max_y * 0.75);
+    fx.ctx.translate(this.opts.max_x * 0.4, this.opts.max_y * 0.4);
     fx.ctx.scale(0.2, 0.2);
     gx.ctx.save();
     gx.ctx.translate(this.opts.max_x * 0.8, this.opts.max_y * 0.4);
@@ -782,12 +764,12 @@ Scenes.modulus.prototype.paint = function (fx, gx, sx) {
   // pong
   if(this.attrs.level > 4 ) {
     fx.ctx.save();
-    fx.ctx.translate(this.opts.max_x * 0.0, this.opts.max_y * 0.4);
-    fx.ctx.scale(0.15, 0.15);
+    fx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.4);
+    fx.ctx.scale(0.2, 0.2);
 
     gx.ctx.save();
-    gx.ctx.translate(this.opts.max_x * 0.0, this.opts.max_y * 0.4);
-    gx.ctx.scale(0.15, 0.15);
+    gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.4);
+    gx.ctx.scale(0.2, 0.2);
     this.pongCell.paint(gx, fx)
     gx.ctx.restore();
     fx.ctx.restore();
@@ -814,7 +796,7 @@ Scenes.modulus.prototype.paint = function (fx, gx, sx) {
     view.ctx.lineWidth = 1
     
     gx.ctx.save()
-    gx.ctx.translate(this.opts.max_x * 0.9, this.opts.max_y * 0.2);
+    gx.ctx.translate(this.opts.max_x * 0.9, this.opts.max_y * 0.15);
     gx.ctx.scale(0.4, 0.4);
 
     gx.ctx.rotate(Math.sin((Date.now()/1000) % (2*Math.PI)) - Math.PI*0.5)
@@ -907,36 +889,34 @@ Scenes.modulus.prototype.paint = function (fx, gx, sx) {
     view.ctx.restore()
   }
 
-  // // human
+  // human
 
-  // gx.ctx.save()
-  // gx.ctx.translate(this.opts.max_x * 0.1, this.opts.max_y * 0.5);
-  // gx.ctx.scale(0.5, 0.5);
+  gx.ctx.save()
+  gx.ctx.translate(this.opts.max_x * 0.5, this.opts.max_y * 0.15);
+  gx.ctx.scale(0.5, 0.5);
 
-  // gx.ctx.rotate(Date.now() /1000 % (2*Math.PI))
+  gx.ctx.rotate(Date.now() /1000 % (2*Math.PI))
 
-  // gx.ctx.fillStyle = '#022'
-  // gx.ctx.strokeStyle = '#0ff'
-  // gx.ctx.lineWidth = 1
+  gx.ctx.fillStyle = '#022'
+  gx.ctx.strokeStyle = '#0ff'
+  gx.ctx.lineWidth = 1
 
-  // var z = 32
-  // gx.ctx.lineWidth = 8
+  var z = 24
+  gx.ctx.lineWidth = 4
 
-  // gx.ctx.beginPath()
-  // gx.ctx.rect(-z ,-z-z, z, z+z+z+z)
-  // gx.ctx.stroke()
+  gx.ctx.beginPath()
+  gx.ctx.rect(-z ,-z-z, z, z+z+z+z)
+  gx.ctx.stroke()
 
-  // gx.ctx.beginPath()
-  // gx.ctx.moveTo(z, 0)
-  // gx.ctx.lineTo(-z, z)
-  // gx.ctx.lineTo(-z, -z)
-  // gx.ctx.lineTo(z, 0)
-  // gx.ctx.closePath()
-  // gx.ctx.fill()
-  // gx.ctx.stroke()
+  gx.ctx.beginPath()
+  gx.ctx.moveTo(z, 0)
+  gx.ctx.lineTo(-z, z)
+  gx.ctx.lineTo(-z, -z)
+  gx.ctx.lineTo(z, 0)
+  gx.ctx.closePath()
+  gx.ctx.fill()
+  gx.ctx.stroke()
 
-  // gx.ctx.restore()
-
-
+  gx.ctx.restore()
 
 }

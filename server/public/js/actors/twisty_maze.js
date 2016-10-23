@@ -724,7 +724,7 @@ Actors.TwistyMaze.prototype.paint = function (view, fx) {
   if(!this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
-    view.ctx.font = '12pt robotron'
+    view.ctx.font = '24pt robotron'
     view.ctx.textAlign='center';
     view.ctx.textBaseline='middle';
     view.ctx.translate(w/2 + 0 * w, w/2 + 2 * w);

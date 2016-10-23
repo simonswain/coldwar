@@ -48,12 +48,9 @@ Scenes.gateway.prototype.genAttrs = function(){
 
 Scenes.gateway.prototype.update = function(delta){
 
-  this.attrs.alpha += delta * 0.05;
-  if(this.attrs.alpha > 2 * Math.PI){
-    this.attrs.alpha -= 2 * Math.PI;
-    this.env.play('heartbeat');
-    
-    this.init();
+  this.env.play('heartbeat');
+  if(this.env.at > 2500) {
+    this.env.goNext()
   }
 
 }

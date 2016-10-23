@@ -489,7 +489,6 @@ Actors.Cell.prototype.update = function (delta) {
 }
 
 Actors.Cell.prototype.paint = function (view, fx) {
-  
   // view.ctx.strokeStyle = '#666'
   // view.ctx.rect(0, 0, this.opts.max_x, this.opts.max_y)
   // view.ctx.stroke()
@@ -652,12 +651,12 @@ Actors.Cell.prototype.paint = function (view, fx) {
   }
 
   if(this.portal){
-    if(this.refs.maze && this.refs.maze.human && !this.refs.maze.human.attrs.escaped){
+    //if(this.refs.maze && this.refs.maze.human && !this.refs.maze.human.attrs.escaped){
       view.ctx.save()
       view.ctx.translate(this.portal.pos.x, this.portal.pos.y);
       this.portal.paint(view)
       view.ctx.restore()
-    }  
+    //}  
   }
  
   var rat;

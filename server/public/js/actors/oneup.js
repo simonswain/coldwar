@@ -63,6 +63,8 @@ Actors.Oneup.prototype.paint = function (view) {
     }
 
     if(Date.now() % 1000 < 200){
+      // don't draw black
+      return;
       gx.ctx.fillStyle = 'rgba(0,0,0,1)';
     }
 
@@ -91,6 +93,8 @@ Actors.Oneup.prototype.paint = function (view) {
     }
 
     if(Date.now() % 1000 < 200){
+      // don't draw black
+      return;
       gx.ctx.fillStyle = 'rgba(0,0,0,1)';
     }
 
@@ -125,6 +129,8 @@ Actors.Oneup.prototype.paint = function (view) {
     }
 
     if(Date.now() % 1000 < 200){
+      // don't draw black
+      return;
       gx.ctx.fillStyle = 'rgba(0,0,0,1)';
     }
 

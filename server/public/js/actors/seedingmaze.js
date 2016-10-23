@@ -712,6 +712,10 @@ Actors.Seedingmaze.prototype.update = function (delta) {
     }
   }
 
+  if(this.portal){
+    this.portal.update();
+  }
+  
 }
 
 Actors.Seedingmaze.prototype.paint = function (view, fx) {
@@ -892,7 +896,7 @@ Actors.Seedingmaze.prototype.paint = function (view, fx) {
   if(this.attrs.human && !this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
-    view.ctx.font = '12pt robotron'
+    view.ctx.font = '24pt robotron'
     view.ctx.textAlign='center';
     view.ctx.textBaseline='middle';
     view.ctx.fillText(Math.floor(this.attrs.humanCountdown/10), w * 0.5, w * 0.5);

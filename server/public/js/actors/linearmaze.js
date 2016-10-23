@@ -1,6 +1,7 @@
 /* global Actors, Actor */
 
-Actors.Maze = function (env, refs, attrs, opts) {
+Actors.Linearmaze = function (env, refs, attrs, opts) {
+
   this.env = env
   this.refs = refs
   this.opts = this.genOpts(opts)
@@ -8,43 +9,31 @@ Actors.Maze = function (env, refs, attrs, opts) {
   this.init()
 }
 
-Actors.Maze.prototype = Object.create(Actor.prototype)
+Actors.Linearmaze.prototype = Object.create(Actor.prototype)
 
-Actors.Maze.prototype.title = 'Maze'
+Actors.Linearmaze.prototype.title = 'Linearmaze'
 
-Actors.Maze.prototype.genAttrs = function (attrs) {
-  console.log(attrs.exciting);
+Actors.Linearmaze.prototype.genAttrs = function (attrs) {
   return {
+    timer: 180,
     ttl: 0,
-    alpha: 0,
-    phase: 'gen',
+    //ttl: (this.opts.rows * this.opts.cols > 24) ? 0 : 8,
+    phase: false,
     max: Math.min(this.opts.max_x, this.opts.max_y),
     escape: false,
     escape_done: false,
     rows: attrs.rows || this.opts.rows,
     cols: attrs.cols || this.opts.cols,
+    human: attrs.human,
     humanCountdown: 60,
     boom: false,
-    boomCountdown: 0,
-    exciting: attrs.exciting || false
+    boomCountdown: 0
   }
 }
 
-Actors.Maze.prototype.init = function () {
+Actors.Linearmaze.prototype.init = function () {
   this.makeGrid();
   this.human = false;
-
-  if (this.env.level % 4 === 0) {
-    this.attrs.color = '153, 153, 0'
-  }
-
-  if (this.env.level % 7 === 0) {
-    this.attrs.color = '153, 0, 153'
-  }
-
-  if (this.env.level > 6 && this.env.level % 3 === 0) {
-    this.attrs.color = '0, 0, 204'
-  }
 
   this._steps = {
     ttl: this.attrs.ttl,
@@ -58,7 +47,7 @@ Actors.Maze.prototype.init = function () {
   }; 
 };
 
-Actors.Maze.prototype.defaults = [{
+Actors.Linearmaze.prototype.defaults = [{
   key: 'max_x',
   value: 640,
   min: 100,
@@ -93,14 +82,9 @@ Actors.Maze.prototype.defaults = [{
   value: 2,
   min: 0,
   max: 16
-}, {
-  key: 'snakes',
-  value: 1,
-  min: 0,
-  max: 16
 }]
 
-Actors.Maze.prototype.makeGrid = function () {
+Actors.Linearmaze.prototype.makeGrid = function () {
 
   // init blank grid
   this.booms = [];
@@ -135,34 +119,40 @@ Actors.Maze.prototype.makeGrid = function () {
 
 }
 
-Actors.Maze.prototype.seedActors = function () {
+Actors.Linearmaze.prototype.seedActors = function () {
   this.attrs.entry_cell = 0;
   this.attrs.reactor_cell = this.cells.length-1;
-
-  this.portal = this.addPortal(this.attrs.entry_cell);
   this.addReactor(this.attrs.reactor_cell);
+  this.portal = this.addPortal(this.attrs.entry_cell);
 
-  this.randomBreeders(this.opts.breeders);
+  this._route = this.route(this.cells[this.attrs.entry_cell], this.cells[this.attrs.reactor_cell]);
 
-  if(this.attrs.exciting){
-    var route = this.route(this.cells[this.attrs.entry_cell], this.cells[this.attrs.reactor_cell]);
-    if(route.length > 6) {
-      route.shift();
-      route.pop();
-      route.pop();
-      route.pop();
-      this.randomPowerup(route)
+  this.cells[this._route[7]].addSnake();
+  this.cells[this._route[this._route.length-4]].addSnake();
+
+  var ok = false;
+  var cell;
+  while(!ok){
+    cell = pickOne(this.cells);
+    if(this._route.indexOf(cell.attrs.i) === -1) {
+      ok = true;
+      cell.addBreeder();
     }
-    this.randomCapacitor(route);
-    this.randomSnake(route);
-    this.randomSnake(route);
-    this.randomSnake(route);
-    this.randomPong();
+  }
+
+  var ok = false;
+  var cell;
+  while(!ok){
+    cell = pickOne(this.cells);
+    if(this._route.indexOf(cell.attrs.i) === -1) {
+      ok = true;
+      cell.addBreeder();
+    }
   }
   
 };
 
-Actors.Maze.prototype.makeGridmates = function () {
+Actors.Linearmaze.prototype.makeGridmates = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
   var i, ix, exit;
   var other, cell;
@@ -180,7 +170,7 @@ Actors.Maze.prototype.makeGridmates = function () {
   }
 }
 
-Actors.Maze.prototype.connectAllCells = function () {
+Actors.Linearmaze.prototype.connectAllCells = function () {
   var dirs = [[0,-1], [1,0], [0,1], [-1,0]];
   var i, ix, exit;
   var other;
@@ -199,7 +189,7 @@ Actors.Maze.prototype.connectAllCells = function () {
   }
 }
 
-Actors.Maze.prototype.generatePerfectMaze = function (max) {
+Actors.Linearmaze.prototype.generatePerfectMaze = function (max) {
   var stack = [];
   var cells = this.cells
   var total = cells.length
@@ -245,335 +235,7 @@ Actors.Maze.prototype.generatePerfectMaze = function (max) {
 
 }
 
-
-
-
-Actors.Maze.prototype.addLogo = function (ix) {
-  this.cells[ix].addLogo();
-}
-
-Actors.Maze.prototype.randomLogo = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    ix = random.from0upto(this.cells.length)
-    if(route && route.indexOf(ix) > -1){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitors){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].machine){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addLogo();
-    break;
-  }
-}
-
-Actors.Maze.prototype.addCapacitor = function (ix) {
-  this.cells[ix].addCapacitor();
-}
-
-Actors.Maze.prototype.randomCapacitor = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    if(route){
-      ix = pickOne(route)
-    } else {
-      ix = random.from0upto(this.cells.length)
-    }
-    if(this.cells[ix].logo){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].powerup){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].machine){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addCapacitor();
-    break;
-
-  }
-}
-
-Actors.Maze.prototype.addCapacitors = function (ix) {
-  this.cells[ix].addCapacitors();
-}
-
-Actors.Maze.prototype.randomCapacitors = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    ix = random.from0upto(this.cells.length)
-    if(route){
-      ix = pickOne(route)
-    } else {
-      ix = random.from0upto(this.cells.length)
-    }
-    if(this.cells[ix].logo){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].powerup){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].machine){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].powerup){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addCapacitors();
-    break;
-
-  }
-}
-
-Actors.Maze.prototype.addMachine = function (ix) {
-  this.cells[ix].addMachine();
-}
-
-Actors.Maze.prototype.randomMachine = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    if(route){
-      ix = pickOne(route)
-    } else {
-      ix = random.from0upto(this.cells.length)
-    }
-    if(this.cells[ix].logo){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitors){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addMachine();
-    break;
-  }
-}
-
-
-Actors.Maze.prototype.addPong = function (ix) {
-  this.cells[ix].addPong();
-}
-
-Actors.Maze.prototype.randomPong = function (max) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    ix = random.from0upto(this.cells.length)
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addPong();
-    break;
-  }
-}
-
-Actors.Maze.prototype.addPowerup = function (ix) {
-  this.cells[ix].addPowerup();
-}
-
-Actors.Maze.prototype.randomPowerup = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    if(route){
-      ix = pickOne(route)
-    } else {
-      ix = random.from0upto(this.cells.length)
-    }
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].machine){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitors){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].logo){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addPowerup();
-    break;
-  }
-}
-
-Actors.Maze.prototype.randomSnake = function (route) {
-  var x = 10; // attempts
-  var ix;
-  while (x>0){
-    ix = random.from0upto(this.cells.length)
-
-    // exclude route
-    if(route && route.indexOf(ix) > -1){
-      x --;
-      continue;
-    }
-
-    if(this.cells[ix].snake){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].machine){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].capacitors){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].logo){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].reactor){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].breeders.length > 0){
-      x --;
-      continue;
-    }
-    if(this.cells[ix].portal){
-      x --;
-      continue;
-    }
-    this.cells[ix].addSnake();
-    break;
-  }
-}
-
-Actors.Maze.prototype.randomBreeders = function (max) {
+Actors.Linearmaze.prototype.randomBreeders = function (max) {
   if(!max){
     max = 0
   }
@@ -582,32 +244,28 @@ Actors.Maze.prototype.randomBreeders = function (max) {
   }
 }
 
-Actors.Maze.prototype.addBreeder = function (ix) {
+Actors.Linearmaze.prototype.addBreeder = function (ix) {
   this.cells[ix].addBreeder();
 }
 
-Actors.Maze.prototype.addReactor = function (ix) {
+Actors.Linearmaze.prototype.addReactor = function (ix) {
   this.cells[ix].addReactor();
 }
 
-Actors.Maze.prototype.randomBreeder = function (route) {
+Actors.Linearmaze.prototype.randomBreeder = function (max) {
   var x = 5; // attempts
   var ix;
   while (x>0){
     ix = random.from0upto(this.cells.length)
-    if(route && route.indexOf(ix) > -1){
-      x --;
-      continue;
-    }
     if(this.cells[ix].breeders.length > 0){
       x --;
       continue;
     }
-    if(this.cells[ix].reactor){
+    if(!this.cells[ix].reactor){
       x --;
       continue;
     }
-    if(this.cells[ix].portal){
+    if(this.cells[ix].portals.length > 0){
       x --;
       continue;
     }
@@ -617,22 +275,51 @@ Actors.Maze.prototype.randomBreeder = function (route) {
 }
 
 
-Actors.Maze.prototype.addReactor = function (ix) {
+Actors.Linearmaze.prototype.randomReactors = function (max) {
+  if(!max){
+    max = 1
+  }
+  for(var i=0; i<max; i++){
+    this.randomReactor();
+  }
+}
+
+
+Actors.Linearmaze.prototype.randomReactor = function (max) {
+  var ix = random.from0upto(this.cells.length)
   this.cells[ix].addReactor();
 }
 
-Actors.Maze.prototype.addHuman = function (ix) {
+Actors.Linearmaze.prototype.addHuman = function (ix) {
   var human = this.cells[ix].addHuman();
   return human
 }
 
-Actors.Maze.prototype.addPortal = function (ix) {
+Actors.Linearmaze.prototype.addPortal = function (ix) {
   var portal = this.cells[ix].addPortal();
   return portal
 }
 
-Actors.Maze.prototype.route = function (cell, other) {
+Actors.Linearmaze.prototype.randomHuman = function (max) {
+  var ix = random.from0upto(this.cells.length)
+  this.cells[ix].addHuman();
+}
 
+Actors.Linearmaze.prototype.randomHumans = function (max) {
+  if(!max){
+    max = 1
+  }
+  for(var i=0; i<max; i++){
+    this.randomHuman();
+  }
+}
+
+Actors.Linearmaze.prototype.route = function (cell, other) {
+
+  if(!cell || !other){
+    return []
+  }
+  
   var from_i = cell.attrs.i;
   var to_i = other.attrs.i;
 
@@ -748,7 +435,7 @@ Actors.Maze.prototype.route = function (cell, other) {
 
 };
 
-Actors.Maze.prototype.doGenPhase = function (delta) {
+Actors.Linearmaze.prototype.doGenPhase = function (delta) {
   if(this._steps.ttl >= 0){
     this._steps.ttl -= delta
     return
@@ -842,8 +529,15 @@ Actors.Maze.prototype.doGenPhase = function (delta) {
 
 };
 
-Actors.Maze.prototype.update = function (delta) {
+Actors.Linearmaze.prototype.update = function (delta) {
 
+  this.attrs.timer -= delta;
+  if(this.attrs.timer < 0){
+    this.attrs.timer = 180;
+    this.makeGrid();
+    return;
+  }
+  
   if(this.attrs.phase == 'gen'){
     this.doGenPhase(delta);
     return;
@@ -855,52 +549,54 @@ Actors.Maze.prototype.update = function (delta) {
     return;
   } 
   
-  if(this.attrs.humanCountdown > 0){
-    if(this.attrs.humanCountdown%10 === 0){
-      this.env.play('rad-short')
-    }
-    
-    this.attrs.humanCountdown --;
-    if(this.attrs.humanCountdown === 15){
-      this.env.play('entry')
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'decolonize',
-          radius: 128,
-          x: 0,
-          y: 0,
-          color: '0,255,255'
-        }
-      ))
+  if(this.attrs.human) {
+    if(this.attrs.humanCountdown > 0){
+      if(this.attrs.humanCountdown%10 === 0){
+        this.env.play('rad-short')
+      }
+      
+      this.attrs.humanCountdown --;
+      if(this.attrs.humanCountdown === 15){
+        this.env.play('entry')
+        this.booms.push(new Actors.Boom(
+          this.env, {
+          }, {
+            style: 'decolonize',
+            radius: 128,
+            x: 0,
+            y: 0,
+            color: '0,255,255'
+          }
+        ))
 
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'decolonize',
-          radius: 132,
-          x: 0,
-          y: 0,
-          color: '255,255,255',
-          ttl: 20
-        }
-      ))
+        this.booms.push(new Actors.Boom(
+          this.env, {
+          }, {
+            style: 'decolonize',
+            radius: 132,
+            x: 0,
+            y: 0,
+            color: '255,255,255',
+            ttl: 20
+          }
+        ))
 
-      this.booms.push(new Actors.Boom(
-        this.env, {
-        }, {
-          style: 'decolonize',
-          radius: 82,
-          x: 0,
-          y: 0,
-          color: '255,255,255',
-          ttl: 60
-        }
-      ))
-    }
+        this.booms.push(new Actors.Boom(
+          this.env, {
+          }, {
+            style: 'decolonize',
+            radius: 82,
+            x: 0,
+            y: 0,
+            color: '255,255,255',
+            ttl: 60
+          }
+        ))
+      }
 
-    if(this.attrs.humanCountdown === 0){
-      this.human = this.addHuman(this.attrs.entry_cell);
+      if(this.attrs.humanCountdown === 0){
+        this.human = this.addHuman(this.attrs.entry_cell);
+      }
     }
   }
 
@@ -908,7 +604,7 @@ Actors.Maze.prototype.update = function (delta) {
     this.human.attrs.escaped = true;
     this.attrs.boom = true;;
     this.attrs.boomCountdown = 60;
-    this.env.play('warpout')
+      this.env.play('warpout')
     
     this.booms.push(new Actors.Boom(
       this.env, {
@@ -959,10 +655,8 @@ Actors.Maze.prototype.update = function (delta) {
         this.cells[i].killAllActors();
       }
 
-      this.env.play('reactor-boom');
-
-      //setTimeout(this.env.restart, 2500)
-      setTimeout(this.env.goNext, 2500)
+      setTimeout(this.env.restart, 2500)
+      //setTimeout(this.env.goNext, 2500)
     }
   }
   
@@ -988,10 +682,10 @@ Actors.Maze.prototype.update = function (delta) {
   if(this.portal){
     this.portal.update(delta);
   }
-  
+
 }
 
-Actors.Maze.prototype.paint = function (view, fx) {
+Actors.Linearmaze.prototype.paint = function (view, fx) {
 
   var max = Math.max(this.opts.max_x, this.opts.max_y);
   var min = Math.min(this.opts.max_x, this.opts.max_y);
@@ -1001,12 +695,16 @@ Actors.Maze.prototype.paint = function (view, fx) {
   var f = (w/this.opts.cell_w);
   
   view.ctx.save()
-  fx.ctx.save()
 
-  // view.ctx.translate(
-  //   (this.opts.max_x - (this.attrs.cols * w))/2,
-  //   (this.opts.max_y - (this.attrs.rows * w))/2
-  // );
+  // if(this.opts.fit){
+  //   view.ctx.translate(this.attrs.max * 0.05, this.attrs.max * 0.05);
+  //   view.ctx.scale(0.9, 0.9);
+  // }
+
+  view.ctx.translate(
+    (this.opts.max_x - (this.attrs.cols * w))/2,
+    (this.opts.max_y - (this.attrs.rows * w))/2
+  );
 
 
   var x, y, i, ii;
@@ -1023,8 +721,8 @@ Actors.Maze.prototype.paint = function (view, fx) {
       cell = this.cells[i];
       view.ctx.save();
       if(this._steps.stack.indexOf(cell) > -1){
-        view.ctx.fillStyle = '#c00';
-        view.ctx.strokeStyle = '#c00';
+        view.ctx.fillStyle = '#300';
+        view.ctx.strokeStyle = '#300';
         view.ctx.beginPath();
         view.ctx.rect((cell.attrs.x * w), (cell.attrs.y * w), w, w); 
         view.ctx.fill();
@@ -1047,104 +745,64 @@ Actors.Maze.prototype.paint = function (view, fx) {
     }
   }
 
-
+  if(this._route){
+    view.ctx.lineWidth = 4
+    for (i = 0, ii = this.cells.length; i<ii; i++) {
+      cell = this.cells[i]
+      x = i % this.attrs.cols
+      y = Math.floor(i / this.attrs.cols)     
+      if(this._route.indexOf(i) > -1){
+        view.ctx.beginPath()
+        view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+        view.ctx.fillStyle='rgba(0,255,255,0.25)';
+        view.ctx.beginPath();
+        view.ctx.rect((x * w) , (y * w), w, w);
+        view.ctx.fill();
+      } else {
+        view.ctx.beginPath()
+        view.ctx.strokeStyle='rgba(255,0,255,0.25)';
+        view.ctx.fillStyle='rgba(255,0,255,0.25)';
+        view.ctx.beginPath();
+        view.ctx.rect((x * w) , (y * w), w, w);
+        view.ctx.fill();
+      }
+    }
+  } 
 
   for (i = 0, ii = this.cells.length; i<ii; i++) {
     x = i % this.attrs.cols;
     y = Math.floor(i/this.attrs.rows);
 
     cell = this.cells[i]
+    fx.ctx.save()
+    fx.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
+    fx.ctx.scale(f, f);
+
     view.ctx.save()
     view.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
     view.ctx.scale(f, f);
 
-    fx.ctx.save()
-    fx.ctx.translate(cell.attrs.x * w, cell.attrs.y * w);
-    fx.ctx.scale(f, f);
-    
-    cell.paint(view, fx);
-    view.ctx.restore()
-    fx.ctx.restore()
+    cell.paint(view, fx); 
+    view.ctx.restore();
+    fx.ctx.restore();
   }
 
   var routes, route, from, to, dx, dy;
 
   // show route
   
-  if(this.human && this.human.attrs.route){
-    routes = this.human.attrs.route; 
-    
-    if(!this._routeIndex){
-      this._routeIndex = 0;
-    }
-
-    if(this._routeIndex >=  routes.length){
-      this._routeIndex = 0;
-    }
-
-    for(i = 0, ii<routes.length; i<ii; i++){
-      route = routes[i];
-
-      if(this.cells[route] && this.cells[route].capacitor){
-        continue;
-      }
-      if(this.cells[route] && this.cells[route].capacitors){
-        continue;
-      }
-
-      x = routes[i] % this.attrs.cols
-      y = Math.floor(routes[i] / this.attrs.cols)
-      
-      from = this.cells[routes[i]];
-      to = this.cells[routes[i+1]];
-
-      if(from && from.breeders.length > 0){
-        continue;
-      }
-
-      if(from && from.powerup){
-        continue;
-      }
-
-      if(from && to){
-        if(Math.floor(this._routeIndex) === i){
-          if(this.attrs.escape){
-            view.ctx.strokeStyle='rgba(255,0,0,1)';
-          } else { 
-            view.ctx.strokeStyle='rgba(0,255,255,1)';
-          }
-        } else {
-          if(this.attrs.escape){
-            view.ctx.strokeStyle='rgba(255,0,0,0.75)';
-          } else { 
-            view.ctx.strokeStyle='rgba(0,255,255,0.5)';
-          }
-        }
-        view.ctx.lineWidth = 1
-        view.ctx.beginPath();
-        if(to.attrs.x > from.attrs.x){
-          view.ctx.moveTo((x * w) + (w*0.5), (y * w) + (w*0.4));
-          view.ctx.lineTo((x * w) + (w*0.6), (y * w) + (w*0.5));
-          view.ctx.lineTo((x * w) + (w*0.5), (y * w) + (w*0.6));
-        } else if(to.attrs.x < from.attrs.x){ 
-          view.ctx.moveTo((x * w) + (w*0.5), (y * w) + (w*0.4));
-          view.ctx.lineTo((x * w) + (w*0.4), (y * w) + (w*0.5));
-          view.ctx.lineTo((x * w) + (w*0.5), (y * w) + (w*0.6));
-        } else if(to.attrs.y > from.attrs.y){
-          view.ctx.moveTo((x * w) + (w*0.4), (y * w) + (w*0.5));
-          view.ctx.lineTo((x * w) + (w*0.5), (y * w) + (w*0.6));
-          view.ctx.lineTo((x * w) + (w*0.6), (y * w) + (w*0.5));
-        } else if(to.attrs.y < from.attrs.y){
-          view.ctx.moveTo((x * w) + (w*0.4), (y * w) + (w*0.5));
-          view.ctx.lineTo((x * w) + (w*0.5), (y * w) + (w*0.4));
-          view.ctx.lineTo((x * w) + (w*0.6), (y * w) + (w*0.5));
-        }
-        view.ctx.stroke();
-      }
-
-    }
-    this._routeIndex += 0.2
-  }
+  // if(this._route){
+  //   for(i = 0, ii<this._route.length; i<ii; i++){
+  //     route = this._route[i];
+  //     x = route % this.attrs.cols
+  //     y = Math.floor(route / this.attrs.cols)     
+  //     view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+  //     view.ctx.lineWidth = 2
+  //     view.ctx.beginPath();
+  //     view.ctx.rect((x * w) , (y * w), w, w);
+  //     view.ctx.stroke();
+  //   }
+  // }
 
   var boom;
   for (i = 0, ii = this.booms.length; i < ii; i++) {
@@ -1158,7 +816,8 @@ Actors.Maze.prototype.paint = function (view, fx) {
     view.ctx.restore()
   }
 
-  if(!this.attrs.phase && this.attrs.humanCountdown > 10){
+  
+  if(this.attrs.human && !this.attrs.phase && this.attrs.humanCountdown > 10){
     view.ctx.save()
     view.ctx.fillStyle = '#0ff'
     view.ctx.font = '24pt robotron'

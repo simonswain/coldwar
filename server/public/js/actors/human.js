@@ -34,7 +34,8 @@ Actors.Human.prototype.genAttrs = function (attrs) {
     escaped: false,
     shotfired: false,
     alpha: 0,
-    flag: true
+    flag: true,
+    passive: false
   }
 }
 
@@ -182,6 +183,11 @@ Actors.Human.prototype.update = function (delta) {
   }
 
   this.recharge()
+
+  if(!this.attrs.passive) {
+    this.attrs.face_enemy = false;
+  }
+  
   this.shootKings()
   this.shootRats()
   this.shootBreeder()
@@ -275,7 +281,9 @@ Actors.Human.prototype.update = function (delta) {
     this.velo.scale(1.5)
   }
 
-  this.pos.add(this.velo)
+  if(!this.attrs.passive) {
+    this.pos.add(this.velo)
+  }
 
   var other, cell;
 
@@ -349,8 +357,6 @@ Actors.Human.prototype.shootKings = function () {
   var enemy
   var closest = Infinity
 
-  this.attrs.face_enemy = false;
-
   if(this.refs.cell.kings.length === 0){
     return;
   };
@@ -393,19 +399,17 @@ Actors.Human.prototype.shootRats = function () {
   var enemy
   var closest = Infinity
 
-  this.attrs.face_enemy = false;
-
   if(!this.refs.cell.attrs.training){
-  var rats = [];
-  for(var i = 0; i < 4; i ++) {
-    if(!this.refs.cell.exits[i]){
-      continue;
+    var rats = [];
+    for(var i = 0; i < 4; i ++) {
+      if(!this.refs.cell.exits[i]){
+        continue;
+      }
+      rats = rats.concat(rats, this.refs.cell.exits[i].rats);
     }
-    rats = rats.concat(rats, this.refs.cell.exits[i].rats);
-  }
-  if(rats.length === 0){
-    return;
-  };
+    if(rats.length === 0){
+      return;
+    };
   }
 
   if(this.refs.cell.rats.length === 0){
@@ -477,8 +481,6 @@ Actors.Human.prototype.shootBreeder = function () {
 
   var enemy
   var closest = Infinity
-
-  this.attrs.face_enemy = false;
 
   if(this.refs.cell.breeders.length === 0){
     return;

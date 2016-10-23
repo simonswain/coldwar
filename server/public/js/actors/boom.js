@@ -268,6 +268,8 @@ Actors.Boom.prototype.paint = function (view) {
         view.ctx.strokeStyle = '#fff'
       }
       view.ctx.lineWidth = 16
+      view.ctx.lineCap='round'
+
       view.ctx.beginPath()
       view.ctx.arc(0, 0, (this.attrs.initial_radius - radius / i), 2 * Math.PI * Math.random(), 2 * Math.PI * Math.random())
       view.ctx.stroke()

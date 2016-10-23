@@ -15,7 +15,9 @@ Actors.Portal.prototype.title = 'Portal'
 Actors.Portal.prototype.genAttrs = function (attrs) {
   return {
     x: attrs.x,
-    y: attrs.y
+    y: attrs.y,
+    alpha: 0,    
+    beta: 0,    
   }
 }
 
@@ -31,32 +33,36 @@ Actors.Portal.prototype.defaults = [{
 }]
 
 Actors.Portal.prototype.update = function (delta) {
-
+  this.attrs.alpha += delta * 0.1;
+  if(this.attrs.alpha > 1){
+    this.attrs.alpha -= 1;
+  }
+  this.attrs.beta += delta * 0.03;
+  if(this.attrs.beta > 1){
+    this.attrs.beta -= 1;
+  }
 }
 
 Actors.Portal.prototype.paint = function (view) {
-  var arc = Math.PI/3;
-  
-  view.ctx.fillStyle = 'rgba(0, 255, 0, 255, 0.9)'
-  var p = (this.env.ms / 2000) + 0.5;
-
-  if(this.refs.maze.attrs.escape && this.env.ms < 500){
+  if(this.refs.maze.attrs.escape){
+    view.ctx.strokeStyle = 'rgba(255, 0, 255, ' + ((0.5 * this.attrs.alpha)) + ')'
     view.ctx.beginPath()
-    view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
-    view.ctx.fill()
+    view.ctx.arc(0, 0, this.opts.r/2, -2*Math.PI * this.attrs.beta, -2*Math.PI * this.attrs.beta + Math.PI * 0.25)
+    view.ctx.stroke()
 
-    view.ctx.strokeStyle = 'rgba(0, 255, 255, 1)'
-    view.ctx.lineWidth = 24
+    view.ctx.strokeStyle = 'rgba(0, 255, 255, ' + ((0.5 * this.attrs.alpha)) + ')'
+    view.ctx.beginPath()
+    view.ctx.arc(0, 0, this.opts.r/2, 2*Math.PI * this.attrs.beta, 2*Math.PI * this.attrs.alpha + Math.PI * 0.25)
+    view.ctx.stroke()
+
+    view.ctx.strokeStyle = 'rgba(0, 255, 255, ' + this.attrs.alpha + ')'
+    view.ctx.lineWidth = 16
     view.ctx.beginPath()
     view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)
     view.ctx.stroke()
-  } else { 
-    view.ctx.beginPath()
-    view.ctx.arc(0, 0, this.opts.r, 0, 2*Math.PI)
-    view.ctx.fill()
-
-    view.ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)'
-    view.ctx.lineWidth = 24
+  } else {
+    view.ctx.strokeStyle = 'rgba(0, 255, 255, ' + this.attrs.alpha * 0.5 + ')'
+    view.ctx.lineWidth = 16
     view.ctx.beginPath()
     view.ctx.rect(-this.opts.r* 0.66, -this.opts.r* 0.66, this.opts.r * 0.66 * 2, this.opts.r * 0.66 * 2)
     view.ctx.stroke()
