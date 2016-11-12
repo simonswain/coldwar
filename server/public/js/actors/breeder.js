@@ -17,6 +17,7 @@ Actors.Breeder.prototype.genAttrs = function (attrs) {
     x: attrs.x,
     y: attrs.y,
     hp: attrs.hp || 100,
+    spawn: 0,
     dead: false
   }
 }
@@ -94,6 +95,12 @@ Actors.Breeder.prototype.kill = function () {
     }
   }
 
+  if(this.refs.cell && this.refs.cell.refs.maze) {
+    if(! this.refs.cell.refs.maze.attrs.boom){
+      this.env.play('baiter')
+    }
+  }
+    
   this.refs.cell.booms.push(new Actors.Boom(
     this.env, {
     }, {
@@ -140,6 +147,11 @@ Actors.Breeder.prototype.update = function (delta) {
   //     }
   //   ))
   // }
+
+  this.attrs.spawn --;
+  if(this.attrs.spawn < 0){
+    this.attrs.spawn = 0;
+  }
 
   if(this.rats.length < this.opts.rats_max){
     if(this.refs.cell.refs.maze){

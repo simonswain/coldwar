@@ -26,6 +26,7 @@ Actors.Logicmaze.prototype.genAttrs = function (attrs) {
     human: attrs.human,
     humanCountdown: 60,
     boom: false,
+    showToHuman: attrs.showToHuman || false,
     boomCountdown: 0
   }
 }
@@ -123,7 +124,7 @@ Actors.Logicmaze.prototype.seedActors = function () {
   //this.attrs.reactor_cell = this.cells.length-1;
   //this.addReactor(this.attrs.reactor_cell);
   //this.portal = this.addPortal(this.attrs.entry_cell);
-  this.addBreeder(this.cells.length-1);
+  this.addBreeder(Math.floor(this.cells.length/3)+1);
 };
 
 Actors.Logicmaze.prototype.makeGridmates = function () {

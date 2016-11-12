@@ -3,29 +3,29 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.entry = function(env, opts){
+Scenes.ingress = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.entry.prototype = Object.create(Scene.prototype);
+Scenes.ingress.prototype = Object.create(Scene.prototype);
 
-Scenes.entry.prototype.title = 'Entry';
+Scenes.ingress.prototype.title = 'Ingress';
 
-Scenes.entry.prototype.layout = '';
+Scenes.ingress.prototype.layout = '';
 
-Scenes.entry.prototype.init = function(){
+Scenes.ingress.prototype.init = function(){
   this.env.play('defstart')
 }
 
-Scenes.entry.prototype.getCast = function(){
+Scenes.ingress.prototype.getCast = function(){
   return {
   }
 };
 
-Scenes.entry.prototype.defaults = [{
+Scenes.ingress.prototype.defaults = [{
   key: 'max_x',
   value: 480,
   min: 32,
@@ -37,7 +37,7 @@ Scenes.entry.prototype.defaults = [{
   max: 1024
 }];
 
-Scenes.entry.prototype.genAttrs = function(){
+Scenes.ingress.prototype.genAttrs = function(){
   return {
     frame_index: 0,
     step_index: 0,
@@ -46,7 +46,7 @@ Scenes.entry.prototype.genAttrs = function(){
   };
 };
 
-Scenes.entry.prototype.update = function(delta){
+Scenes.ingress.prototype.update = function(delta){
 
   if(this.env.at > 3000) {
     this.env.goNext()
@@ -55,7 +55,7 @@ Scenes.entry.prototype.update = function(delta){
 }
 
 
-Scenes.entry.prototype.paint = function(fx, gx, sx){
+Scenes.ingress.prototype.paint = function(fx, gx, sx){
 
     var arc = Math.PI/3;
 

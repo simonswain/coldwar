@@ -36,7 +36,9 @@ Coldwar.prototype.boot = function () {
     'superzapper',
     'superzap',
     'entry',
-    'fall'
+    'fall',
+    'humanoidfall',
+    'pow',
   ];
 
   var self = this;
@@ -45,7 +47,10 @@ Coldwar.prototype.boot = function () {
   });
 
   this.play = function (k) {
-    return;
+    if(this.env.mute){
+      return;
+    }
+    //return;
     if(this.sounds[k]){
       this.sounds[k].play();
     }
@@ -494,7 +499,8 @@ Coldwar.prototype.genEnv = function () {
     show_opts: localStorage.getItem('show_opts') === 'true',
     show_meta: false,
     show_help: false,
-    caption_index: 0
+    caption_index: 0,
+    mute: false
   }
 }
 
@@ -1112,9 +1118,9 @@ Coldwar.prototype.scenes = [{
   title: 'Factory',
   slug: 'factory'
 }, {
-  title: 'Beware',
-  slug: 'beware'
-}, {
+//   title: 'Beware',
+//   slug: 'beware'
+// }, {
   title: 'Enemies',
   slug: 'enemies'
 }, {
@@ -1127,8 +1133,8 @@ Coldwar.prototype.scenes = [{
   title: 'Ready?',
   slug: 'ready'
 }, {
-  title: 'Entry',
-  slug: 'entry'
+  title: 'Ingress',
+  slug: 'ingress'
 }, {
   title: 'Maze 1',
   slug: 'maze1'
@@ -1184,14 +1190,26 @@ Coldwar.prototype.scenes = [{
   title: 'Four Cells',
   slug: 'four_cells'
 }, {
-  title: 'Cell Hopping',
-  slug: 'cell_hopping'
+  title: 'Cell Hop 1',
+  slug: 'cellhop1'
 }, {
-  title: 'Solver0',
-  slug: 'solver0'
+  title: 'Cell Hop 2',
+  slug: 'cellhop2'
 }, {
-  title: 'Solver1',
-  slug: 'solver1'
+  title: 'Seeding 1',
+  slug: 'seeding_maze'
+}, {
+  title: 'Rat Logic',
+  slug: 'rat_logic'
+}, {
+  title: 'Rat Seek',
+  slug: 'rat_logic_seek'
+// }, {
+//   title: 'Solver0',
+//   slug: 'solver0'
+// }, {
+//   title: 'Solver1',
+//   slug: 'solver1'
 }, {
   title: 'Solver2',
   slug: 'solver2'
@@ -1220,14 +1238,11 @@ Coldwar.prototype.scenes = [{
   title: 'Solver',
   slug: 'solver'
 }, {
-  title: 'Rat Mischief',
-  slug: 'rat_logic'
+  title: 'Seeding 2',
+  slug: 'seeding_redux'
 }, {
-  title: 'Rat Logic',
-  slug: 'rat_logic_seek'
-}, {
-  title: 'Seeding Maze',
-  slug: 'seeding_maze'
+  title: 'Rat Redux',
+  slug: 'rat_logic_redux'
 }, {
   title: 'Linear Path',
   slug: 'linear_path'
@@ -1244,11 +1259,14 @@ Coldwar.prototype.scenes = [{
   title: 'Tunnel',
   slug: 'tunnel'
 }, {
-  title: 'Gateway',
-  slug: 'gateway'
-}, {
-  title: 'King Rat',
-  slug: 'king_rat'
+  title: 'So You Think',
+  slug: 'soyouthink'
+// }, {
+//   title: 'Gateway',
+//   slug: 'gateway'
+// }, {
+//   title: 'King Rat',
+//   slug: 'king_rat'
 // }, {
 //   title: 'Trap',
 //   slug: 'trap'

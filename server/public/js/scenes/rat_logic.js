@@ -12,13 +12,14 @@ Scenes.rat_logic.prototype = Object.create(Scene.prototype)
 Scenes.rat_logic.prototype.title = 'Rat Logic'
 
 Scenes.rat_logic.prototype.init = function () {
+  this.env.mute = true;
   this.maze = new Actors.Logicmaze(
     this.env, {
       scene: this
     }, {
     }, {
-      rows: 3,
-      cols: 3,
+      rows: 4,
+      cols: 4,
       human: false
     })
 }

@@ -252,7 +252,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#ff0';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
 
     if(i === 15){
@@ -261,7 +262,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#f00';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
   }
 
@@ -278,7 +280,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 1){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -311,7 +314,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 2){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -344,7 +348,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 3){
       gx.ctx.fillStyle = '#f00';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -377,7 +382,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 4){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate((x + 0.5) * ww, y * hh);
@@ -409,7 +415,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 5){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -442,7 +449,8 @@ Scenes.solver5.prototype.paint = function(fx, gx, sx){
     if(i === 6){
       gx.ctx.fillStyle = '#f00';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);

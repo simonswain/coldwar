@@ -253,7 +253,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#ff0';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
 
     if(i === 15){
@@ -262,7 +263,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#f00';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
   }
 
@@ -279,7 +281,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
     if(i === 1){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -312,7 +315,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
     if(i === 2){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
      gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -345,7 +349,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
     if(i === 3){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate(x * ww, (y + 0.5) * hh);
@@ -378,7 +383,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
     if(i === 7){
       gx.ctx.fillStyle = '#00f';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate((x + 0.5) * ww, y * hh);
@@ -410,7 +416,8 @@ Scenes.solver7.prototype.paint = function(fx, gx, sx){
     if(i === 11){
       gx.ctx.fillStyle = '#f00';
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
 
       gx.ctx.save();
       gx.ctx.translate((x + 0.5) * ww, y * hh);

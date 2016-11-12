@@ -31,7 +31,7 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 0,
 	  "x": 0,
 	  "y": 0,
-	  "exits": [null, 1, 4, 1]
+	  "exits": [null, 1, 4, null]
   }, {
 	  "i": 1,
 	  "x": 1,
@@ -106,7 +106,7 @@ Scenes.solver2.prototype.init = function(){
 	  "i": 15,
 	  "x": 3,
 	  "y": 3,
-	  "exits": [11, 1, null, 14]
+	  "exits": [11, null, null, 14]
   }];
   
 }
@@ -255,7 +255,8 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#ff0';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
 
     if(i === 15){
@@ -264,7 +265,8 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
         gx.ctx.fillStyle = '#f00';
       }
       gx.ctx.beginPath();
-      gx.ctx.fillRect((x * ww), (y * hh), ww, hh);
+      gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
+      gx.ctx.fill();
     }
   }
 
@@ -338,57 +340,56 @@ Scenes.solver2.prototype.paint = function(fx, gx, sx){
   }
 
 
-  for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
-    x = i % this.attrs.cols;
-    y = Math.floor(i / this.attrs.rows);
+  // for(var i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+  //   x = i % this.attrs.cols;
+  //   y = Math.floor(i / this.attrs.rows);
 
-    var cell = this.cells[i];
+  //   var cell = this.cells[i];
 
-    if(i === 0){
-      gx.ctx.save();
-      gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='#000';
-      gx.ctx.lineWidth=4;
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(0 * ww, 0);
-      gx.ctx.lineTo(0.2 * ww, 0);
-      gx.ctx.stroke();
+  //   if(i === 0){
+  //     gx.ctx.save();
+  //     gx.ctx.translate(x * ww, (y + 0.5) * hh);
+  //     gx.ctx.strokeStyle='#000';
+  //     gx.ctx.lineWidth=4;
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(0 * ww, 0);
+  //     gx.ctx.lineTo(0.2 * ww, 0);
+  //     gx.ctx.stroke();
 
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(0.2 * ww, 0);
-      gx.ctx.lineTo(0.1 * ww, -0.1 * hh);
-      gx.ctx.stroke();
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(0.2 * ww, 0);
+  //     gx.ctx.lineTo(0.1 * ww, -0.1 * hh);
+  //     gx.ctx.stroke();
 
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(0.2 * ww, 0);
-      gx.ctx.lineTo(0.1 * ww, 0.1 * hh);
-      gx.ctx.stroke();
-      gx.ctx.restore();
-    }
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(0.2 * ww, 0);
+  //     gx.ctx.lineTo(0.1 * ww, 0.1 * hh);
+  //     gx.ctx.stroke();
+  //     gx.ctx.restore();
+  //   }
 
-    if(i === 15){
-      gx.ctx.save();
-      gx.ctx.translate(x * ww, (y + 0.5) * hh);
-      gx.ctx.strokeStyle='#000';
-      gx.ctx.lineWidth=4;
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(0.8 * ww, 0);
-      gx.ctx.lineTo(1.0 * ww, 0);
-      gx.ctx.stroke();
+  //   if(i === 15){
+  //     gx.ctx.save();
+  //     gx.ctx.translate(x * ww, (y + 0.5) * hh);
+  //     gx.ctx.strokeStyle='#000';
+  //     gx.ctx.lineWidth=4;
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(0.8 * ww, 0);
+  //     gx.ctx.lineTo(1.0 * ww, 0);
+  //     gx.ctx.stroke();
 
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(1.0 * ww, 0);
-      gx.ctx.lineTo(0.9 * ww, -0.1 * hh);
-      gx.ctx.stroke();
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(1.0 * ww, 0);
+  //     gx.ctx.lineTo(0.9 * ww, -0.1 * hh);
+  //     gx.ctx.stroke();
 
-      gx.ctx.beginPath(); 
-      gx.ctx.moveTo(1.0 * ww, 0);
-      gx.ctx.lineTo(0.9 * ww, 0.1 * hh);
-      gx.ctx.stroke();
-      gx.ctx.restore();
-    }
-
-  }
+  //     gx.ctx.beginPath(); 
+  //     gx.ctx.moveTo(1.0 * ww, 0);
+  //     gx.ctx.lineTo(0.9 * ww, 0.1 * hh);
+  //     gx.ctx.stroke();
+  //     gx.ctx.restore();
+  //   }
+  // }
 
   
   gx.ctx.restore();

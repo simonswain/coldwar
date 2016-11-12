@@ -41,7 +41,8 @@ Actors.Reactor.prototype.prime = function () {
     return;
   }
 
-  this.env.play('inception')
+  this.env.play('humm')
+  //this.env.play('inception')
 
   this.attrs.primed = true;
   this.refs.cell.booms.push(new Actors.Boom(

@@ -117,33 +117,37 @@ Scenes.title.prototype.update = function(delta){
 }
 
 Scenes.title.prototype.flash = function(fx, gx){
-
+  return;
   var i, ii;
   ii = gx.h;
 
   var view = gx
 
-    var h = (Date.now()%360 * 0.22) - 10;
-  var c;
-  c = 'hsl(' + h + ', 100%, 50%)';
-  
-  if(Math.random() < 0.025){
-    c = 'rgba(255,255,0,0.5)';
-  }
+ 
+  // if(Math.random() < 0.025){
+  //   c = 'rgba(255,255,0,0.5)';
+  // }
 
-  if(Math.random() < 0.15){
-    c = 'rgba(255,255,255,1)';
-  }
+  // if(Math.random() < 0.15){
+  //   c = 'rgba(255,255,255,0.75)';
+  // }
   
   view.ctxshadowColor = c;
   view.ctxshadowBlur = 40;
   view.ctxshadowOffsetX = 0;
   view.ctxshadowOffsetY = 0;
   view.ctxshadowBlur = 16;
+
+  var h, c;
   
   for(i=0; i<ii; i+= this.attrs.row_h){
+
+    h = (((Date.now() + i*13) / 100) % 360);
+    c = 'hsla(' + h + ', 100%, 50%, 0.25)';
+
     view.ctx.beginPath();
-    view.ctx.strokeStyle= 'rgba(0, 255, 255, 0.25)';
+    view.ctx.strokeStyle= c;
+    //view.ctx.strokeStyle= 'rgba(0, 255, 255, 0.25)';
     if(Math.random() < 0.02){
       view.ctx.strokeStyle= 'rgba(255, 0, 255, 0.15)';
     }
@@ -159,14 +163,15 @@ Scenes.title.prototype.flash = function(fx, gx){
 
 }
 
-Scenes.title.prototype.paint = function(fx, gx, sx){
+Scenes.title.prototype.paint = function(fx, gx){
   gx.ctx.save();
-  gx.ctx.translate(-this.opts.max_x * 0.6, -this.opts.max_y * 0.5);
+  gx.ctx.translate(-this.opts.max_x * 0.64, -this.opts.max_y * 0.6);
   gx.ctx.scale(2, 2);
   this.paintTitle(gx);
   gx.ctx.restore();
+
   fx.ctx.save();
-  fx.ctx.translate(-this.opts.max_x * 0.6, -this.opts.max_y * 0.5);
+  fx.ctx.translate(-this.opts.max_x * 0.64, -this.opts.max_y * 0.6);
   fx.ctx.translate(this.opts.wiggle_size*(Math.random() - 0.5), this.opts.wiggle_size*(Math.random() - 0.5));
   fx.ctx.scale(2, 2);
   this.paintTitle(fx);
@@ -178,7 +183,6 @@ Scenes.title.prototype.paintTitle = function(view){
   var frame = Scenes.title.prototype.frames[this.attrs.frame_index];
   
   view.ctx.fillStyle = '#fb0';
-  //view.ctx.font = this.opts.font_size + 'pt ubuntu mono';
   view.ctx.font = '24pt robotron';
   var text = frame.text
 var chars;
@@ -227,19 +231,27 @@ var chars;
     
     view.ctx.save();
     view.ctx.translate(Math.random() * 5, Math.random() * 5);
-
-    if(text[i] === ' '){
-      view.ctx.strokeStyle = '#00f' 
-      view.ctx.lineWidth = 1;
-      view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
-    }
  
-    if(text[i] === ' '){
-      view.ctx.strokeStyle = '#00f' 
-      view.ctx.lineWidth = 1;
-      view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
-    }
+    // if(Math.random() < 0.01){
+    //   view.ctx.beginPath();
+    //   view.ctx.fillStyle = '#000' 
+    //   view.ctx.fillRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    // }
 
+    // if(text[i] === ' '){
+    //   view.ctx.strokeStyle = '#00f' 
+    //   view.ctx.lineWidth = 1;
+    //   view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    // }
+ 
+    // if(text[i] === ' ' && Math.random() < 0.001){ 
+    //   view.ctx.beginPath();
+    //   view.ctx.strokeStyle = '#00f' 
+    //   view.ctx.lineWidth = 1;
+    //   view.ctx.strokeRect(xx + (x * dx), yy + (y * dy) - 26, 20, 24);
+    // }
+
+    ///view.ctx.beginPath();
     var ch = text[i] === ' ' ? ' ' : '-';
     var trans = false;
     if(text[i] !== ' '){
@@ -318,67 +330,79 @@ Scenes.title.prototype.frames = [];
 
 Scenes.title.prototype.frames[0] = {
   text:[
-    ' xxxxxx x   x  xxxx  ',
-    '   xx   x   x  xx    ',
-    '   xx   x   x  xx    ',
-    '   xx   xxxxx  xxx   ',
-    '   xx   xxxxx  xx    ',
-    '   xx   x   x  xxxx  ',
+    '                        ',
+    '   xxxxxx x   x  xxxx   ',
+    '     xx   x   x  xx     ',
+    '     xx   x   x  xx     ',
+    '     xx   xxxxx  xxx    ',
+    '     xx   xxxxx  xx     ',
+    '     xx   x   x  xxxx   ',
+    '                        ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[1] = {
   text:[
-    ' x x    xx   xxxx  xxxx',
-    'xxxxx  xxxx    xx  x   ',
-    'x x x  x  x   xx   xx  ',
-    'x   x  xxxx  xx    xx  ',
-    'x   x  x  x  xx    x   ',
-    'x   x  x  x  xxxx  xxxx'
+    '                         ',
+    '  x x    xx   xxxx  xxxx ',
+    ' xxxxx  xxxx    xx  x    ',
+    ' x x x  x  x   xx   xx   ',
+    ' x   x  xxxx  xx    xx   ',
+    ' x   x  x  x  xx    x    ',
+    ' x   x  x  x  xxxx  xxxx ',
+    '                         ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[2] = {
   text:[
-    '        xxx   xxxx     ',
-    '       x  xx  x        ',
-    '       x  xx  x        ',
-    '       x  xx  xx       ',
-    '       x  xx  xx       ',
-    '        xxx   x        ',
+    '                         ',
+    '         xxx   xxxx      ',
+    '        x  xx  x         ',
+    '        x  xx  x         ',
+    '        x  xx  xx        ',
+    '        x  xx  xx        ',
+    '         xxx   x         ',
+    '                         ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[3] = {
   text:[
-    '  xxxxxx x   x  xxxx   ',
-    '    xx   x   x  xx     ',
-    '    xx   x   x  xx     ',
-    '    xx   xxxxx  xxx    ',
-    '    xx   xxxxx  xx     ',
-    '    xx   x   x  xxxx   ',
+    '                         ',
+    '   xxxxxx x   x  xxxx    ',
+    '     xx   x   x  xx      ',
+    '     xx   x   x  xx      ',
+    '     xx   xxxxx  xxx     ',
+    '     xx   xxxxx  xx      ',
+    '     xx   x   x  xxxx    ',
+    '                         ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[4] = {
   text:[
-    'xxx    xx  xxxxxx xxxx ',
-    'x xx  xxxx   xx   xx   ',
-    'x xx  x  x   xx   xx   ',
-    'xxx   xxxx   xx   xxxx ',
-    'x  x  x  x   xx     xx ',
-    'x  x  x  x   xx   xxxx ',
+    '                        ',
+    ' xxx    xx  xxxxxx xxxx ',
+    ' x xx  xxxx   xx   xx   ',
+    ' x xx  x  x   xx   xx   ',
+    ' xxx   xxxx   xx   xxxx ',
+    ' x  x  x  x   xx     xx ',
+    ' x  x  x  x   xx   xxxx ',
+    '                        ',
   ].join("\n")
 };
 
 Scenes.title.prototype.frames[5] = {
   text:[
-    '       xxx   xxxx      ',
-    '      x  xx  x         ',
-    '      x  xx  xx        ',
-    '      x  xx  xx        ',
-    '      x  xx  x         ',
-    '       xxx   x         ',
+    '                        ',
+    '        xxx   xxxx      ',
+    '       x  xx  x         ',
+    '       x  xx  xx        ',
+    '       x  xx  xx        ',
+    '       x  xx  x         ',
+    '        xxx   x         ',
+    '                        ',
   ].join("\n")
 };
 

@@ -72,11 +72,9 @@ Scenes.tunnel.prototype.update = function(delta){
   this.attrs.alpha += delta * 0.5 
   if(this.attrs.alpha > 2 * Math.PI){
     this.attrs.alpha -= 2 * Math.PI;
-    this.env.play('heartbeat');
-    
+    this.env.play('heartbeat');   
     this.init();
   }
-
 
   this.attrs.tt += delta/5;
   if(this.attrs.tt > 5){
@@ -85,9 +83,9 @@ Scenes.tunnel.prototype.update = function(delta){
 
   if(this.attrs.mode === 'enter'){
     this.attrs.x += delta * 4;
-    if(this.attrs.x >= this.opts.max_x * 1.1){
+    if(this.attrs.x >= this.opts.max_x){
       //this.attrs.x = 0;
-      setTimeout(this.env.goNext, 500)
+      setTimeout(this.env.goNext, 10)
       this.mode = 'leaving'
     }
 

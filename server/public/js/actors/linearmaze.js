@@ -679,10 +679,6 @@ Actors.Linearmaze.prototype.update = function (delta) {
     }
   }
 
-  if(this.portal){
-    this.portal.update(delta);
-  }
-
 }
 
 Actors.Linearmaze.prototype.paint = function (view, fx) {
@@ -752,12 +748,12 @@ Actors.Linearmaze.prototype.paint = function (view, fx) {
       x = i % this.attrs.cols
       y = Math.floor(i / this.attrs.cols)     
       if(this._route.indexOf(i) > -1){
-        view.ctx.beginPath()
-        view.ctx.strokeStyle='rgba(0,255,255,0.25)';
-        view.ctx.fillStyle='rgba(0,255,255,0.25)';
-        view.ctx.beginPath();
-        view.ctx.rect((x * w) , (y * w), w, w);
-        view.ctx.fill();
+        // view.ctx.beginPath()
+        // view.ctx.strokeStyle='rgba(0,255,255,0.25)';
+        // view.ctx.fillStyle='rgba(0,255,255,0.25)';
+        // view.ctx.beginPath();
+        // view.ctx.rect((x * w) , (y * w), w, w);
+        // view.ctx.fill();
       } else {
         view.ctx.beginPath()
         view.ctx.strokeStyle='rgba(255,0,255,0.25)';

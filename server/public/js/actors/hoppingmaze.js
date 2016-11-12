@@ -53,7 +53,7 @@ Actors.Hoppingmaze.prototype.defaults = [{
   max: 1600
 }, {
   key: 'max_y',
-  value: 480,
+  value: 640,
   min: 100,
   max: 1000
 }, {
@@ -78,7 +78,7 @@ Actors.Hoppingmaze.prototype.defaults = [{
   max: 1
 }, {
   key: 'breeders',
-  value: 2,
+  value: 0,
   min: 0,
   max: 16
 }]
@@ -123,7 +123,7 @@ Actors.Hoppingmaze.prototype.seedActors = function () {
   //this.attrs.reactor_cell = this.cells.length-1;
   //this.addReactor(this.attrs.reactor_cell);
   //this.portal = this.addPortal(this.attrs.entry_cell);
-  this.addBreeder(this.cells.length-1);
+  //this.addBreeder(this.cells.length-1);
 };
 
 Actors.Hoppingmaze.prototype.makeGridmates = function () {

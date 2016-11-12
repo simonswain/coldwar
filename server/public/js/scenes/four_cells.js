@@ -13,6 +13,7 @@ Scenes.four_cells.prototype.title = 'Four_Cells'
 
 Scenes.four_cells.prototype.init = function () {
 
+  this.env.mute = true;
 
   this.cell1 = new Actors.Cell(
     this.env, {

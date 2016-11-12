@@ -711,10 +711,6 @@ Actors.Seedingmaze.prototype.update = function (delta) {
       ii--
     }
   }
-
-  if(this.portal){
-    this.portal.update();
-  }
   
 }
 

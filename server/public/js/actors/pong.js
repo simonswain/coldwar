@@ -88,9 +88,7 @@ Actors.Pong.prototype.angry = function () {
 
 Actors.Pong.prototype.twist = function () {
   var v = this.velo.vecr();
-  
   var q = new VecR(Math.PI * 2 * Math.random(), 1 );
-
   v.a += q.a * 0.1
   this.velo = v.vec3();
 };

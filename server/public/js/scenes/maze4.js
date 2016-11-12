@@ -9,7 +9,7 @@ Scenes.maze4 = function (env, opts) {
 
 Scenes.maze4.prototype = Object.create(Scene.prototype)
 
-Scenes.maze4.prototype.title = 'Maze 1'
+Scenes.maze4.prototype.title = 'Maze 4'
 
 Scenes.maze4.prototype.init = function () {
   this.maze = new Actors.Maze(
@@ -20,7 +20,7 @@ Scenes.maze4.prototype.init = function () {
     }, {
       rows: 5,
       cols: 7,
-      breeders: 6,
+      breeders: 6
     });
 
   this.target_zoom = 1;

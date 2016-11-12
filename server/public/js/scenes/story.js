@@ -192,6 +192,16 @@ Scenes.story.prototype.paint = function(fx, gx, sx){
     gx.ctx.fillStyle = 'rgba(255,255,255,1)';
     gx.ctx.translate(0, ((Math.random()-0.5))*this.opts.max_y * 0.5)
   }
+
+  if(Math.random() < 0.025){
+    gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+    gx.ctx.translate(((Math.random()-0.5))*this.opts.max_y * 0.5, 0)
+  }
+
+  if(Math.random() < 0.025){
+    gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+    gx.ctx.translate(((Math.random()-0.5))*this.opts.max_y * 0.25, 0)
+  }
   
   for (var i = 0; i < ix; i++) {
     if(frame.text[i] === "\n"){

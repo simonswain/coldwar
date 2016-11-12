@@ -1,29 +1,31 @@
 /* global Scenes, Scene, Actors */
 
-Scenes.maze2 = function (env, opts) {
+Scenes.cellhop1 = function (env, opts) {
   this.env = env
   this.opts = this.genOpts(opts)
   this.attrs = this.genAttrs()
   this.init()
 }
 
-Scenes.maze2.prototype = Object.create(Scene.prototype)
+Scenes.cellhop1.prototype = Object.create(Scene.prototype)
 
-Scenes.maze2.prototype.title = 'Maze 1'
+Scenes.cellhop1.prototype.title = 'Cell Hopping'
 
-Scenes.maze2.prototype.init = function () {
-  this.maze = new Actors.Maze(
+Scenes.cellhop1.prototype.init = function () {
+  this.env.mute = true;
+  this.maze = new Actors.Hoppingmaze(
     this.env, {
       scene: this
     }, {
+      human: true,
     }, {
-      rows: 4,
-      cols: 5,
-      breeders: 4,
+      breeders: 0,
+      rows: 1,
+      cols: 1
     })
 }
 
-Scenes.maze2.prototype.getCast = function () {
+Scenes.cellhop1.prototype.getCast = function () {
   return {
     Maze: Actors.Maze,
     Cell: Actors.Cell,
@@ -36,7 +38,7 @@ Scenes.maze2.prototype.getCast = function () {
   }
 }
 
-Scenes.maze2.prototype.defaults = [{
+Scenes.cellhop1.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
   value: 640,
@@ -45,22 +47,22 @@ Scenes.maze2.prototype.defaults = [{
 }, {
   key: 'max_y',
   info: 'Max Y',
-  value: 512,
+  value: 640,
   min: 100,
   max: 1000
 }]
 
-Scenes.maze2.prototype.genAttrs = function () {
+Scenes.cellhop1.prototype.genAttrs = function () {
   return {
   }
 }
 
-Scenes.maze2.prototype.update = function (delta) {
+Scenes.cellhop1.prototype.update = function (delta) {
   this.maze.update(delta);
 }
 
 
-Scenes.maze2.prototype.flash = function(fx, gx, sx){
+Scenes.cellhop1.prototype.flash = function(fx, gx, sx){
   if(this.maze.attrs.boom && this.maze.attrs.boomCountdown <= 0){
     if(Math.random() < 0.5){
       gx.ctx.fillStyle = '#ffffff'
@@ -77,10 +79,14 @@ Scenes.maze2.prototype.flash = function(fx, gx, sx){
   }
 }
 
-Scenes.maze2.prototype.paint = function (fx, gx, sx) { 
+Scenes.cellhop1.prototype.paint = function (fx, gx, sx) { 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
   gx.ctx.scale(0.9, 0.9);
+  fx.ctx.save();
+  fx.ctx.translate(this.opts.max_x * 0.05, this.opts.max_y * 0.05);
+  fx.ctx.scale(0.9, 0.9);
   this.maze.paint(gx, fx)
   gx.ctx.restore();
+  fx.ctx.restore();
 }

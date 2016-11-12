@@ -24,7 +24,8 @@ Actors.Boom.prototype.styles = [
   'laser',
   'colonize',
   'decolonize',
-  'nuke'
+  'nuke',
+  'nuke2'
 ]
 
 Actors.Boom.prototype.genAttrs = function (attrs) {
@@ -265,7 +266,10 @@ Actors.Boom.prototype.paint = function (view) {
         view.ctx.strokeStyle = '#ff0'
       }
       if(Math.random() < 0.25){
-        view.ctx.strokeStyle = '#fff'
+        view.ctx.strokeStyle = '#0ff'
+      }
+      if(Math.random() < 0.25){
+        view.ctx.strokeStyle = '#000'
       }
       view.ctx.lineWidth = 16
       view.ctx.lineCap='round'
@@ -274,9 +278,8 @@ Actors.Boom.prototype.paint = function (view) {
       view.ctx.arc(0, 0, (this.attrs.initial_radius - radius / i), 2 * Math.PI * Math.random(), 2 * Math.PI * Math.random())
       view.ctx.stroke()
     }
-
     break
-
+    
   case 'crater':
       // nop
       break
@@ -288,7 +291,7 @@ Actors.Boom.prototype.paint = function (view) {
       view.ctx.fill()
       break
 
-    default:
+  default:
       view.ctx.fillStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
       view.ctx.strokeStyle = 'rgba(' + this.attrs.color + ', ' + f.toFixed(2) + ')'
       view.ctx.beginPath()

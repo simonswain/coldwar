@@ -398,6 +398,14 @@ Actors.Cell.prototype.update = function (delta) {
       }
     }
   }
+
+  for (i = 0, ii = this.humans.length; i<ii; i++) {
+    if(!this.humans[i] || this.humans[i].attrs.dead){
+      this.humans.splice(i, 1);
+      i--
+      ii--
+    }
+  }
   
   for (i = 0, ii = this.rats.length; i<ii; i++) {
     if(this.rats[i]){
@@ -485,6 +493,9 @@ Actors.Cell.prototype.update = function (delta) {
     this.powerup = null;
   }
 
+  if(this.portal){
+    this.portal.update(delta);
+  }
   
 }
 
@@ -494,21 +505,47 @@ Actors.Cell.prototype.paint = function (view, fx) {
   // view.ctx.stroke()
 
   var intents = [[0,-1],[1,0],[0,1],[-1,0]];
+  var intentToHuman = false;
   
-  // for(var i=0; i<4; i++){
-  //   if(this.exits[i]){
-  //     view.ctx.font = '32pt ubuntu mono, monospace'
-  //     view.ctx.textAlign='center';
-  //     view.ctx.textBaseline='middle';
-  //     view.ctx.beginPath()
-  //     view.ctx.fillStyle = '#600'
-  //     view.ctx.fillText(
-  //       i,
-  //       (this.opts.max_x / 2) + (intents[i][0] * this.opts.max_x * 0.35),
-  //       (this.opts.max_y / 2) + (intents[i][1] * this.opts.max_y * 0.35)
-  //     );
-  //   }
-  // }
+  if(this.refs.maze && this.refs.maze.attrs.showToHuman && this.refs.maze.human){
+    this.routeToHuman = this.refs.maze.route(this, this.refs.maze.human.refs.cell);
+
+    var qq=[];
+    for(var i=0; i<4; i++){
+      
+      if(this.exits[i] === null){
+        // nop
+      } else if(this.exits[i].attrs.i == this.routeToHuman[1]){
+        intentToHuman = i;
+        break;
+      }
+    }
+
+    var z = 48
+
+    if(intentToHuman !== false){
+      view.ctx.save();
+      view.ctx.translate(this.opts.max_x/2, this.opts.max_y/2)
+      view.ctx.rotate( (Math.PI/2) * (intentToHuman - 1))
+
+      view.ctx.lineWidth = 8      
+      view.ctx.lineCap='round'      
+      view.ctx.strokeStyle = '#f0f'
+      
+      view.ctx.beginPath()
+      view.ctx.moveTo(z * 3, 0)
+      view.ctx.lineTo(z * 4, 0);
+      view.ctx.stroke()
+
+      view.ctx.beginPath()
+      view.ctx.moveTo(z*3.5, -z*0.5);
+      view.ctx.lineTo(z*4, 0);
+      view.ctx.lineTo(z*3.5, z*0.5);
+      view.ctx.stroke()
+      view.ctx.restore();     
+    }
+  }
+  
   
   if (this.attrs.flash>0) {
     if(this.humans && this.humans[0]){

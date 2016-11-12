@@ -3,29 +3,29 @@
 /*jshint strict:false */
 /*jshint latedef:false */
 
-Scenes.ready = function(env, opts){
+Scenes.soyouthink = function(env, opts){
   this.env = env;
   this.opts = this.genOpts(opts);
   this.attrs = this.genAttrs();
   this.init();
 };
 
-Scenes.ready.prototype = Object.create(Scene.prototype);
+Scenes.soyouthink.prototype = Object.create(Scene.prototype);
 
-Scenes.ready.prototype.title = 'Ready';
+Scenes.soyouthink.prototype.title = 'Soyouthink';
 
-Scenes.ready.prototype.layout = '';
+Scenes.soyouthink.prototype.layout = '';
 
-Scenes.ready.prototype.init = function(){
-  //this.env.play('ready')
+Scenes.soyouthink.prototype.init = function(){
+  this.env.play('humanoidfall')
 }
 
-Scenes.ready.prototype.getCast = function(){
+Scenes.soyouthink.prototype.getCast = function(){
   return {
   }
 };
 
-Scenes.ready.prototype.defaults = [{
+Scenes.soyouthink.prototype.defaults = [{
   key: 'max_x',
   value: 640,
   min: 32,
@@ -67,7 +67,7 @@ Scenes.ready.prototype.defaults = [{
   max: 64
 }];
 
-Scenes.ready.prototype.genAttrs = function(){
+Scenes.soyouthink.prototype.genAttrs = function(){
   return {
     frame_index: 0,
     step_index: 0,
@@ -76,11 +76,12 @@ Scenes.ready.prototype.genAttrs = function(){
   };
 };
 
-Scenes.ready.prototype.update = function(delta){
+Scenes.soyouthink.prototype.update = function(delta){
 
-  // if(this.env.at > 9500) {
-  //   this.env.goNext()
-  // }
+
+  if(this.env.at > 4000) {
+    this.env.goNext()
+  }
   
   if(this.attrs.hold > 0){
     this.attrs.hold -= delta;
@@ -88,7 +89,7 @@ Scenes.ready.prototype.update = function(delta){
     //   this.attrs.hold = 0;
     //   this.attrs.step_index = 0;
     //   this.attrs.frame_index ++;
-    //   if(this.attrs.frame_index === Scenes.ready.prototype.frames.length){
+    //   if(this.attrs.frame_index === Scenes.soyouthink.prototype.frames.length){
     //     this.attrs.frame_index = 0;
     //   }
     // }
@@ -97,7 +98,7 @@ Scenes.ready.prototype.update = function(delta){
     if (this.attrs.time > this.opts.step_hold) {
       this.attrs.time = 0;
       this.attrs.step_index += this.opts.step_skip;
-      if (this.attrs.step_index >= Scenes.ready.prototype.frames[this.attrs.frame_index].text.length) {
+      if (this.attrs.step_index >= Scenes.soyouthink.prototype.frames[this.attrs.frame_index].text.length) {
         this.attrs.hold = this.opts.frame_hold;
       }
     }
@@ -105,9 +106,9 @@ Scenes.ready.prototype.update = function(delta){
   
 }
 
-Scenes.ready.prototype.paint = function(fx, gx, sx){
+Scenes.soyouthink.prototype.paint = function(fx, gx, sx){
 
-  var frame = Scenes.ready.prototype.frames[this.attrs.frame_index];
+  var frame = Scenes.soyouthink.prototype.frames[this.attrs.frame_index];
 
   var ix = this.attrs.step_index;
   if(ix >= frame.text.length){
@@ -116,7 +117,7 @@ Scenes.ready.prototype.paint = function(fx, gx, sx){
   
   var yy = (this.opts.max_y * 0.4);
   var dy = (this.opts.max_y * 0.1);
-  var xx = (this.opts.max_x * 0.33);
+  var xx = (this.opts.max_x * 0.1);
   var dx = (this.opts.max_x * 0.06);
   var y = 0;
   var x = 0;
@@ -129,15 +130,15 @@ Scenes.ready.prototype.paint = function(fx, gx, sx){
     gx.ctx.save();
     gx.ctx.translate(Math.random() - 0.5, Math.random() - 0.5);
 
-    var h = (Date.now()%360 * 0.22) - 10;
+    var h = (Date.now()%360 * 0.82) - 10;
     gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
     
     if(Math.random() < 0.025){
-      gx.ctx.fillStyle = 'rgba(255,255,0,0.5)';
+      gx.ctx.fillStyle = 'rgba(0,255,0,0.5)';
     }
 
     if(Math.random() < 0.025){
-      gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+      gx.ctx.fillStyle = 'rgba(0,255,255,1)';
     }
 
     if(Date.now() % 1000 < 200){
@@ -149,8 +150,7 @@ Scenes.ready.prototype.paint = function(fx, gx, sx){
     }     
 
     gx.ctx.font = '36pt robotron';
-    gx.ctx.textAlign='center'
-    gx.ctx.textBaseline='middle'
+
     gx.ctx.fillText(frame.text[i], xx + (x * dx), yy + (y * dy));
     gx.ctx.restore();
     x ++;
@@ -159,10 +159,11 @@ Scenes.ready.prototype.paint = function(fx, gx, sx){
   
 }
 
-Scenes.ready.prototype.frames = [];
+Scenes.soyouthink.prototype.frames = [];
 
-Scenes.ready.prototype.frames[0] = {
+Scenes.soyouthink.prototype.frames[0] = {
   text:[
-    'Ready?',
+    ' SO YOU THINK',
+    'YOU CAN ESCAPE? '
   ].join("\n"),
 };

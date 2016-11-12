@@ -12,14 +12,15 @@ Scenes.seeding_maze.prototype = Object.create(Scene.prototype)
 Scenes.seeding_maze.prototype.title = 'Rat Logic Seec'
 
 Scenes.seeding_maze.prototype.init = function () {
+  this.env.mute = true;
   this.maze = new Actors.Seedingmaze(
     this.env, {
       scene: this
     }, {
       human: true
     }, {
-      rows: 4,
-      cols: 4
+      rows: 3,
+      cols: 3
     })
 }
 
@@ -57,6 +58,9 @@ Scenes.seeding_maze.prototype.genAttrs = function () {
 
 Scenes.seeding_maze.prototype.update = function (delta) {
   this.maze.update(delta);
+  if(this.maze.human) {
+    this.maze.human.attrs.show_intent = true
+  }
 }
 
 

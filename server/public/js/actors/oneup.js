@@ -48,8 +48,8 @@ Actors.Oneup.prototype.update = function (delta) {
 
 Actors.Oneup.prototype.paint = function (view) {
 
-    var gx = view;
-    var h = (Date.now()%360 * 0.22) - 10;
+  var gx = view;
+  var h = (Date.now()%360 * 0.22) - 10;
   
   if(this.attrs.style === 'static'){
     gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';

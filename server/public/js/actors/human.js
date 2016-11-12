@@ -35,7 +35,8 @@ Actors.Human.prototype.genAttrs = function (attrs) {
     shotfired: false,
     alpha: 0,
     flag: true,
-    passive: false
+    passive: false,
+    show_intent: false
   }
 }
 
@@ -50,7 +51,7 @@ Actors.Human.prototype.init = function (attrs) {
   );
 
   this.velo = new VecR(
-    Math.PI * 2 * Math.random(),
+    Math.PI * -0.375,
     this.attrs.speed
   ).vec3()
 
@@ -168,6 +169,12 @@ Actors.Human.prototype.defaults = [{
   step:0.1
 }]
 
+Actors.Human.prototype.twist = function () {
+  var v = this.velo.vecr(); 
+  var q = new VecR(Math.PI * 2 * Math.random(), 1 );
+  v.a += q.a * 0.15
+  this.velo = v.vec3();
+};
 
 Actors.Human.prototype.update = function (delta) {
 
@@ -293,6 +300,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.x += this.refs.cell.opts.max_x
     } else {
       this.velo = new Vec3(-this.velo.x, this.velo.y, 0);
+      this.twist();
       this.pos.x = 0
     }
   } else if (this.pos.x > this.refs.cell.opts.max_x) {
@@ -301,6 +309,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.x = this.pos.x - this.refs.cell.opts.max_x
     } else {
       this.velo = new Vec3(-this.velo.x, this.velo.y, 0);
+      this.twist();
       this.pos.x = this.refs.cell.opts.max_x
     }
   }
@@ -311,6 +320,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.y += this.refs.cell.opts.max_y
     } else {
       this.velo = new Vec3(this.velo.x, - this.velo.y, 0);
+      this.twist();
       this.pos.y = 0
     }
   } else if (this.pos.y > this.refs.cell.opts.max_y) {
@@ -319,6 +329,7 @@ Actors.Human.prototype.update = function (delta) {
       this.pos.y = this.pos.y - this.refs.cell.opts.max_y
     } else {
       this.velo = new Vec3(this.velo.x, -this.velo.y, 0);
+      this.twist();
       this.pos.y = this.refs.cell.opts.max_y
     }
   }
@@ -462,6 +473,7 @@ Actors.Human.prototype.flashbang = function () {
   if(this.refs.cell.rats.length > this.opts.flashbang_rats){
     if(Math.random() < this.opts.flashbang_probability){
       this.refs.cell.attrs.flash = 4;
+      this.env.play('superzapper')
       this.refs.cell.rats.forEach(function (other) {
         if(!other){
           return;
@@ -744,9 +756,9 @@ Actors.Human.prototype.toPowerup = function () {
   pos = new Vec3(this.refs.cell.opts.max_x / 2, this.refs.cell.opts.max_y / 2);
   range = this.pos.rangeXY(pos)
   if (range < 64) {
-    this.attrs.powerup = 3000
+    this.attrs.powerup += 3000
     this.refs.cell.powerup.kill();
-    this.env.play('computer');
+    this.env.play('pow');
 
 
     this.refs.cell.oneups.push(new Actors.Oneup(
@@ -897,36 +909,36 @@ Actors.Human.prototype.paint = function (view, fx) {
 
   view.ctx.restore()
 
-  // if(this.attrs.intent === 0){
-  //   view.ctx.strokeStyle = '#f00'
-  //   view.ctx.beginPath()
-  //   view.ctx.moveTo(0, 0)
-  //   view.ctx.lineTo(0, -2*z)
-  //   view.ctx.stroke()
-  // }
+  if(this.attrs.show_intent){
+    view.ctx.save();
+    switch (this.attrs.intent) {
+    case 0:
+      view.ctx.rotate(- 0.5 * Math.PI);
+      break;
+    case 1:
+      //view.ctx.rotate(0;
+      break;
+    case 2:
+      view.ctx.rotate(0.5 * Math.PI);
+      break;
+    case 3:
+      view.ctx.rotate(Math.PI);
+      break;
+    }
 
-  // if(this.attrs.intent === 1){
-  //   view.ctx.strokeStyle = '#f00'
-  //   view.ctx.beginPath()
-  //   view.ctx.moveTo(0, 0)
-  //   view.ctx.lineTo(2*z, 0)
-  //   view.ctx.stroke()
-  // }
+    view.ctx.strokeStyle = '#f0f'
+    view.ctx.beginPath()
+    view.ctx.moveTo(z * 2, 0)
+    view.ctx.lineTo(z * 4, 0);
+    view.ctx.stroke()
 
-  // if(this.attrs.intent === 2){
-  //   view.ctx.strokeStyle = '#f00'
-  //   view.ctx.beginPath()
-  //   view.ctx.moveTo(0, 0)
-  //   view.ctx.lineTo(0, 2*z)
-  //   view.ctx.stroke()
-  // }
-
-  // if(this.attrs.intent === 3){
-  //   view.ctx.strokeStyle = '#f00'
-  //   view.ctx.beginPath()
-  //   view.ctx.moveTo(0, 0)
-  //   view.ctx.lineTo(-2*z, 0)
-  //   view.ctx.stroke()
-  // }
+    view.ctx.beginPath()
+    view.ctx.moveTo(z*3, -z*0.5);
+    view.ctx.lineTo(z*4, 0);
+    view.ctx.lineTo(z*3, z*0.5);
+    view.ctx.stroke()
+    
+    view.ctx.restore();   
+  }
 
 }

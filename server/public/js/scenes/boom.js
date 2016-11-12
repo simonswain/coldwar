@@ -12,6 +12,7 @@ Scenes.boom.prototype = Object.create(Scene.prototype)
 Scenes.boom.prototype.title = 'Maze 1'
 
 Scenes.boom.prototype.init = function () {
+  this.env.play('boom')
 }
 
 Scenes.boom.prototype.getCast = function () {

@@ -12,6 +12,7 @@ Scenes.linear_path.prototype = Object.create(Scene.prototype)
 Scenes.linear_path.prototype.title = 'Rat Logic Seec'
 
 Scenes.linear_path.prototype.init = function () {
+  this.env.mute = true;
   this.maze = new Actors.Linearmaze(
     this.env, {
       scene: this
