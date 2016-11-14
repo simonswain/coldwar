@@ -150,14 +150,14 @@ Scenes.small_array.prototype.paint = function (fx, gx, sx) {
   y = Math.floor(ix / this.opts.rows);
 
   gx.ctx.fillStyle ='#fff';
-  gx.ctx.font = '12pt robotron';
-  gx.ctx.textAlign = 'center';
+  gx.ctx.font = '16pt robotron';
+  gx.ctx.textAlign = 'left';
   gx.ctx.textBaseline = 'middle';
   gx.ctx.fillText(
     '(' + y + ' * ' + this.opts.cols + ') + ' + x + ' = ' + ix, 
     //'ix = (y * w) + x',
-    this.opts.max_x * 0.5,
-    this.opts.max_y * 0.68
+    this.opts.max_x * 0.28,
+    this.opts.max_y * 0.70
   );
 
   

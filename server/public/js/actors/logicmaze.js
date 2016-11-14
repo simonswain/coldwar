@@ -334,6 +334,7 @@ Actors.Logicmaze.prototype.randomReactor = function (max) {
 Actors.Logicmaze.prototype.addHuman = function (ix) {
   var human = this.cells[ix].addHuman();
   human.attrs.passive = true;
+  human.attrs.idle = true;
   return human
 }
 

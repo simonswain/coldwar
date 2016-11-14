@@ -629,6 +629,11 @@ Actors.Hoppingmaze.prototype.update = function (delta) {
 
       if(this.attrs.humanCountdown === 0){
         this.human = this.addHuman(this.attrs.entry_cell);
+        this.human.velo = new VecR(
+          0,
+          this.human.attrs.speed
+        ).vec3()
+
       }
     }
   }

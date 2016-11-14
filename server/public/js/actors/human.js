@@ -36,6 +36,7 @@ Actors.Human.prototype.genAttrs = function (attrs) {
     alpha: 0,
     flag: true,
     passive: false,
+    idle: false,
     show_intent: false
   }
 }
@@ -291,7 +292,7 @@ Actors.Human.prototype.update = function (delta) {
   if(!this.attrs.passive) {
     this.pos.add(this.velo)
   }
-
+  
   var other, cell;
 
   if (this.pos.x < 0) {
@@ -347,6 +348,13 @@ Actors.Human.prototype.update = function (delta) {
     //console.log(this.refs.cell.attrs.i);
     other.humans.push(this);
   }
+
+
+  if(this.attrs.idle) {
+    this.attrs.face_angle += delta / 25
+    this.attrs.face_enemy = true;
+  }
+  
 
 }
 
@@ -454,6 +462,7 @@ Actors.Human.prototype.shootRats = function () {
 
   if (enemy && this.attrs.energy > 0 && Math.random() < this.opts.laser_probability) {
     this.attrs.energy = this.attrs.energy - 1
+    this.attrs.idle = false
     this.refs.cell.addZap(
       this.pos.x,
       this.pos.y,
