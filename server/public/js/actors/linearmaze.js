@@ -15,7 +15,7 @@ Actors.Linearmaze.prototype.title = 'Linearmaze'
 
 Actors.Linearmaze.prototype.genAttrs = function (attrs) {
   return {
-    timer: 180,
+    timer: 360,
     ttl: 0,
     //ttl: (this.opts.rows * this.opts.cols > 24) ? 0 : 8,
     phase: false,
@@ -126,7 +126,10 @@ Actors.Linearmaze.prototype.seedActors = function () {
   this.portal = this.addPortal(this.attrs.entry_cell);
 
   this._route = this.route(this.cells[this.attrs.entry_cell], this.cells[this.attrs.reactor_cell]);
-
+  this._ix = 0;
+  this._hl = 15;
+  this._de = 1;
+  
   this.cells[this._route[7]].addSnake();
   this.cells[this._route[this._route.length-4]].addSnake();
 
@@ -533,8 +536,19 @@ Actors.Linearmaze.prototype.update = function (delta) {
 
   this.attrs.timer -= delta;
   if(this.attrs.timer < 0){
-    this.attrs.timer = 180;
+    this.attrs.timer = 360;
     this.makeGrid();
+    return;
+  }
+
+  this._hl -= delta;
+  if(this._hl < 0){
+    this._hl = 5;
+    this._ix += this._de;
+    if(this._ix >= this._route.length || this._ix < 0) {
+      this._de = -this._de;
+      this._ix += this._de;
+    }
     return;
   }
   
@@ -655,8 +669,8 @@ Actors.Linearmaze.prototype.update = function (delta) {
         this.cells[i].killAllActors();
       }
 
-      setTimeout(this.env.restart, 2500)
-      //setTimeout(this.env.goNext, 2500)
+      //setTimeout(this.env.restart, 2500)
+      //setTimeout(this.env.goNext, 5000)
     }
   }
   
@@ -748,19 +762,22 @@ Actors.Linearmaze.prototype.paint = function (view, fx) {
       x = i % this.attrs.cols
       y = Math.floor(i / this.attrs.cols)     
       if(this._route.indexOf(i) > -1){
-        // view.ctx.beginPath()
-        // view.ctx.strokeStyle='rgba(0,255,255,0.25)';
-        // view.ctx.fillStyle='rgba(0,255,255,0.25)';
-        // view.ctx.beginPath();
-        // view.ctx.rect((x * w) , (y * w), w, w);
-        // view.ctx.fill();
-      } else {
-        view.ctx.beginPath()
-        view.ctx.strokeStyle='rgba(255,0,255,0.25)';
-        view.ctx.fillStyle='rgba(255,0,255,0.25)';
-        view.ctx.beginPath();
-        view.ctx.rect((x * w) , (y * w), w, w);
-        view.ctx.fill();
+        if(this._route[this._ix] === cell.attrs.i) {
+          view.ctx.beginPath()
+          view.ctx.fillStyle='rgba(255,255,255,1)';
+          view.ctx.beginPath();
+          view.ctx.arc((x * w) + (w/2), (y * w) + (w/2), w/8, 0, 2*Math.PI);
+          view.ctx.fill();
+        }
+
+        if(this._route[this._ix] === cell.attrs.i) {
+          fx.ctx.beginPath()
+          fx.ctx.fillStyle='rgba(255,255,255,0.25)';
+          fx.ctx.fillStyle='rgba(255,255,255,1)';
+          fx.ctx.beginPath();
+          fx.ctx.arc((x * w) + (w/2), (y * w) + (w/2), w/12, 0, 2*Math.PI);
+          fx.ctx.fill();
+        }
       }
     }
   } 

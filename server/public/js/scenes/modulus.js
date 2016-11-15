@@ -279,9 +279,6 @@ Scenes.modulus.prototype.paintLevel = function (gx) {
     gx.ctx.fillStyle = 'rgba(255,255,255,1)';
   }
 
-  if(Date.now() % 1000 < 200){
-    gx.ctx.fillStyle = 'rgba(0,0,0,1)';
-  }
 
   if(Date.now() % 1000 > 950){
     gx.ctx.fillStyle = 'rgba(255,255,255,1)';
@@ -291,7 +288,10 @@ Scenes.modulus.prototype.paintLevel = function (gx) {
   gx.ctx.textAlign='center'
   gx.ctx.textBaseline='middle'
 
-  gx.ctx.fillText(this.attrs.level.toString(16).toUpperCase(), 0, 0);
+  if(Date.now() % 1000 > 200){
+    //gx.ctx.fillStyle = 'rgba(0,0,0,1)';
+    gx.ctx.fillText(this.attrs.level.toString(16).toUpperCase(), 0, 0);
+  }
 
 }
 

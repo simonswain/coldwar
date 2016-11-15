@@ -1,17 +1,17 @@
 /* global Scenes, Scene, Actors */
 
-Scenes.linear_path = function (env, opts) {
+Scenes.linear_maze = function (env, opts) {
   this.env = env
   this.opts = this.genOpts(opts)
   this.attrs = this.genAttrs()
   this.init()
 }
 
-Scenes.linear_path.prototype = Object.create(Scene.prototype)
+Scenes.linear_maze.prototype = Object.create(Scene.prototype)
 
-Scenes.linear_path.prototype.title = 'Rat Logic Seec'
+Scenes.linear_maze.prototype.title = 'Rat Logic Seec'
 
-Scenes.linear_path.prototype.init = function () {
+Scenes.linear_maze.prototype.init = function () {
   this.env.mute = true;
   this.maze = new Actors.Linearmaze(
     this.env, {
@@ -23,7 +23,7 @@ Scenes.linear_path.prototype.init = function () {
     })
 }
 
-Scenes.linear_path.prototype.getCast = function () {
+Scenes.linear_maze.prototype.getCast = function () {
   return {
     Maze: Actors.Maze,
     Cell: Actors.Cell,
@@ -35,7 +35,7 @@ Scenes.linear_path.prototype.getCast = function () {
   }
 }
 
-Scenes.linear_path.prototype.defaults = [{
+Scenes.linear_maze.prototype.defaults = [{
   key: 'max_x',
   info: 'Max X',
   value: 640,
@@ -49,17 +49,17 @@ Scenes.linear_path.prototype.defaults = [{
   max: 1000
 }]
 
-Scenes.linear_path.prototype.genAttrs = function () {
+Scenes.linear_maze.prototype.genAttrs = function () {
   return {
   }
 }
 
-Scenes.linear_path.prototype.update = function (delta) {
+Scenes.linear_maze.prototype.update = function (delta) {
   this.maze.update(delta);
 }
 
 
-Scenes.linear_path.prototype.flash = function(fx, gx, sx){
+Scenes.linear_maze.prototype.flash = function(fx, gx, sx){
   if(this.maze.attrs.boom && this.maze.attrs.boomCountdown <= 0){
     if(Math.random() < 0.5){
       gx.ctx.fillStyle = '#ffffff'
@@ -76,7 +76,7 @@ Scenes.linear_path.prototype.flash = function(fx, gx, sx){
   }
 }
 
-Scenes.linear_path.prototype.paint = function (fx, gx, sx) { 
+Scenes.linear_maze.prototype.paint = function (fx, gx, sx) { 
   gx.ctx.save();
   gx.ctx.translate(this.opts.max_x * 0.15, this.opts.max_y * 0.15);
   gx.ctx.scale(0.7, 0.7);

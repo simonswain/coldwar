@@ -573,19 +573,29 @@ Actors.TwistyMaze.prototype.paint = function (view, fx) {
   if(this.attrs.phase == 'gen'){
     var x, y, i, ii;
     var cell;
-    var ww = this.opts.max_x / this.attrs.cols
-    var hh = this.opts.max_y / this.attrs.rows
+    var h, c;
     
     for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
-
       x = i % this.attrs.rows
       y = Math.floor(i / this.attrs.cols);
 
       cell = this.cells[i];
       view.ctx.save();
       if(this._steps.stack.indexOf(cell) > -1){
-        view.ctx.fillStyle = '#300';
-        view.ctx.strokeStyle = '#300';
+        h = (Date.now()%360 * 0.22) - 10;
+        c = 'hsl(' + h + ', 100%, 50%)';
+        
+        if(Math.random() < 0.025){
+          c = 'rgba(255,255,0,0.5)';
+        }
+
+        if(Math.random() < 0.025){
+          c = 'rgba(255,255,255,1)';
+        }
+         view.ctx.fillStyle = c;
+         view.ctx.strokeStyle = c;
+        // view.ctx.fillStyle = '#c00';
+        // view.ctx.strokeStyle = '#c00';
         view.ctx.beginPath();
         view.ctx.rect((cell.attrs.x * w), (cell.attrs.y * w), w, w); 
         view.ctx.fill();
@@ -607,6 +617,43 @@ Actors.TwistyMaze.prototype.paint = function (view, fx) {
       view.ctx.restore();
     }
   }
+  // if(this.attrs.phase == 'gen'){
+  //   var x, y, i, ii;
+  //   var cell;
+  //   var ww = this.opts.max_x / this.attrs.cols
+  //   var hh = this.opts.max_y / this.attrs.rows
+    
+  //   for(i = 0, ii=this.attrs.rows * this.attrs.cols; i < ii; i++){
+
+  //     x = i % this.attrs.rows
+  //     y = Math.floor(i / this.attrs.cols);
+
+  //     cell = this.cells[i];
+  //     view.ctx.save();
+  //     if(this._steps.stack.indexOf(cell) > -1){
+  //       view.ctx.fillStyle = '#300';
+  //       view.ctx.strokeStyle = '#300';
+  //       view.ctx.beginPath();
+  //       view.ctx.rect((cell.attrs.x * w), (cell.attrs.y * w), w, w); 
+  //       view.ctx.fill();
+  //       view.ctx.stroke();
+  //     }
+
+  //     if(this._steps.other && this._steps.other.attrs.i === i){
+  //       view.ctx.fillStyle = '#ff0';
+  //       view.ctx.beginPath();
+  //       view.ctx.fillRect((cell.attrs.x * w), (cell.attrs.y * w), w, w);
+  //     }      
+
+  //     if(this._steps.cell && this._steps.cell !== -1 && this._steps.cell.attrs.i === i){
+  //       view.ctx.fillStyle = '#f00';
+  //       view.ctx.beginPath();
+  //       view.ctx.fillRect((cell.attrs.x * w), (cell.attrs.y * w), w, w);
+  //     }      
+
+  //     view.ctx.restore();
+  //   }
+  // }
   
   if(this.savedRoute){
     for (i = 0, ii = this.cells.length; i<ii; i++) {

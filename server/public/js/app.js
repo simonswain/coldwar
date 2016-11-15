@@ -1244,8 +1244,8 @@ Coldwar.prototype.scenes = [{
   title: 'Rat Redux',
   slug: 'rat_logic_redux'
 }, {
-  title: 'Linear Path',
-  slug: 'linear_path'
+  title: 'Linear Maze',
+  slug: 'linear_maze'
 }, {
   title: 'Modulus',
   slug: 'modulus'
