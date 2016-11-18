@@ -18,8 +18,8 @@ Scenes.rat_logic.prototype.init = function () {
       scene: this
     }, {
     }, {
-      rows: 4,
-      cols: 4,
+      rows: 3,
+      cols: 3,
       human: false
     })
 }

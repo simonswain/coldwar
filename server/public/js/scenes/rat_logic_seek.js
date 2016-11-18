@@ -20,8 +20,8 @@ Scenes.rat_logic_seek.prototype.init = function () {
       human: true,
       showToHuman: true
     }, {
-      rows: 4,
-      cols: 4
+      rows: 3,
+      cols: 3
     })
 }
 

@@ -279,7 +279,7 @@ Scenes.solver8.prototype.paint = function(fx, gx, sx){
     gx.ctx.save();
 
     if(i === 1){
-      gx.ctx.fillStyle = '#00f';
+      gx.ctx.fillStyle = '#0ff';
       gx.ctx.beginPath();
       gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
       gx.ctx.fill();
@@ -313,7 +313,7 @@ Scenes.solver8.prototype.paint = function(fx, gx, sx){
     }
 
     if(i === 2){
-      gx.ctx.fillStyle = '#00f';
+      gx.ctx.fillStyle = '#0ff';
       gx.ctx.beginPath();
       gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
       gx.ctx.fill();
@@ -347,7 +347,7 @@ Scenes.solver8.prototype.paint = function(fx, gx, sx){
     }
 
     if(i === 3){
-      gx.ctx.fillStyle = '#00f';
+      gx.ctx.fillStyle = '#0ff';
       gx.ctx.beginPath();
       gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
       gx.ctx.fill();
@@ -381,7 +381,7 @@ Scenes.solver8.prototype.paint = function(fx, gx, sx){
     }
 
     if(i === 7){
-      gx.ctx.fillStyle = '#00f';
+      gx.ctx.fillStyle = '#0ff';
       gx.ctx.beginPath();
       gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
       gx.ctx.fill();
@@ -414,7 +414,7 @@ Scenes.solver8.prototype.paint = function(fx, gx, sx){
     }
 
     if(i === 11){
-      gx.ctx.fillStyle = '#f00';
+      gx.ctx.fillStyle = '#0ff';
       gx.ctx.beginPath();
       gx.ctx.arc((x * ww) + (ww/2), (y * hh) + (hh/2), ww/4, 0, 2*Math.PI);
       gx.ctx.fill();

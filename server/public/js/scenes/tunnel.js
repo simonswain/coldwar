@@ -18,6 +18,7 @@ Scenes.tunnel.prototype.layout = '';
 
 Scenes.tunnel.prototype.genAttrs = function(){
   return {
+    index: 0,
     alpha: 0,
     x: -150,
     y: 0,
@@ -33,6 +34,7 @@ Scenes.tunnel.prototype.genAttrs = function(){
 };
 
 Scenes.tunnel.prototype.init = function(){
+  this.string = '  R A T S   O F   T H E   M A Z E   O F   T H E ';
 }
 
 Scenes.tunnel.prototype.getCast = function(){
@@ -69,6 +71,11 @@ Scenes.tunnel.prototype.flash = function(fx, gx){
 
 Scenes.tunnel.prototype.update = function(delta){
 
+  this.attrs.index += delta * 0.25;
+  if(this.attrs.index >= this.string.length){
+    this.attrs.index = 0;
+  }      
+  
   this.attrs.alpha += delta * 0.5 
   if(this.attrs.alpha > 2 * Math.PI){
     this.attrs.alpha -= 2 * Math.PI;
@@ -84,7 +91,7 @@ Scenes.tunnel.prototype.update = function(delta){
   if(this.attrs.mode === 'enter'){
     this.attrs.x += delta * 4;
     if(this.attrs.x >= this.opts.max_x){
-      //this.attrs.x = 0;
+      this.attrs.x = 0;
       setTimeout(this.env.goNext, 10)
       this.mode = 'leaving'
     }
@@ -98,8 +105,6 @@ Scenes.tunnel.prototype.update = function(delta){
 Scenes.tunnel.prototype.paint = function(fx, gx, sx){
 
   var view = gx;
-
-
 
   var w = this.opts.max_x * 0.05;
   var cx = 0;
@@ -181,6 +186,47 @@ Scenes.tunnel.prototype.paint = function(fx, gx, sx){
 
   }
 
+  var len = this.string.length;
+  var ww = this.opts.max_x / len;
+  var ix = Math.floor(this.attrs.index)
+var ch;
+
+  gx.ctx.font = '36pt robotron';
+  gx.ctx.textAlign='center';
+  gx.ctx.baseline='middle';
+  
+  for(var i=0, ii=len; i<ii; i++ ) {
+    ch = this.string[(ix + i) % len];
+
+    var h = (Date.now()%360 * 0.82) - 10 * i;
+    gx.ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+    
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(0,255,0,0.5)';
+    }
+
+    if(Math.random() < 0.025){
+      gx.ctx.fillStyle = 'rgba(0,255,255,1)';
+    }
+
+    if(Date.now() % 1000 > 950){
+      gx.ctx.fillStyle = 'rgba(255,255,255,1)';
+    }     
+
+    //gx.ctx.fillStyle = 'rgba(0,255,0,0.5)';
+    gx.ctx.save();
+    gx.ctx.translate(i * ww, this.opts.max_y * 0.25);
+    gx.ctx.fillText(ch, 0, 0);
+    gx.ctx.restore();
+
+    gx.ctx.save();
+    gx.ctx.translate(i * ww, this.opts.max_y * 0.8);
+    gx.ctx.fillText(ch, 0, 0);
+    gx.ctx.restore();
+
+  }
+  
+  
   
   
 }
