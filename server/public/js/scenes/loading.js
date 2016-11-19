@@ -31,6 +31,8 @@ Scenes.loading.prototype.genAttrs = function(){
 
 Scenes.loading.prototype.init = function(){
 
+  this.env.play('computer');
+
   this.frames = [{
     duration: 10,
     paint: this.ready1
@@ -364,7 +366,7 @@ Scenes.loading.prototype.grid = function(fx) {
 
   if(this.attrs.alpha < 0.01 && this.attrs.flag){
     this.attrs.flag = false;
-    this.env.play('computer');
+    //this.env.play('computer');
   }
   if(this.attrs.alpha > 0.99 && !this.attrs.flag){
     this.attrs.flag = true;

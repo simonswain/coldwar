@@ -149,12 +149,7 @@ Actors.Maze.prototype.seedActors = function () {
     var route = this.route(this.cells[this.attrs.entry_cell], this.cells[this.attrs.reactor_cell]);
     if(route.length > 6) {
       route.shift();
-      route.pop();
-      route.pop();
-      route.pop();
       this.randomPowerup(route)
-      route.pop();
-      route.pop();
       this.randomPowerup(route)
     }
     this.randomCapacitor(route);

@@ -475,9 +475,9 @@ Actors.Human.prototype.shootRats = function () {
 
 Actors.Human.prototype.flashbang = function () {
 
-  if(this.attrs.powerup > 0){
-    return;
-  }
+  // if(this.attrs.powerup > 0){
+  //   return;
+  // }
   
   if(this.refs.cell.rats.length > this.opts.flashbang_rats){
     if(Math.random() < this.opts.flashbang_probability){
