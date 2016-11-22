@@ -155,7 +155,10 @@ Actors.Breeder.prototype.update = function (delta) {
 
   if(this.rats.length < this.opts.rats_max){
     if(this.refs.cell.refs.maze){
-      if( !this.refs.cell.refs.maze.attrs.escape){
+      if(!this.refs.cell.refs.maze.attrs.escape){
+        this.attrs.spawn += 2;
+        this.addRat();
+      } else if (this.refs.cell.refs.maze.attrs.exciting){
         this.attrs.spawn += 2;
         this.addRat();
       }

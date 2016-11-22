@@ -1091,6 +1091,9 @@ Coldwar.prototype.scenes = [{
   title: 'Logo',
   slug: 'logo'
 }, {
+  title: 'Loaded',
+  slug: 'loaded'
+}, {
   title: 'Story',
   slug: 'story'
 }, {

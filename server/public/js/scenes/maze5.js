@@ -18,9 +18,9 @@ Scenes.maze5.prototype.init = function () {
     }, {
       exciting: true
     }, {
-      rows: 4,
-      cols: 5,
-      breeders: 6
+      rows: 5,
+      cols: 6,
+      breeders:8
     });
 
   this.target_zoom = 1;

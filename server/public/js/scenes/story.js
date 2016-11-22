@@ -43,9 +43,9 @@ Scenes.story.prototype.defaults = [{
   max: 1024
 }, {
   key: 'max_y',
-  value: 480,
+  value: 360,
   min: 32,
-  max: 1024
+  max: 768
 }, {
   key: 'max_z',
   value: 1,

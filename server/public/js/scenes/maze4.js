@@ -20,7 +20,7 @@ Scenes.maze4.prototype.init = function () {
     }, {
       rows: 5,
       cols: 7,
-      breeders: 6
+      breeders: 7
     });
 
   this.target_zoom = 1;
